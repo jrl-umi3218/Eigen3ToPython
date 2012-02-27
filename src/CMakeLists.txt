@@ -31,4 +31,17 @@ add_library(_eigen3 SHARED ${SOURCES})
 
 set_target_properties(_eigen3 PROPERTIES PREFIX "")
 
+# install rules
+# find python version (not implemented in cmake 2.8.5)
+execute_process(COMMAND "${PYTHON_EXECUTABLE}" -V ERROR_VARIABLE _VERSION
+                OUTPUT_QUIET ERROR_STRIP_TRAILING_WHITESPACE)
+string(REPLACE "Python " "" PYTHON_VERSION_STRING "${_VERSION}")
+string(REGEX REPLACE "^([0-9]+)\\.[0-9]+\\.[0-9]+.*" "\\1"
+       PYTHON_VERSION_MAJOR "${PYTHON_VERSION_STRING}")
+string(REGEX REPLACE "^[0-9]+\\.([0-9])+\\.[0-9]+.*" "\\1"
+       PYTHON_VERSION_MINOR "${PYTHON_VERSION_STRING}")
+
+set(INSTALL_PATH "lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/dist-packages/eigen3/")
+install(TARGETS _eigen3 DESTINATION ${INSTALL_PATH})
+install(FILES __init__.py convert.py DESTINATION ${INSTALL_PATH})
 
