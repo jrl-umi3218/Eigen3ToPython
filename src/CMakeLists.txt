@@ -4,8 +4,8 @@ find_package(PythonLibs REQUIRED)
 
 # create the package in build dir for testing purpose
 set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/eigen3)
-configure_file(__init__.py ${CMAKE_CURRENT_BINARY_DIR}/eigen3 COPYONLY)
-configure_file(convert.py ${CMAKE_CURRENT_BINARY_DIR}/eigen3 COPYONLY)
+configure_file(__init__.py ${CMAKE_CURRENT_BINARY_DIR}/eigen3/__init__.py COPYONLY)
+configure_file(convert.py ${CMAKE_CURRENT_BINARY_DIR}/eigen3/convert.py COPYONLY)
 
 set(OUTPUT_BINDING ${CMAKE_CURRENT_BINARY_DIR}/eigen3.cpp)
 
