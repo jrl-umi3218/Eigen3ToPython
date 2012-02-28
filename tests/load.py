@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../build/src/')
+sys.path.insert(0,'../build/src/')
 import eigen3
 
 import numpy as np

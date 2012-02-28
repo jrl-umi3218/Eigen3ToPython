@@ -18,7 +18,7 @@ add_custom_command (
 
 # build the library
 set(SOURCES ${OUTPUT_BINDING})
-set(HEADERS MatrixBaseAddon.h MatrixAddon.h)
+set(HEADERS MatrixBaseAddon.h MatrixAddon.h EigenUtils.h)
 
 include_directories(.)
 include_directories(${EIGEN3_INCLUDE_DIRS})
@@ -26,7 +26,8 @@ include_directories(${PYTHON_INCLUDE_DIRS})
 set(MatrixBaseAddon "\"${CMAKE_CURRENT_SOURCE_DIR}/MatrixBaseAddon.h\"")
 set(MatrixAddon "\"${CMAKE_CURRENT_SOURCE_DIR}/MatrixAddon.h\"")
 add_definitions(-DEIGEN_MATRIXBASE_PLUGIN=${MatrixBaseAddon}
-  -DEIGEN_MATRIX_PLUGIN=${MatrixAddon})
+  -DEIGEN_MATRIX_PLUGIN=${MatrixAddon}
+)
 add_library(_eigen3 SHARED ${SOURCES})
 
 set_target_properties(_eigen3 PROPERTIES PREFIX "")

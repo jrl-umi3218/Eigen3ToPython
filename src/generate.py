@@ -38,6 +38,50 @@ def makeMatrixBase(mb, dim):
 
   mb.add_output_stream_operator()
 
+def add_quaternion(mod):
+  q = mod.add_class('Quaterniond')
+
+  q.add_copy_constructor()
+
+  q.add_constructor([])
+  q.add_constructor([param('Eigen::Vector4d', 'vec')])
+  q.add_constructor([param('double', 'w'), param('double', 'x'),
+                     param('double', 'y'), param('double', 'z'),])
+  q.add_function_as_constructor('::createFromAngleAxis', 'Quaterniond*',
+                                [param('double', 'angle'), param('Vector3d', 'axis')])
+  q.add_function_as_constructor('::createFromMatrix', 'Quaterniond*', [param('Matrix3d', 'axis')])
+
+  q.add_method('angularDistance', retval('double'), [param('Quaterniond', 'other')],
+               is_const=True)
+  q.add_method('conjugate', retval('Eigen::Quaterniond'), [], is_const=True)
+  q.add_method('dot', retval('double'), [param('Eigen::Quaterniond', 'other')])
+  q.add_method('inverse', retval('Eigen::Quaterniond'), [], is_const=True)
+  q.add_method('isApprox', retval('bool'), [param('Eigen::Quaterniond', 'other')], is_const=True)
+  q.add_method('isApprox', retval('bool'),
+               [param('Eigen::Quaterniond', 'other'), param('double', 'prec')],
+               is_const=True)
+  q.add_method('matrix', retval('Eigen::Matrix3d'), [], is_const=True)
+  q.add_method('normalize', None, [])
+  q.add_method('normalized', retval('Eigen::Quaterniond'), [], is_const=True)
+  q.add_method('setIdentity', retval('Eigen::Quaterniond'), [])
+  q.add_method('slerp', retval('Eigen::Quaterniond'),
+               [param('double', 't'), param('Eigen::Quaterniond', 'other')], is_const=True)
+  q.add_method('squaredNorm', retval('double'), [], is_const=True)
+  q.add_method('toRotationMatrix', retval('Eigen::Matrix3d'), [], is_const=True)
+
+  q.add_method('coeffs', retval('Eigen::Vector4d'), [], is_const=True)
+  q.add_method('vec', retval('Eigen::Vector3d'), [], is_const=True)
+  q.add_method('w', retval('double'), [], is_const=True)
+  q.add_method('x', retval('double'), [], is_const=True)
+  q.add_method('y', retval('double'), [], is_const=True)
+  q.add_method('z', retval('double'), [], is_const=True)
+
+  q.add_method('Identity', retval('Eigen::Quaterniond'), [], is_static=True)
+
+  q.add_binary_numeric_operator('*')
+
+
+  q.add_output_stream_operator()
 
 if __name__ == '__main__':
   if len(sys.argv) < 2:
@@ -46,7 +90,9 @@ if __name__ == '__main__':
   eigen3 = Module('_eigen3', cpp_namespace='::Eigen')
   eigen3.add_include('<stdexcept>')
   eigen3.add_include('<Eigen/Core>')
+  eigen3.add_include('<Eigen/Geometry>')
   eigen3.add_include('"EigenTypedef.h"')
+  eigen3.add_include('"EigenUtils.h"')
 
   # Vector3d
   vector2d = eigen3.add_class('Vector2d')
@@ -79,6 +125,9 @@ if __name__ == '__main__':
   # Matrix3d
   Matrix6d = eigen3.add_class('Matrix6d')
   makeMatrixBase(Matrix6d, (6, 6))
+
+  # Quaterniond
+  add_quaternion(eigen3)
 
   with open(sys.argv[1], 'w') as f:
     eigen3.generate(f)
