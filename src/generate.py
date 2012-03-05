@@ -36,6 +36,8 @@ def makeMatrixBase(mb, dim):
   if dim[1] > 1:
     mb.add_method('Identity', retval(mb.full_name), [], is_static=True)
 
+  mb.add_method('Zero', retval(mb.full_name), [], is_static=True)
+
   mb.add_method('rows', retval('int'), [], is_const=True)
   mb.add_method('cols', retval('int'), [], is_const=True)
 
