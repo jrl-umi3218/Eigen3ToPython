@@ -23,6 +23,18 @@ def makeMatrixBase(mb, dim):
   # if is a vector
   if dim[1] == 1:
     mb.add_constructor([param('double', 'val')]*dim[0])
+    if dim[0] > 0:
+      mb.add_method('UnitX', retval(mb.full_name), [], is_static=True)
+    if dim[0] > 1:
+      mb.add_method('UnitY', retval(mb.full_name), [], is_static=True)
+    if dim[0] > 2:
+      mb.add_method('UnitZ', retval(mb.full_name), [], is_static=True)
+    if dim[0] > 3:
+      mb.add_method('UnitW', retval(mb.full_name), [], is_static=True)
+
+  # if is a matrix
+  if dim[1] > 1:
+    mb.add_method('Identity', retval(mb.full_name), [], is_static=True)
 
   mb.add_method('rows', retval('int'), [], is_const=True)
   mb.add_method('cols', retval('int'), [], is_const=True)
