@@ -41,7 +41,6 @@ def isSquareMatrix(mb):
 def makeMatrixBase(mb):
   mb.add_constructor([])
 
-  # if is a vector
   if isVector(mb):
     elems = max(mb.shape)
     mb.add_constructor([param('double', 'val')]*elems)
@@ -54,12 +53,15 @@ def makeMatrixBase(mb):
     if elems > 3:
       mb.add_method('UnitW', retval(mb.full_name), [], is_static=True)
 
-  # if is a matrix
   if isSquareMatrix(mb):
     mb.add_method('Identity', retval(mb.full_name), [], is_static=True)
+    mb.add_method('inverse', retval(mb.full_name), [], is_const=True)
 
   mb.add_method('Zero', retval(mb.full_name), [], is_static=True)
+  mb.add_method('Random', retval(mb.full_name), [], is_static=True)
 
+
+  # accessors
   mb.add_method('rows', retval('int'), [], is_const=True)
   mb.add_method('cols', retval('int'), [], is_const=True)
 
@@ -72,6 +74,15 @@ def makeMatrixBase(mb):
 
   mb.add_method('size', retval('int'), [], is_const=True, custom_name='__len__')
 
+  # transpose
+  try:
+    tShape = (mb.shape[1], mb.shape[0])
+    mbRet = mbByShape[tShape]
+    mb.add_method('transpose', retval(mbRet.full_name), [], is_const=True)
+  except KeyError:
+    pass
+
+  # numeric operator
   mb.add_binary_numeric_operator('*', left_cppclass=Parameter.new('double', 'scalar'))
   mb.add_binary_numeric_operator('*', right=param('double', 'scalar'))
 
@@ -83,11 +94,11 @@ def makeMatrixBase(mb):
 
   mb.add_unary_numeric_operator('-')
 
+  # add multiply with all compatible type
   for mb2 in mbByRows[mb.shape[1]]:
     nShape = (mb.shape[0], mb2.shape[1])
     try:
       mb3 = mbByShape[nShape]
-      print mb.full_name,'*',mb2.full_name,':',mb3.full_name
       mb.add_binary_numeric_operator('*', result_cppclass=mb3, right=param(mb2.full_name, 't2'))
     except KeyError:
       pass
@@ -143,6 +154,8 @@ def add_quaternion(mod):
 
 
   q.add_output_stream_operator()
+
+
 
 if __name__ == '__main__':
   if len(sys.argv) < 2:
