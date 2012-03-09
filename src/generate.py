@@ -14,26 +14,48 @@
 # along with Eigen3ToPython.  If not, see <http://www.gnu.org/licenses/>.
 
 from pybindgen import *
+from collections import defaultdict
 import sys
 
+mbByRows = defaultdict(list)
+mbByShape = {}
 
-def makeMatrixBase(mb, dim):
+def createMatrixBase(name, shape):
+  type = eigen3.add_class(name)
+  setattr(type, 'shape', shape)
+  mbByShape[shape] = type
+  return type
+
+
+
+def isVector(mb):
+  return mb.shape[0] == 1 or mb.shape[1] == 1
+
+
+
+def isSquareMatrix(mb):
+  return mb.shape[0] == mb.shape[1]
+
+
+
+def makeMatrixBase(mb):
   mb.add_constructor([])
 
   # if is a vector
-  if dim[1] == 1:
-    mb.add_constructor([param('double', 'val')]*dim[0])
-    if dim[0] > 0:
+  if isVector(mb):
+    elems = max(mb.shape)
+    mb.add_constructor([param('double', 'val')]*elems)
+    if elems > 0:
       mb.add_method('UnitX', retval(mb.full_name), [], is_static=True)
-    if dim[0] > 1:
+    if elems > 1:
       mb.add_method('UnitY', retval(mb.full_name), [], is_static=True)
-    if dim[0] > 2:
+    if elems > 2:
       mb.add_method('UnitZ', retval(mb.full_name), [], is_static=True)
-    if dim[0] > 3:
+    if elems > 3:
       mb.add_method('UnitW', retval(mb.full_name), [], is_static=True)
 
   # if is a matrix
-  if dim[1] > 1:
+  if isSquareMatrix(mb):
     mb.add_method('Identity', retval(mb.full_name), [], is_static=True)
 
   mb.add_method('Zero', retval(mb.full_name), [], is_static=True)
@@ -50,7 +72,32 @@ def makeMatrixBase(mb, dim):
 
   mb.add_method('size', retval('int'), [], is_const=True, custom_name='__len__')
 
+  mb.add_binary_numeric_operator('*', left_cppclass=Parameter.new('double', 'scalar'))
+  mb.add_binary_numeric_operator('*', right=param('double', 'scalar'))
+
+  mb.add_binary_numeric_operator('+')
+  mb.add_binary_numeric_operator('-')
+
+  mb.add_inplace_numeric_operator('+=')
+  mb.add_inplace_numeric_operator('-=')
+
+  mb.add_unary_numeric_operator('-')
+
+  for mb2 in mbByRows[mb.shape[1]]:
+    nShape = (mb.shape[0], mb2.shape[1])
+    try:
+      mb3 = mbByShape[nShape]
+      print mb.full_name,'*',mb2.full_name,':',mb3.full_name
+      mb.add_binary_numeric_operator('*', result_cppclass=mb3, right=param(mb2.full_name, 't2'))
+    except KeyError:
+      pass
+
+  if isSquareMatrix(mb):
+    mb.add_inplace_numeric_operator('*=')
+
   mb.add_output_stream_operator()
+
+
 
 def add_quaternion(mod):
   q = mod.add_class('Quaterniond')
@@ -108,37 +155,22 @@ if __name__ == '__main__':
   eigen3.add_include('"EigenTypedef.h"')
   eigen3.add_include('"EigenUtils.h"')
 
-  # Vector3d
-  vector2d = eigen3.add_class('Vector2d')
-  makeMatrixBase(vector2d, (2, 1))
+  # declare type
+  vector2d = createMatrixBase('Vector2d', (2,1))
+  matrix2d = createMatrixBase('Matrix2d', (2,2))
+  vector3d = createMatrixBase('Vector3d', (3,1))
+  matrix3d = createMatrixBase('Matrix3d', (3,3))
+  vector4d = createMatrixBase('Vector4d', (4,1))
+  matrix4d = createMatrixBase('Matrix4d', (4,4))
+  vector6d = createMatrixBase('Vector6d', (6,1))
+  matrix6d = createMatrixBase('Matrix6d', (6,6))
 
-  # Matrix2d
-  Matrix2d = eigen3.add_class('Matrix2d')
-  makeMatrixBase(Matrix2d, (2, 2))
+  for k, v in mbByShape.iteritems():
+    mbByRows[k[0]].append(v)
 
-  # Vector3d
-  vector3d = eigen3.add_class('Vector3d')
-  makeMatrixBase(vector3d, (3, 1))
-
-  # Matrix3d
-  Matrix3d = eigen3.add_class('Matrix3d')
-  makeMatrixBase(Matrix3d, (3, 3))
-
-  # Vector4d
-  vector4d = eigen3.add_class('Vector4d')
-  makeMatrixBase(vector4d, (4, 1))
-
-  # Matrix4d
-  Matrix4d = eigen3.add_class('Matrix4d')
-  makeMatrixBase(Matrix4d, (4, 4))
-
-  # Vector6d
-  vector6d = eigen3.add_class('Vector6d')
-  makeMatrixBase(vector6d, (6, 1))
-
-  # Matrix3d
-  Matrix6d = eigen3.add_class('Matrix6d')
-  makeMatrixBase(Matrix6d, (6, 6))
+  # make matrix base type
+  for k, v in mbByShape.iteritems():
+    makeMatrixBase(v)
 
   # Quaterniond
   add_quaternion(eigen3)
