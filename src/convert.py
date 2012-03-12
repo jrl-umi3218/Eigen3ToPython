@@ -17,6 +17,8 @@ import numpy as np
 import numpy.matlib
 import _eigen3 as ei
 
+from collections import defaultdict
+
 def toNumpy(eiM):
   num = np.matlib.zeros((eiM.rows(), eiM.cols()))
   for i in xrange(0, eiM.rows()):
@@ -24,15 +26,18 @@ def toNumpy(eiM):
       num[i,j] = eiM.coeff(i,j)
   return num
 
-eigenFact = {(2,1):ei.Vector2d,
-             (2,2):ei.Matrix2d,
-             (3,1):ei.Vector3d,
-             (3,3):ei.Matrix3d,
-             (4,1):ei.Vector4d,
-             (4,4):ei.Matrix4d,
-             (6,1):ei.Vector6d,
-             (6,6):ei.Matrix6d
-            }
+
+eigenFact = defaultdict(ei.MatrixXd,
+                        {(2,1):ei.Vector2d,
+                        (2,2):ei.Matrix2d,
+                        (3,1):ei.Vector3d,
+                        (3,3):ei.Matrix3d,
+                        (4,1):ei.Vector4d,
+                        (4,4):ei.Matrix4d,
+                        (6,1):ei.Vector6d,
+                        (6,6):ei.Matrix6d
+                        }
+                       )
 
 def toEigen(num):
   eiM = eigenFact[num.shape]()

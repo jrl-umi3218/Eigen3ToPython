@@ -17,8 +17,12 @@ from pybindgen import *
 from collections import defaultdict
 import sys
 
+
+
 mbByRows = defaultdict(list)
 mbByShape = {}
+
+
 
 def createMatrixBase(name, shape):
   type = eigen3.add_class(name)
@@ -38,8 +42,50 @@ def isSquareMatrix(mb):
 
 
 
-def makeMatrixBase(mb):
+def makeCommonMatrixBase(mb):
+  # constructor
   mb.add_constructor([])
+  mb.add_copy_constructor()
+
+  # accessors
+  mb.add_method('rows', retval('int'), [], is_const=True)
+  mb.add_method('cols', retval('int'), [], is_const=True)
+
+  mb.add_method('getItem', retval('double'), [param('int', 'id')], is_const=True,
+                custom_name='__getitem__')
+  mb.add_method('setItem', None, [param('int', 'row'), param('double', 'id')], custom_name='__setitem__')
+
+  mb.add_method('getItem', retval('double'), [param('int', 'row'), param('int', 'cols')], is_const=True, custom_name='coeff')
+  mb.add_method('setItem', None, [param('int', 'row'), param('int', 'cols'), param('double', 'val')], custom_name='coeff')
+
+  mb.add_method('size', retval('int'), [], is_const=True, custom_name='__len__')
+
+  # output
+  mb.add_output_stream_operator()
+
+
+
+def makeDynamicMatrixBase(mb):
+  makeCommonMatrixBase(mb)
+
+  mb.add_constructor([param('int', 'rows'), param('int', 'cols')])
+
+  mb.add_method('Zero', retval(mb.full_name),
+                [param('int', 'rows'), param('int', 'cols')], is_static=True)
+  mb.add_method('Random', retval(mb.full_name),
+                [param('int', 'rows'), param('int', 'cols')], is_static=True)
+  mb.add_method('Identity', retval(mb.full_name),
+                [param('int', 'rows'), param('int', 'cols')], is_static=True)
+
+  mb.add_method('transpose', retval(mb.full_name), [], is_const=True)
+
+
+
+def makeFixedMatrixBase(mb):
+  makeCommonMatrixBase(mb)
+
+  mb.add_method('Zero', retval(mb.full_name), [], is_static=True)
+  mb.add_method('Random', retval(mb.full_name), [], is_static=True)
 
   if isVector(mb):
     elems = max(mb.shape)
@@ -57,30 +103,13 @@ def makeMatrixBase(mb):
     mb.add_method('Identity', retval(mb.full_name), [], is_static=True)
     mb.add_method('inverse', retval(mb.full_name), [], is_const=True)
 
-  mb.add_method('Zero', retval(mb.full_name), [], is_static=True)
-  mb.add_method('Random', retval(mb.full_name), [], is_static=True)
-
-
-  # accessors
-  mb.add_method('rows', retval('int'), [], is_const=True)
-  mb.add_method('cols', retval('int'), [], is_const=True)
-
-  mb.add_method('getItem', retval('double'), [param('int', 'id')], is_const=True,
-                custom_name='__getitem__')
-  mb.add_method('setItem', None, [param('int', 'row'), param('double', 'id')], custom_name='__setitem__')
-
-  mb.add_method('getItem', retval('double'), [param('int', 'row'), param('int', 'cols')], is_const=True, custom_name='coeff')
-  mb.add_method('setItem', None, [param('int', 'row'), param('int', 'cols'), param('double', 'val')], custom_name='coeff')
-
-  mb.add_method('size', retval('int'), [], is_const=True, custom_name='__len__')
-
   # transpose
   try:
     tShape = (mb.shape[1], mb.shape[0])
     mbRet = mbByShape[tShape]
     mb.add_method('transpose', retval(mbRet.full_name), [], is_const=True)
   except KeyError:
-    pass
+    mb.add_method('transpose', retval(matrixXd.full_name), [], is_const=True)
 
   # numeric operator
   mb.add_binary_numeric_operator('*', left_cppclass=Parameter.new('double', 'scalar'))
@@ -101,12 +130,10 @@ def makeMatrixBase(mb):
       mb3 = mbByShape[nShape]
       mb.add_binary_numeric_operator('*', result_cppclass=mb3, right=param(mb2.full_name, 't2'))
     except KeyError:
-      pass
+      mb.add_binary_numeric_operator('*', result_cppclass=matrixXd, right=param(mb2.full_name, 't2'))
 
   if isSquareMatrix(mb):
     mb.add_inplace_numeric_operator('*=')
-
-  mb.add_output_stream_operator()
 
 
 
@@ -178,12 +205,17 @@ if __name__ == '__main__':
   vector6d = createMatrixBase('Vector6d', (6,1))
   matrix6d = createMatrixBase('Matrix6d', (6,6))
 
+  matrixXd = eigen3.add_class('MatrixXd')
+
   for k, v in mbByShape.iteritems():
     mbByRows[k[0]].append(v)
 
-  # make matrix base type
+  # make dynamic matrix base
+  makeDynamicMatrixBase(matrixXd)
+
+  # make fixed matrix base type
   for k, v in mbByShape.iteritems():
-    makeMatrixBase(v)
+    makeFixedMatrixBase(v)
 
   # Quaterniond
   add_quaternion(eigen3)
