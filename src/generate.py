@@ -81,6 +81,18 @@ def makeDynamicMatrixBase(mb):
 
 
 
+def makeDynamicVectorBase(mb):
+  makeCommonMatrixBase(mb)
+
+  mb.add_constructor([param('int', 'rows')])
+
+  mb.add_method('Zero', retval(mb.full_name),
+                [param('int', 'rows')], is_static=True)
+  mb.add_method('Random', retval(mb.full_name),
+                [param('int', 'rows')], is_static=True)
+
+
+
 def makeFixedMatrixBase(mb):
   makeCommonMatrixBase(mb)
 
@@ -206,12 +218,14 @@ if __name__ == '__main__':
   matrix6d = createMatrixBase('Matrix6d', (6,6))
 
   matrixXd = eigen3.add_class('MatrixXd')
+  vectorXd = eigen3.add_class('VectorXd')
 
   for k, v in mbByShape.iteritems():
     mbByRows[k[0]].append(v)
 
   # make dynamic matrix base
   makeDynamicMatrixBase(matrixXd)
+  makeDynamicVectorBase(vectorXd)
 
   # make fixed matrix base type
   for k, v in mbByShape.iteritems():
