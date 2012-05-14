@@ -174,6 +174,8 @@ def add_quaternion(mod):
   q.add_method('matrix', retval('Eigen::Matrix3d'), [], is_const=True)
   q.add_method('normalize', None, [])
   q.add_method('normalized', retval('Eigen::Quaterniond'), [], is_const=True)
+  q.add_method('setFromTwoVectors', retval('Eigen::Quaterniond'), [param('Eigen::Vector3d', 'v1'),
+                                                                   param('Eigen::Vector3d', 'v2')])
   q.add_method('setIdentity', retval('Eigen::Quaterniond'), [])
   q.add_method('slerp', retval('Eigen::Quaterniond'),
                [param('double', 't'), param('Eigen::Quaterniond', 'other')], is_const=True)
