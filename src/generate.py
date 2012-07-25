@@ -127,6 +127,8 @@ def makeFixedMatrixBase(mb):
   mb.add_binary_numeric_operator('*', left_cppclass=Parameter.new('double', 'scalar'))
   mb.add_binary_numeric_operator('*', right=param('double', 'scalar'))
 
+  mb.add_binary_numeric_operator('/', right=param('double', 'scalar'))
+
   mb.add_binary_numeric_operator('+')
   mb.add_binary_numeric_operator('-')
 
