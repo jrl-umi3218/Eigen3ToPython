@@ -49,3 +49,15 @@ def toEigen(num):
       eiM.coeff(i, j, num[i,j])
   return eiM
 
+
+def toEigenX(num):
+  if num.shape[1] == 1:
+    eiM = ei.VectorXd(num.shape[0])
+  else:
+    eiM = ei.MatrixXd(*num.shape)
+
+  for i in xrange(0, eiM.rows()):
+    for j in xrange(0, eiM.cols()):
+      eiM.coeff(i, j, num[i,j])
+  return eiM
+

@@ -14,5 +14,5 @@
 # along with Eigen3ToPython.  If not, see <http://www.gnu.org/licenses/>.
 
 from _eigen3 import *
-from convert import toNumpy, toEigen
+from convert import toNumpy, toEigen, toEigenX
 
