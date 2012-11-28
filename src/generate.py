@@ -109,12 +109,16 @@ def makeFixedMatrixBase(mb):
     mb.add_constructor([param('double', 'val')]*elems)
     if elems > 0:
       mb.add_method('UnitX', retval(mb.full_name), [], is_static=True)
+      mb.add_method('x', 'double', [], is_const=True)
     if elems > 1:
       mb.add_method('UnitY', retval(mb.full_name), [], is_static=True)
+      mb.add_method('y', 'double', [], is_const=True)
     if elems > 2:
       mb.add_method('UnitZ', retval(mb.full_name), [], is_static=True)
+      mb.add_method('z', 'double', [], is_const=True)
     if elems > 3:
       mb.add_method('UnitW', retval(mb.full_name), [], is_static=True)
+      mb.add_method('w', 'double', [], is_const=True)
 
   if isSquareMatrix(mb):
     mb.add_method('Identity', retval(mb.full_name), [], is_static=True)
