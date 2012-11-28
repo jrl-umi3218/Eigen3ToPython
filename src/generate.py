@@ -146,6 +146,11 @@ def makeFixedMatrixBase(mb):
 
   mb.add_unary_numeric_operator('-')
 
+  if isVector(mb) and mb.shape[0] == 3:
+    mb.add_method('cross', retval(mb.full_name), [param(mb.full_name, 'v2')], is_const=True)
+  if isVector(mb):
+    mb.add_method('dot', retval('double'), [param(mb.full_name, 'v2')], is_const=True)
+
   # add multiply with all compatible type
   for mb2 in mbByRows[mb.shape[1]]:
     nShape = (mb.shape[0], mb2.shape[1])
