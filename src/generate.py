@@ -60,6 +60,11 @@ def makeCommonMatrixBase(mb):
 
   mb.add_method('size', retval('int'), [], is_const=True, custom_name='__len__')
 
+  # norm functions
+  mb.add_method('norm', retval('double'), [], is_const=True)
+  mb.add_method('normalize', None, [])
+  mb.add_method('normalized', retval(mb.full_name), [], is_const=True)
+
   # output
   mb.add_output_stream_operator()
 
