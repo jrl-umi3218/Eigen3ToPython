@@ -62,6 +62,7 @@ def makeCommonMatrixBase(mb):
 
   # norm functions
   mb.add_method('norm', retval('double'), [], is_const=True)
+  mb.add_method('squaredNorm', retval('double'), [], is_const=True)
   mb.add_method('normalize', None, [])
   mb.add_method('normalized', retval(mb.full_name), [], is_const=True)
 
