@@ -1,4 +1,3 @@
-pkg_check_modules(EIGEN3 REQUIRED eigen3)
 INCLUDE(FindPythonLibs)
 INCLUDE(FindPythonInterp)
 
