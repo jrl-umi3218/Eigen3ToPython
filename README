@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jorisv/Eigen3ToPython.svg?branch=master)](https://travis-ci.org/jorisv/Eigen3ToPython)
+
 Eigen3ToPython aim to make a bidirectional bridge between numpy and eigen3.
 
 This python library goal is not to provide a full eigen3 python binding but to provide easy conversion between numpy and eigen3.
