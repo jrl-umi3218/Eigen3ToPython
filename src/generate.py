@@ -164,6 +164,8 @@ def makeFixedMatrixBase(mb):
   if isSquareMatrix(mb):
     mb.add_inplace_numeric_operator('*=')
 
+  if mb.shape[0] == 3 and mb.shape[1] == 3:
+    mb.add_method('eulerAngles', retval('Eigen::Vector3d'), [param('int', 'a0'), param('int', 'a1'), param('int', 'a2')], is_const=True)
 
 
 def add_quaternion(mod):
@@ -255,4 +257,3 @@ if __name__ == '__main__':
 
   with open(sys.argv[1], 'w') as f:
     eigen3.generate(f)
-
