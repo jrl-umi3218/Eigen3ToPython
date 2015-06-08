@@ -220,7 +220,9 @@ e3.toEigenX(np.mat(np.eye(10)).T) # Eigen::MatrixXd
 Installing
 ------
 
-### Dependencies
+### Manual
+
+#### Dependencies
 
 To compile you need the following tools:
  
@@ -231,7 +233,7 @@ To compile you need the following tools:
  * [PyBindGen](https://launchpad.net/pybindgen) = 0.16 (build with 0.17 but a bug
 in this version prevents the use of `len()` on Eigen3 matrix)
 
-### Building
+#### Building
 
 ```sh
 git clone --recursive https://github.com/jorisv/Eigen3ToPython.git
@@ -246,6 +248,10 @@ Where the main options are:
 
  * `-DCMAKE_BUIlD_TYPE=Release` Build in Release mode
  * `-DCMAKE_INSTALL_PREFIX=some/path/to/install` default is `/usr/local`
+
+### Arch Linux
+
+You can use the following [AUR package](https://aur.archlinux.org/packages/eigen3topython-git).
 
 
 Pulling git subtree
