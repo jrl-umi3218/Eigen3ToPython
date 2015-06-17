@@ -248,6 +248,7 @@ Where the main options are:
 
  * `-DCMAKE_BUIlD_TYPE=Release` Build in Release mode
  * `-DCMAKE_INSTALL_PREFIX=some/path/to/install` default is `/usr/local`
+ * `-DPYTHON_DEB_LAYOUT=OFF` install python library in `site-packages` (ON will install in `dist-packages`
 
 ### Arch Linux
 
