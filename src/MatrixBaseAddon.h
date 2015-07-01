@@ -23,14 +23,17 @@ inline Scalar getItem(uint i) const
   return this->operator()(i);
 }
 
-inline void setItem(uint i, const Scalar& val)
+/// return -1 on error and 0 on success to fulfill the PySequence_SetItem
+/// convention
+inline int setItem(uint i, const Scalar& val)
 {
-  if(i >= this->size())
+  if(i >= this->size() || i < 0)
   {
     PyErr_SetString(PyExc_IndexError, "Container index out of range");
-    return;
+    return -1;
   }
   this->operator()(i) = val;
+  return 0;
 }
 
 inline Scalar getItem(uint i, uint j) const
@@ -43,13 +46,16 @@ inline Scalar getItem(uint i, uint j) const
   return this->operator()(i, j);
 }
 
-inline void setItem(uint i, uint j, const Scalar& val)
+/// return -1 on error and 0 on success to fulfill the PySequence_SetItem
+/// convention
+inline int setItem(uint i, uint j, const Scalar& val)
 {
-  if(i >= this->rows() || j >= this->cols())
+  if(i >= this->rows() || j >= this->cols() || i < 0 || j < 0)
   {
     PyErr_SetString(PyExc_IndexError, "Container index out of range");
-    return;
+    return -1;
   }
   this->operator()(i, j) = val;
+  return 0;
 }
 

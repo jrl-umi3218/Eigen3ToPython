@@ -53,7 +53,8 @@ def makeCommonMatrixBase(mb):
 
   mb.add_method('getItem', retval('double'), [param('int', 'id')], is_const=True,
                 custom_name='__getitem__')
-  mb.add_method('setItem', None, [param('int', 'row'), param('double', 'id')], custom_name='__setitem__')
+  # set a int value as return type to fullfil the PySequence_SetItem convention
+  mb.add_method('setItem', retval('int'), [param('int', 'row'), param('double', 'id')], custom_name='__setitem__')
 
   mb.add_method('getItem', retval('double'), [param('int', 'row'), param('int', 'cols')], is_const=True, custom_name='coeff')
   mb.add_method('setItem', None, [param('int', 'row'), param('int', 'cols'), param('double', 'val')], custom_name='coeff')
