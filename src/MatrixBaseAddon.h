@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with Eigen3ToPython.  If not, see <http://www.gnu.org/licenses/>.
 
-inline Scalar getItem(uint i) const
+inline Scalar getItem(unsigned int i) const
 {
   if(i >= this->size())
   {
@@ -25,7 +25,7 @@ inline Scalar getItem(uint i) const
 
 /// return -1 on error and 0 on success to fulfill the PySequence_SetItem
 /// convention
-inline int setItem(uint i, const Scalar& val)
+inline int setItem(unsigned int i, const Scalar& val)
 {
   if(i >= this->size() || i < 0)
   {
@@ -36,7 +36,7 @@ inline int setItem(uint i, const Scalar& val)
   return 0;
 }
 
-inline Scalar getItem(uint i, uint j) const
+inline Scalar getItem(unsigned int i, unsigned int j) const
 {
   if(i >= this->rows() || j >= this->cols())
   {
@@ -48,7 +48,7 @@ inline Scalar getItem(uint i, uint j) const
 
 /// return -1 on error and 0 on success to fulfill the PySequence_SetItem
 /// convention
-inline int setItem(uint i, uint j, const Scalar& val)
+inline int setItem(unsigned int i, unsigned int j, const Scalar& val)
 {
   if(i >= this->rows() || j >= this->cols() || i < 0 || j < 0)
   {
