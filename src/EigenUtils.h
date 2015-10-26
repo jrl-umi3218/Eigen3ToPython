@@ -13,14 +13,32 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with Eigen3ToPython.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifdef __clang__
+#include <memory>
+#endif
+
 Eigen::Quaterniond* createFromAngleAxis(double angle, const Eigen::Vector3d& axis)
 {
+#ifdef __clang__
+  std::allocator<Eigen::Quaterniond> alloc;
+  Eigen::Quaterniond * ret = alloc.allocate(1);
+  alloc.construct(ret, Eigen::AngleAxisd(angle, axis));
+  return ret;
+#else
   return new Eigen::Quaterniond(Eigen::AngleAxisd(angle, axis));
+#endif
 }
 
 Eigen::Quaterniond* createFromMatrix(const Eigen::Matrix3d& rot)
 {
+#ifdef __clang__
+  std::allocator<Eigen::Quaterniond> alloc;
+  Eigen::Quaterniond * ret = alloc.allocate(1);
+  alloc.construct(ret, Eigen::AngleAxisd(rot));
+  return ret;
+#else
   return new Eigen::Quaterniond(Eigen::AngleAxisd(rot));
+#endif
 }
 
 std::ostream& operator<<(std::ostream& out, const Eigen::Quaterniond& q)
