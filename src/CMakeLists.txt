@@ -4,12 +4,23 @@ CONFIGURE_FILE(__init__.py ${CMAKE_CURRENT_BINARY_DIR}/eigen3/__init__.py COPYON
 CONFIGURE_FILE(convert.py ${CMAKE_CURRENT_BINARY_DIR}/eigen3/convert.py COPYONLY)
 SET(OUTPUT_BINDING ${CMAKE_CURRENT_BINARY_DIR}/eigen3.cpp)
 
-# Generate Python binding code
-ADD_CUSTOM_COMMAND (
-  OUTPUT ${OUTPUT_BINDING}
-  COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/generate.py ${OUTPUT_BINDING}
-  DEPENDS generate.py
-)
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  # The bindings cannot compile with clang and the c++11 flag, it would be
+  # complicated to parse the generated C++ to patch it on the fly, hence this
+  # not-so-elegant solution
+  ADD_CUSTOM_COMMAND (
+    OUTPUT ${OUTPUT_BINDING}
+    COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/.clang/eigen3.cpp.clang ${OUTPUT_BINDING}
+  )
+else()
+  # Generate Python binding code
+  ADD_CUSTOM_COMMAND (
+    OUTPUT ${OUTPUT_BINDING}
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/generate.py ${OUTPUT_BINDING}
+    DEPENDS generate.py
+  )
+endif()
+
 
 # Build the library
 SET(SOURCES ${OUTPUT_BINDING})
