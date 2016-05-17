@@ -37,6 +37,7 @@ ADD_DEFINITIONS(-DEIGEN_MATRIXBASE_PLUGIN=${MatrixBaseAddon}
                 -DEIGEN_MATRIX_PLUGIN=${MatrixAddon})
 
 ADD_LIBRARY(_eigen3 MODULE ${SOURCES})
+target_link_libraries(_eigen3 ${PYTHON_LIBRARY})
 
 SET_TARGET_PROPERTIES(_eigen3 PROPERTIES PREFIX "")
 
