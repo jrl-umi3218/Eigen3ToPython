@@ -1,8 +1,10 @@
+sudo: required
+dist: trusty
 language: cpp
 compiler: gcc
 env:
   global:
-  - APT_DEPENDENCIES="gccxml doxygen doxygen-latex libboost1.48-all-dev"
+  - APT_DEPENDENCIES="gccxml doxygen doxygen-latex libboost-all-dev"
   - DEBSIGN_KEYID=5AE5CD75
 notifications:
   email:
