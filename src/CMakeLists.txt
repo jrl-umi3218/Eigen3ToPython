@@ -39,12 +39,6 @@ target_link_libraries(_eigen3 PUBLIC ${PYTHON_LIBRARY})
 SET_TARGET_PROPERTIES(_eigen3 PROPERTIES PREFIX "")
 
 # Install rules
-
-# Targets:
-#   * <prefix>/lib/libbar.a
-#   * <prefix>/lib/libbaz.a
-#   * header location after install: <prefix>/include/foo/Bar.hpp
-#   * headers can be included by C++ code `#include <foo/Bar.hpp>`
 install(
     TARGETS _eigen3
     EXPORT "${TARGETS_EXPORT_NAME}"
