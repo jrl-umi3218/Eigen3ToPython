@@ -1,8 +1,10 @@
+sudo: required
+dist: trusty
 language: cpp
 compiler: gcc
 env:
   global:
-  - APT_DEPENDENCIES="gccxml doxygen doxygen-latex libboost1.48-all-dev"
+  - APT_DEPENDENCIES="gccxml doxygen doxygen-latex libboost-all-dev"
   - DEBSIGN_KEYID=5AE5CD75
 notifications:
   email:
@@ -16,6 +18,6 @@ after_failure: ./.travis/run after_failure
 before_install:
   - sudo apt-get -y update
   - sudo apt-get install -y gccxml
-  - curDir=`pwd`; cd "$build_dir"; wget https://pybindgen.googlecode.com/files/pybindgen-0.16.0.tar.bz2; tar -xvjf ./pybindgen-0.16.0.tar.bz2; cd pybindgen-0.16.0; ./waf configure; ./waf; sudo ./waf install; cd $curDir
+  - ./.travis/dependencies/pybindgen-0.16 `which python|sed -e's@bin/python@@'`
   - ./.travis/run  before_install
   - ./.travis/dependencies/eigen-3.2
