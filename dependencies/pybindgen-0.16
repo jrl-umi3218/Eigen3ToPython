@@ -4,6 +4,12 @@
 
 . `dirname $0`/../common.sh
 
+if [ $# -ge 1 ]; then
+  PYBINDGEN_INSTALL_PREFIX=$1
+else
+  PYBINDGEN_INSTALL_PREFIX=/usr/local
+fi
+
 # Install dependencies
 ${SUDO_CMD} apt-get install -qq gccxml python-pygccxml
 
@@ -14,6 +20,6 @@ tar xjf pybindgen-0.16.0.tar.bz2
 cd "$build_dir/pybindgen-0.16.0/"
 
 # Configure build and install
-./waf configure
+./waf --prefix=$PYBINDGEN_INSTALL_PREFIX configure
 ./waf
 ${SUDO_CMD} ./waf install
