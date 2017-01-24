@@ -18,6 +18,6 @@ after_failure: ./.travis/run after_failure
 before_install:
   - sudo apt-get -y update
   - sudo apt-get install -y gccxml
-  - ./.travis/dependencies/pybindgen-0.16
+  - ./.travis/dependencies/pybindgen-0.16 `which python|sed -e's@bin/python@@'`
   - ./.travis/run  before_install
   - ./.travis/dependencies/eigen-3.2
