@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Eigen3ToPython.  If not, see <http://www.gnu.org/licenses/>.
 
+import hashlib
 import os
 
 GEN_DIMS = [2,3,4,6]
@@ -662,3 +663,16 @@ cimport c_eigen
     fd.write(generateDeclaration("Vector6d"))
     fd.write(generateDeclaration("Quaterniond"))
     fd.write(generateDeclaration("AngleAxisd"))
+  # Generate a hash from eigen.pyx, c_eigen.pxd and eigen.pxd
+  files = ['{}/eigen.pyx'.format(out_path), '{}/c_eigen.pxd'.format(out_path), '{}/eigen.pxd'.format(out_path)]
+  chunk = 65536 # 64kb chunk
+  sha512 = hashlib.sha512()
+  for f in files:
+    with open(f, 'r') as fd:
+      while True:
+        data = fd.read(chunk)
+        if data:
+          sha512.update(fd.read(chunk))
+        else:
+          break
+  return sha512.hexdigest()[:7]

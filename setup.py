@@ -32,7 +32,7 @@ win32_build = os.name == 'nt'
 from utils import generate_eigen_pyx
 
 this_path  = os.path.dirname(os.path.realpath(__file__))
-generate_eigen_pyx(this_path + "/eigen", this_path + "/utils")
+version_hash = generate_eigen_pyx(this_path + "/eigen", this_path + "/utils")
 
 class pkg_config(object):
   def __init__(self, package):
@@ -125,7 +125,7 @@ extensions = cythonize(extensions)
 
 setup(
     name = 'eigen',
-    version='0.5.0',
+    version='1.0.0-{}'.format(version_hash),
     ext_modules = extensions,
     packages = packages,
     package_data = { 'eigen': data }
