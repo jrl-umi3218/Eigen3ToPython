@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jrl-umi3218/Eigen3ToPython.svg?branch=topic/Cython)](https://travis-ci.org/jrl-umi3218/Eigen3ToPython)
+[![Build Status](https://travis-ci.org/jrl-umi3218/Eigen3ToPython.svg?branch=master)](https://travis-ci.org/jrl-umi3218/Eigen3ToPython)
 
 Eigen3ToPython
 ======
