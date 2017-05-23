@@ -1,3 +1,4 @@
+from __future__ import print_function
 try:
   from setuptools import setup
   from setuptools import Extension
@@ -23,6 +24,7 @@ class pkg_config(object):
     self.library_dirs = []
     self.libraries = []
     self.found = True
+    self.name = package
     try:
       tokens = subprocess.check_output(['pkg-config', '--libs', '--cflags', package]).split()
     except subprocess.CalledProcessError:
@@ -89,6 +91,7 @@ def GenExtension(name, pkg, ):
   if pkg.found:
     return Extension(name, [ext_src], extra_compile_args = pkg.compile_args, include_dirs = pkg.include_dirs, library_dirs = pkg.library_dirs, libraries = pkg.libraries)
   else:
+    print("Failed to find {}".format(pkg.name))
     return None
 
 extensions = [

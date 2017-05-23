@@ -8,6 +8,7 @@ addons:
     - g++
     - cmake
 script:
+- . ./.travis/common.sh
 - pip install .
 - nosetests
 before_install:
