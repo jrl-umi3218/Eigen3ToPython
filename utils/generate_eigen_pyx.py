@@ -125,6 +125,9 @@ def generateBaseBinding(className, type, nRow, nCol):
     cdef MatrixXd ret = MatrixXd(p, q)
     ret.impl = <c_eigen.MatrixXd>(self.impl.block(i,j,p,q))
     return ret
+  def __array__(self):
+    A = numpy.asarray(<numpy.double_t[:self.impl.cols(), :self.impl.rows()]> self.impl.data()).T
+    return A
   def block(self, int i, int j, int p, int q):
     if q == 1:
       return self.__vblock(i,j,p,q)
@@ -504,11 +507,6 @@ def generateVectorBinding(className, type, nRow, nCol):
             raise IndexError("Trying to set an element with a sequence")
       else:
         self.impl[idx] = value
-  def __array__(self):
-    A = numpy.zeros((self.impl.rows(), 1))
-    for i in range(self.impl.rows()):
-      A[i] = self.impl[i]
-    return A
   def __mul__(self, other):
     if isinstance(self, {0}):
       if isinstance(other, MatrixXd):
@@ -657,7 +655,8 @@ cimport c_eigen_private
       fd.write(effd.read())
   with open("{}/eigen.pxd".format(out_path), 'w') as fd:
     fd.write("# This file was automatically generated, do not modify it\n")
-    fd.write("import numpy\n")
+    fd.write("cimport numpy\n")
+    fd.write("from cython.view cimport array as cvarray\n")
     fd.write("from libcpp.vector cimport vector\n")
     fd.write("cimport c_eigen\n")
     fd.write(generateDeclaration("MatrixXd"))

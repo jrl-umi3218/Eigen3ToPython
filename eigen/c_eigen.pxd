@@ -58,6 +58,7 @@ cdef extern from "<Eigen/Dense>" namespace "Eigen":
     Matrix[T,nCol,nRow] transpose()
     void setZero()
     Matrix[T,nRow,nCol] Zero()
+    T* data()
 
   ctypedef Matrix[double, two, one] Vector2d
   ctypedef Matrix[double, three, one] Vector3d
