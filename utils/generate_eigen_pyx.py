@@ -200,14 +200,14 @@ def generateMatrixBinding(className, type, nRow, nCol):
       if isinstance(r, slice) and isinstance(c, slice):
         ri = r.indices(self.impl.rows())
         ci = c.indices(self.impl.cols())
-        return [[self.__getitem__((rix, cix)) for cix in xrange(*ci)]
-                 for rix in xrange(*ri)]
+        return [[self.__getitem__((rix, cix)) for cix in range(*ci)]
+                 for rix in range(*ri)]
       if isinstance(r, slice):
         indices = r.indices(self.impl.rows())
-        return [[self.__getitem__((i, c))] for i in xrange(*indices)]
+        return [[self.__getitem__((i, c))] for i in range(*indices)]
       if isinstance(c, slice):
         indices = c.indices(self.impl.cols())
-        return [[self.__getitem__((r, i)) for i in xrange(*indices)]]
+        return [[self.__getitem__((r, i)) for i in range(*indices)]]
       if (abs(r) < self.impl.rows() or r == -self.impl.rows()) and\
           (abs(c) < self.impl.cols() or c == -self.impl.cols()):
         if r < 0:
@@ -219,7 +219,7 @@ def generateMatrixBinding(className, type, nRow, nCol):
         raise IndexError("Index out of bounds")
     if isinstance(pos, slice):
       indices = pos.indices(len(self))
-      return [self.__getitem__(i) for i in xrange(*indices)]
+      return [self.__getitem__(i) for i in range(*indices)]
     else:
       if abs(pos) < self.impl.rows():
         if pos < 0:
@@ -232,16 +232,16 @@ def generateMatrixBinding(className, type, nRow, nCol):
     if isinstance(r, slice) and isinstance(c, slice):
       ri = r.indices(self.impl.rows())
       ci = c.indices(self.impl.cols())
-      for scx, cix in enumerate(xrange(*ci)):
-        for srx, rix in enumerate(xrange(*ri)):
+      for scx, cix in enumerate(range(*ci)):
+        for srx, rix in enumerate(range(*ri)):
           self.__setitem__((rix, cix), v[srx][scx])
     elif isinstance(r, slice):
       indices = r.indices(self.impl.rows())
-      for rsx, rix in enumerate(xrange(*indices)):
+      for rsx, rix in enumerate(range(*indices)):
         self.__setitem__((rix, c), v[rsx])
     elif isinstance(c, slice):
       indices = c.indices(self.impl.cols())
-      for csx, cix in enumerate(xrange(*indices)):
+      for csx, cix in enumerate(range(*indices)):
         self.__setitem__((r, cix), v[csx])
     elif r < self.impl.rows() and c < self.impl.cols():
       c_eigen.EigenSetValue[{1},{2},{3}](self.impl, r, c, v)
@@ -477,7 +477,7 @@ def generateVectorBinding(className, type, nRow, nCol):
         raise IndexError("Colum index can only be zero in vector")
     if isinstance(idx, slice):
       indices = idx.indices(self.impl.rows())
-      return [[self.__getitem__(i)] for i in xrange(*indices)]
+      return [[self.__getitem__(i)] for i in range(*indices)]
     if abs(idx) < self.impl.rows() or idx == -self.impl.rows():
       if idx < 0:
         idx = self.impl.rows() + idx
@@ -487,7 +487,7 @@ def generateVectorBinding(className, type, nRow, nCol):
   def __setitem__(self, idx, value):
     if isinstance(idx, slice):
       indices = idx.indices(self.impl.rows())
-      for j, i in enumerate(xrange(*indices)):
+      for j, i in enumerate(range(*indices)):
         self.__setitem__(i, value[j])
     elif idx < self.impl.rows():
       if(hasattr(value, '__len__')):
@@ -537,28 +537,28 @@ def generateVectorBinding(className, type, nRow, nCol):
   @staticmethod
   def UnitX():
     return {0}({1})
-""".format(className, ','.join([str(float(x == 0)) for x in xrange(nRow)]))
+""".format(className, ','.join([str(float(x == 0)) for x in range(nRow)]))
   if nRow > 1:
     ret += """  def y(self):
     return self.impl[1]
   @staticmethod
   def UnitY():
     return {0}({1})
-""".format(className, ','.join([str(float(x == 1)) for x in xrange(nRow)]))
+""".format(className, ','.join([str(float(x == 1)) for x in range(nRow)]))
   if nRow > 2:
     ret += """  def z(self):
     return self.impl[2]
   @staticmethod
   def UnitZ():
     return {0}({1})
-""".format(className, ','.join([str(float(x == 2)) for x in xrange(nRow)]))
+""".format(className, ','.join([str(float(x == 2)) for x in range(nRow)]))
   if nRow > 3:
     ret += """  def w(self):
     return self.impl[3]
   @staticmethod
   def UnitW():
     return {0}({1})
-""".format(className, ','.join([str(float(x == 3)) for x in xrange(nRow)]))
+""".format(className, ','.join([str(float(x == 3)) for x in range(nRow)]))
   if nRow > 0:
     ret += """  @staticmethod
   def Random():
@@ -672,7 +672,7 @@ cimport c_eigen
       while True:
         data = fd.read(chunk)
         if data:
-          sha512.update(fd.read(chunk))
+          sha512.update(data.encode('ascii'))
         else:
           break
   return sha512.hexdigest()[:7]

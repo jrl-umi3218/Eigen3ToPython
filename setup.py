@@ -87,7 +87,7 @@ if not win32_build:
 
 configs = { pkg: pkg_config(pkg) for pkg in ['eigen3'] }
 
-for p,c in configs.iteritems():
+for p,c in configs.items():
   c.compile_args.append('-std=c++11')
   for o in python_others:
     c.compile_args.append(o)
