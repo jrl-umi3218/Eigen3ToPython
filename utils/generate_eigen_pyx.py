@@ -97,10 +97,17 @@ def generateBaseBinding(className, type, nRow, nCol):
     return ret
   def __div__(self, other):
     if isinstance(self, {0}):
-      return self.__div(other)
+      return self.__truediv__(other)
     else:
       return other.__div__(self)
+  def __truediv__(self, other):
+    if isinstance(self, {0}):
+      return self.__div(other)
+    else:
+      return other.__truediv__(self)
   def __idiv__(self, other):
+    return self.__itruediv__(other)
+  def __itruediv__(self, other):
     self.impl = self.impl.scalar_div(other)
     return self
   def __richcmp__({0} self, {0} other, int op):
@@ -622,10 +629,11 @@ cdef class {0}Vector(object):
 
 def generate_eigen_pyx(out_path, utils_path):
   with open("{}/__init__.py".format(out_path), 'w') as fd:
-    fd.write("from eigen import *\n")
+    fd.write("from .eigen import *\n")
   with open("{}/eigen.pyx".format(out_path), 'w') as fd:
     fd.write("""# distutils: language = c++
 
+from __future__ import division
 import numpy
 from libcpp.vector cimport vector
 cimport c_eigen

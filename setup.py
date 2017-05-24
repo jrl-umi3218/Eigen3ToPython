@@ -44,6 +44,7 @@ class pkg_config(object):
     self.name = package
     try:
       tokens = subprocess.check_output(['pkg-config', '--libs', '--cflags', package]).split()
+      tokens = [ token.decode('ascii') for token in tokens ]
     except subprocess.CalledProcessError:
       tokens = []
       self.found = False
@@ -75,7 +76,9 @@ python_libs = []
 python_lib_dirs = []
 python_others = []
 if not win32_build:
-  for token in subprocess.check_output(['python-config', '--ldflags']).split():
+  tokens = subprocess.check_output(['python-config', '--ldflags']).split()
+  tokens = [ token.decode('ascii') for token in tokens ]
+  for token in tokens:
     flag = token[:2]
     value = token[2:]
     if flag == '-l':
@@ -115,11 +118,11 @@ extensions = [
   GenExtension('eigen.eigen', configs['eigen3'])
 ]
 
-extensions = filter(lambda x: x is not None, extensions)
+extensions = [ x for x in extensions if x is not None ]
 packages = ['eigen']
-data = ['__init__.py', 'c_eigen.pxd', 'eigen.pxd']
+data = ['__init__.py', 'c_eigen.pxd', 'eigen.pxd', 'eigen.so']
 
-cython_packages = filter(lambda x: any([ext.name.startswith(x) for ext in extensions]), packages)
+cython_packages = [ x for x in packages if any([ext.name.startswith(x) for ext in extensions]) ]
 
 extensions = cythonize(extensions)
 
