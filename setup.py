@@ -26,6 +26,7 @@ except ImportError:
 from Cython.Build import cythonize
 import os
 import subprocess
+import numpy
 
 win32_build = os.name == 'nt'
 
@@ -109,7 +110,7 @@ def GenExtension(name, pkg, ):
   pyx_src = pyx_src + '.pyx'
   ext_src = pyx_src
   if pkg.found:
-    return Extension(name, [ext_src], extra_compile_args = pkg.compile_args, include_dirs = pkg.include_dirs, library_dirs = pkg.library_dirs, libraries = pkg.libraries)
+    return Extension(name, [ext_src], extra_compile_args = pkg.compile_args, include_dirs = pkg.include_dirs + [numpy.get_include()], library_dirs = pkg.library_dirs, libraries = pkg.libraries)
   else:
     print("Failed to find {}".format(pkg.name))
     return None
