@@ -61,7 +61,7 @@ def generateBaseBinding(className, type, nRow, nCol):
   def __deepcopy__(self, memo):
     return {0}(self)
   def __str__(self):
-    return c_eigen.toString[{1}, {2}, {3}](self.impl)
+    return c_eigen_private.toString[{1}, {2}, {3}](self.impl)
   def __repr__(self):
     return "{0} [%sx%s]"%(self.rows(), self.cols())
   def __len__(self):
@@ -168,11 +168,11 @@ def generateMatrixBinding(className, type, nRow, nCol):
 """
   if nRow > 0:
     ret += """    if len(args) == 0:
-      self.impl = c_eigen.EigenZero[{1},{2},{3}]()
+      self.impl = c_eigen_private.EigenZero[{1},{2},{3}]()
     elif len(args) == 1 and isinstance(args[0], {0}):
       self.__copyctor__(args[0])
     elif len(args) == 1 and len(args[0]) == {4}:
-      self.impl = c_eigen.EigenZero[{1},{2},{3}]()
+      self.impl = c_eigen_private.EigenZero[{1},{2},{3}]()
       for i, row in enumerate(args[0]):
         assert(len(args[0][i]) == {5})
         for j, el in enumerate(row):
@@ -182,18 +182,18 @@ def generateMatrixBinding(className, type, nRow, nCol):
 """.format(className, type, n2c(nRow), n2c(nCol), nRow, nCol)
   else:
     ret += """    if len(args) == 0:
-      self.impl = c_eigen.EigenZero[{1},{2},{3}](0,0)
+      self.impl = c_eigen_private.EigenZero[{1},{2},{3}](0,0)
     elif len(args) == 2:
-      self.impl = c_eigen.EigenZero[{1},{2},{3}](args[0], args[1])
+      self.impl = c_eigen_private.EigenZero[{1},{2},{3}](args[0], args[1])
     elif len(args) == 1 and isinstance(args[0], {0}):
       self.__copyctor__(args[0])
     elif len(args) == 1 and isinstance(args[0], int):
-      self.impl = c_eigen.EigenZero[{1},{2},{3}](args[0],1)
+      self.impl = c_eigen_private.EigenZero[{1},{2},{3}](args[0],1)
     elif len(args) == 1:
       nRow = len(args[0])
       assert(nRow > 0)
       nCol = len(args[0][0])
-      self.impl = c_eigen.EigenZero[{1},{2},{3}](nRow, nCol)
+      self.impl = c_eigen_private.EigenZero[{1},{2},{3}](nRow, nCol)
       for i, row in enumerate(args[0]):
         assert(len(args[0][i]) == nCol)
         for j, el in enumerate(row):
@@ -251,7 +251,7 @@ def generateMatrixBinding(className, type, nRow, nCol):
       for csx, cix in enumerate(range(*indices)):
         self.__setitem__((r, cix), v[csx])
     elif r < self.impl.rows() and c < self.impl.cols():
-      c_eigen.EigenSetValue[{1},{2},{3}](self.impl, r, c, v)
+      c_eigen_private.EigenSetValue[{1},{2},{3}](self.impl, r, c, v)
     else:
       raise IndexError("Index out of bounds")
   def transpose(self):
@@ -266,22 +266,22 @@ def generateMatrixBinding(className, type, nRow, nCol):
   if nRow > 0:
     ret += """  def __fixvecmul(self, Vector{4}d other):
     ret = Vector{4}d()
-    ret.impl = c_eigen.EigenMul[{1},{2},{3},{2},c_eigen.one](self.impl, other.impl)
+    ret.impl = c_eigen_private.EigenMul[{1},{2},{3},{2},c_eigen.one](self.impl, other.impl)
     return ret
   def __fixmatmul(self, {0} other):
     ret = {0}()
-    ret.impl = c_eigen.EigenMul[{1},{2},{3},{2},{3}](self.impl, other.impl)
+    ret.impl = c_eigen_private.EigenMul[{1},{2},{3},{2},{3}](self.impl, other.impl)
     return ret
 """.format(className, type, n2c(nRow), n2c(nCol), nRow)
   else:
     for i in  GEN_DIMS:
       ret += """  def __fixedvec{0}mul(self,Vector{0}d other):
     ret = Vector{0}d()
-    ret.impl = c_eigen.EigenFixedMul[{2},c_eigen.dynamic,c_eigen.dynamic,{1},c_eigen.one](self.impl,other.impl)
+    ret.impl = c_eigen_private.EigenFixedMul[{2},c_eigen.dynamic,c_eigen.dynamic,{1},c_eigen.one](self.impl,other.impl)
     return ret
   def __dynvec{0}mul(self,Vector{0}d other):
     ret = VectorXd()
-    ret.impl = c_eigen.EigenMul[{2},c_eigen.dynamic,c_eigen.dynamic,{1},c_eigen.one](self.impl,other.impl)
+    ret.impl = c_eigen_private.EigenMul[{2},c_eigen.dynamic,c_eigen.dynamic,{1},c_eigen.one](self.impl,other.impl)
     return ret
   def __vec{0}mul(self, Vector{0}d other):
     if self.cols() == {0}:
@@ -295,11 +295,11 @@ def generateMatrixBinding(className, type, nRow, nCol):
     for i in  GEN_DIMS:
       ret += """  def __fixedmat{0}mul(self,Matrix{0}d other):
     ret = Matrix{0}d()
-    ret.impl = c_eigen.EigenFixedMul[{2},c_eigen.dynamic,c_eigen.dynamic,{1},{1}](self.impl,other.impl)
+    ret.impl = c_eigen_private.EigenFixedMul[{2},c_eigen.dynamic,c_eigen.dynamic,{1},{1}](self.impl,other.impl)
     return ret
   def __dynmat{0}mul(self,Matrix{0}d other):
     ret = MatrixXd()
-    ret.impl = <c_eigen.MatrixXd>(c_eigen.EigenMul[{2},c_eigen.dynamic,c_eigen.dynamic,{1},{1}](self.impl,other.impl))
+    ret.impl = <c_eigen.MatrixXd>(c_eigen_private.EigenMul[{2},c_eigen.dynamic,c_eigen.dynamic,{1},{1}](self.impl,other.impl))
     return ret
   def __mat{0}mul(self, Matrix{0}d other):
     if self.cols() == {0}:
@@ -319,7 +319,7 @@ def generateMatrixBinding(className, type, nRow, nCol):
   else:
     ret += """      ret = VectorXd()
 """
-  ret += """      ret.impl = c_eigen.EigenMul[{1},{2},{3},c_eigen.dynamic,c_eigen.one](self.impl, other.impl)
+  ret += """      ret.impl = c_eigen_private.EigenMul[{1},{2},{3},c_eigen.dynamic,c_eigen.one](self.impl, other.impl)
       return ret
     else:
       raise TypeError("Vector size incompatible with this matrix")
@@ -327,11 +327,11 @@ def generateMatrixBinding(className, type, nRow, nCol):
     if value is None:
       return self.impl.coeff(row, col)
     else:
-      c_eigen.EigenSetValue[{1},{2},{3}](self.impl, row, col, value)
+      c_eigen_private.EigenSetValue[{1},{2},{3}](self.impl, row, col, value)
   def __matmul(self, MatrixXd other):
     if other.rows() == self.cols():
       ret = MatrixXd()
-      ret.impl = c_eigen.EigenFixedMul[{1},{2},{3},c_eigen.dynamic,c_eigen.dynamic](self.impl,other.impl)
+      ret.impl = c_eigen_private.EigenFixedMul[{1},{2},{3},c_eigen.dynamic,c_eigen.dynamic](self.impl,other.impl)
       return ret
     else:
       raise TypeError("Multiplying incompatible matrices")
@@ -375,41 +375,41 @@ def generateMatrixBinding(className, type, nRow, nCol):
   if nRow == 3 and nCol == 3:
     ret += """  def eulerAngles(self, int a0, int a1, int a2):
     ret = Vector3d()
-    ret.impl = c_eigen.EigenEulerAngles(self.impl, a0, a1, a2)
+    ret.impl = c_eigen_private.EigenEulerAngles(self.impl, a0, a1, a2)
     return ret
 """
   if nRow > 0:
     ret += """  @staticmethod
   def Random():
     ret = {0}()
-    ret.impl = c_eigen.EigenRandom[{1},{2},{3}]()
+    ret.impl = c_eigen_private.EigenRandom[{1},{2},{3}]()
     return ret
   @staticmethod
   def Zero():
     ret = {0}()
-    ret.impl = c_eigen.EigenZero[{1},{2},{3}]()
+    ret.impl = c_eigen_private.EigenZero[{1},{2},{3}]()
     return ret
   @staticmethod
   def Identity():
     ret = {0}()
-    ret.impl = c_eigen.EigenIdentity[{1},{2},{3}]()
+    ret.impl = c_eigen_private.EigenIdentity[{1},{2},{3}]()
     return ret
 """.format(className, type, n2c(nRow), n2c(nCol))
   else:
     ret += """  @staticmethod
   def Random(int row, int col):
     ret = {0}()
-    ret.impl = c_eigen.EigenRandom[{1},{2},{3}](row, col)
+    ret.impl = c_eigen_private.EigenRandom[{1},{2},{3}](row, col)
     return ret
   @staticmethod
   def Zero(int row, int col):
     ret = {0}()
-    ret.impl = c_eigen.EigenZero[{1},{2},{3}](row, col)
+    ret.impl = c_eigen_private.EigenZero[{1},{2},{3}](row, col)
     return ret
   @staticmethod
   def Identity(int row, int col):
     ret = {0}()
-    ret.impl = c_eigen.EigenIdentity[{1},{2},{3}](row, col)
+    ret.impl = c_eigen_private.EigenIdentity[{1},{2},{3}](row, col)
     return ret
 """.format(className, type, n2c(nRow), n2c(nCol))
   ret += """cdef {0} {0}FromC(const c_eigen.{0} & arg):
@@ -451,7 +451,7 @@ def generateVectorBinding(className, type, nRow, nCol):
   if nRow > 0:
     ret += """
     if len(args) == 0:
-      self.impl = c_eigen.EigenZero[{1},{2},{3}]()
+      self.impl = c_eigen_private.EigenZero[{1},{2},{3}]()
     elif len(args) == 1:
       assert(len(args[0]) == {4})
       self.__vctor(args[0])
@@ -461,18 +461,18 @@ def generateVectorBinding(className, type, nRow, nCol):
   else:
     ret += """
     if len(args) == 0:
-      self.impl = c_eigen.EigenZero[{1},{2},{3}](0)
+      self.impl = c_eigen_private.EigenZero[{1},{2},{3}](0)
     elif len(args) > 1:
-      self.impl = c_eigen.EigenZero[{1},{2},{3}](len(args))
+      self.impl = c_eigen_private.EigenZero[{1},{2},{3}](len(args))
       self.__vctor(args)
 """.format(className, type, n2c(nRow), n2c(nCol))
   ret += """    elif len(args) == 1:
         if isinstance(args[0], {0}):
           self.__copyctor__(args[0])
         elif isinstance(args[0], int):
-          self.impl = c_eigen.EigenZero[{1},{2},{3}](args[0])
+          self.impl = c_eigen_private.EigenZero[{1},{2},{3}](args[0])
         else:
-          self.impl = c_eigen.EigenZero[{1},{2},{3}](len(args[0]))
+          self.impl = c_eigen_private.EigenZero[{1},{2},{3}](len(args[0]))
           self.__vctor(args[0])
     else:
       raise TypeError('Invalid arguments passed to {0} constructor')
@@ -530,7 +530,7 @@ def generateVectorBinding(className, type, nRow, nCol):
     if value is None:
       return self.impl.coeff(row, 0)
     else:
-      c_eigen.EigenSetValue[{1},{2},{3}](self.impl, row, 0, value)
+      c_eigen_private.EigenSetValue[{1},{2},{3}](self.impl, row, 0, value)
 """.format(className, type, n2c(nRow), n2c(nCol))
   if nRow == 3:
     ret += """  def cross(self, {0} other):
@@ -570,24 +570,24 @@ def generateVectorBinding(className, type, nRow, nCol):
     ret += """  @staticmethod
   def Random():
     ret = {0}()
-    ret.impl = c_eigen.EigenRandom[{1},{2},{3}]()
+    ret.impl = c_eigen_private.EigenRandom[{1},{2},{3}]()
     return ret
   @staticmethod
   def Zero():
     ret = {0}()
-    ret.impl = c_eigen.EigenZero[{1},{2},{3}]()
+    ret.impl = c_eigen_private.EigenZero[{1},{2},{3}]()
     return ret
 """.format(className, type, n2c(nRow), n2c(nCol))
   else:
     ret += """  @staticmethod
   def Random(int row):
     ret = {0}()
-    ret.impl = c_eigen.EigenRandom[{1},{2},{3}](row)
+    ret.impl = c_eigen_private.EigenRandom[{1},{2},{3}](row)
     return ret
   @staticmethod
   def Zero(int row):
     ret = {0}()
-    ret.impl = c_eigen.EigenZero[{1},{2},{3}](row)
+    ret.impl = c_eigen_private.EigenZero[{1},{2},{3}](row)
     return ret
 """.format(className, type, n2c(nRow), n2c(nCol))
   ret += """  def __matmul(self, MatrixXd m):
@@ -596,12 +596,12 @@ def generateVectorBinding(className, type, nRow, nCol):
   if(nRow >= 0):
     ret+="""
     if m.impl.cols() == {4}:
-      ret = Matrix{4}dFromC(<c_eigen.Matrix{4}d>c_eigen.EigenMul[{1},{2},{3},c_eigen.dynamic,c_eigen.dynamic](self.impl, m.impl))
+      ret = Matrix{4}dFromC(<c_eigen.Matrix{4}d>c_eigen_private.EigenMul[{1},{2},{3},c_eigen.dynamic,c_eigen.dynamic](self.impl, m.impl))
     else:
-      ret = MatrixXdFromC(<c_eigen.MatrixXd>c_eigen.EigenMul[{1},{2},{3},c_eigen.dynamic,c_eigen.dynamic](self.impl, m.impl))""".format(className, type, n2c(nRow), n2c(nCol), nRow)
+      ret = MatrixXdFromC(<c_eigen.MatrixXd>c_eigen_private.EigenMul[{1},{2},{3},c_eigen.dynamic,c_eigen.dynamic](self.impl, m.impl))""".format(className, type, n2c(nRow), n2c(nCol), nRow)
   else:
     ret +="""
-    ret = MatrixXdFromC(<c_eigen.MatrixXd>c_eigen.EigenMul[{1},c_eigen.dynamic, {3}, c_eigen.dynamic, c_eigen.dynamic](self.impl, m.impl))""".format(className, type, n2c(nRow), n2c(nCol))
+    ret = MatrixXdFromC(<c_eigen.MatrixXd>c_eigen_private.EigenMul[{1},c_eigen.dynamic, {3}, c_eigen.dynamic, c_eigen.dynamic](self.impl, m.impl))""".format(className, type, n2c(nRow), n2c(nCol))
   ret+= """
     return ret
 
@@ -637,6 +637,7 @@ from __future__ import division
 import numpy
 from libcpp.vector cimport vector
 cimport c_eigen
+cimport c_eigen_private
 
 """)
     fd.write("# This file was automatically generated, do not modify it\n")

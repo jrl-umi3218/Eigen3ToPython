@@ -8,7 +8,7 @@ cdef class Quaterniond(object):
   def __aaxisdctor__(self, AngleAxisd aax):
     self.impl = c_eigen.Quaterniond(aax.impl)
   def __m3ctor__(self, Matrix3d other):
-    self.impl = c_eigen.EigenQFromM(other.impl)
+    self.impl = c_eigen_private.EigenQFromM(other.impl)
   def __cinit__(self, *args):
     if len(args) == 0:
       self.impl = c_eigen.Quaterniond()
@@ -92,4 +92,4 @@ cdef Quaterniond QuaterniondFromC(const c_eigen.Quaterniond & arg):
   return ret
 
 def poly_eval(VectorXd poly, x):
-  return c_eigen.poly_eval[double](poly.impl, x)
+  return c_eigen_private.poly_eval[double](poly.impl, x)
