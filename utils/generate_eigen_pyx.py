@@ -57,10 +57,7 @@ def generateBaseBinding(className, type, nRow, nCol):
   def __copyctor__(self, {0} other):
     self.impl = other.impl
   def __arrayctor(self, numpy.ndarray[dtype=numpy.double_t, ndim=2] array):
-    cdef c_eigen.Map[c_eigen.{0}] * mp
-    mp = new c_eigen.Map[c_eigen.{0}](<double*>array.data, array.shape[0], array.shape[1])
-    self.impl = c_eigen.{0}(deref(mp))
-    del mp
+    self.impl = c_eigen.{0}(c_eigen.Map[c_eigen.{0}](<double*>array.data, array.shape[0], array.shape[1]))
   def __copy__(self):
     return {0}(self)
   def __deepcopy__(self, memo):
