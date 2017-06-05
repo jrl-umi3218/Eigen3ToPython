@@ -26,6 +26,10 @@ namespace Eigen
 
 typedef Matrix<double, 6, 1> Vector6d;
 typedef Matrix<double, 6, 6> Matrix6d;
+typedef Stride<Dynamic, Dynamic> DynStride;
+
+template <typename Mtype>
+using DynMap = Map<Mtype, AlignmentType::Aligned, DynStride>;
 
 }
 

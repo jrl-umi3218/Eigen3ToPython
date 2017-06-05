@@ -57,7 +57,10 @@ def generateBaseBinding(className, type, nRow, nCol):
   def __copyctor__(self, {0} other):
     self.impl = other.impl
   def __arrayctor(self, numpy.ndarray[dtype=numpy.double_t, ndim=2] array):
-    self.impl = c_eigen.{0}(c_eigen.Map[c_eigen.{0}](<double*>array.data, array.shape[0], array.shape[1]))
+    if array.flags.f_contiguous:
+      self.impl = c_eigen.{0}(c_eigen.DynMap[c_eigen.{0}](<double*>array.data, array.shape[0], array.shape[1], c_eigen.DynStride(array.strides[0]/array.itemsize, array.strides[1]/array.itemsize)))
+    if array.flags.c_contiguous:
+      self.impl = c_eigen.{0}(c_eigen.DynMap[c_eigen.{0}](<double*>array.data, array.shape[0], array.shape[1], c_eigen.DynStride(array.strides[1]/array.itemsize, array.strides[0]/array.itemsize)))
   def __copy__(self):
     return {0}(self)
   def __deepcopy__(self, memo):
@@ -195,7 +198,7 @@ def generateMatrixBinding(className, type, nRow, nCol):
     elif len(args) == 1 and isinstance(args[0], int):
       self.impl = c_eigen_private.EigenZero[{1},{2},{3}](args[0],1)
     elif len(args) == 1:
-      self.__arrayctor(numpy.asfortranarray(args[0], dtype=numpy.double))
+      self.__arrayctor(numpy.asanyarray(args[0], dtype=numpy.double))
     else:
       raise TypeError("Invalid arguments passed to {0} ctor")
 """.format(className, type, n2c(nRow), n2c(nCol))
