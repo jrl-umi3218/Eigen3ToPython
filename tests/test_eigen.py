@@ -216,14 +216,28 @@ def setitem_other(first_container, other_container, slicing=None):
   getitem_other(first_container, other_container, slicing)
 
 @with_setup(generate_vectors, teardown_vectors)
-def test_convert_vector():
+def test_convert_tonumpy_vector():
   for k, v in vectors.items():
     assert((np.array(v) == vector_arrays[k]).all())
 
 @with_setup(generate_matrices, teardown_matrices)
-def test_convert_matrix():
+def test_convert_tonumpy_matrix():
   for k, m in matrices.items():
     assert((np.array(m) == matrix_arrays[k]).all())
+
+@with_setup(generate_vectors, teardown_vectors)
+def test_convert_fromnumpy_vector():
+  for k, v in vectors.items():
+    # Test both storage orders
+    assert((v - vector_types[k](np.ascontiguousarray(vector_arrays[k]))).norm() == 0.0)
+    assert((v - vector_types[k](np.asfortranarray(vector_arrays[k]))).norm() == 0.0)
+
+@with_setup(generate_matrices, teardown_matrices)
+def test_convert_fromnumpy_matrix():
+  for k, m in matrices.items():
+    # Test both storage orders
+    assert((m - matrix_types[k](np.ascontiguousarray(matrix_arrays[k]))).norm() == 0.0)
+    assert((m - matrix_types[k](np.asfortranarray(matrix_arrays[k]))).norm() == 0.0)
 
 def test_arithmetic():
   scalars = [0, 1, -1, 2.34, np.pi]
