@@ -27,9 +27,13 @@ cdef extern from *:
   ctypedef int six "6"
 
 cdef extern from "<Eigen/Dense>" namespace "Eigen":
+  cdef cppclass Map[M]:
+    Map(double*, int, int)
+
   cdef cppclass Matrix[T,nRow,nCol]:
     Matrix()
     Matrix(const Matrix[T,nRow,nCol] &)
+    Matrix(const Map[Matrix[T,nRow,nCol]]&)
     T& operator[](int)
     Matrix[T,nRow,nCol] operator+(const Matrix[T,nRow,nCol] &)
     Matrix[T,nRow,nCol] operator-()

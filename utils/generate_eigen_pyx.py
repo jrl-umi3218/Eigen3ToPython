@@ -56,6 +56,11 @@ def generateBaseBinding(className, type, nRow, nCol):
   ret="""cdef class {0}(object):
   def __copyctor__(self, {0} other):
     self.impl = other.impl
+  def __arrayctor(self, numpy.ndarray[dtype=numpy.double_t, ndim=2] array):
+    cdef c_eigen.Map[c_eigen.{0}] * mp
+    mp = new c_eigen.Map[c_eigen.{0}](<double*>array.data, array.shape[0], array.shape[1])
+    self.impl = c_eigen.{0}(deref(mp))
+    del mp
   def __copy__(self):
     return {0}(self)
   def __deepcopy__(self, memo):
@@ -193,14 +198,7 @@ def generateMatrixBinding(className, type, nRow, nCol):
     elif len(args) == 1 and isinstance(args[0], int):
       self.impl = c_eigen_private.EigenZero[{1},{2},{3}](args[0],1)
     elif len(args) == 1:
-      nRow = len(args[0])
-      assert(nRow > 0)
-      nCol = len(args[0][0])
-      self.impl = c_eigen_private.EigenZero[{1},{2},{3}](nRow, nCol)
-      for i, row in enumerate(args[0]):
-        assert(len(args[0][i]) == nCol)
-        for j, el in enumerate(row):
-          self.coeff(i,j,el)
+      self.__arrayctor(numpy.asfortranarray(args[0], dtype=numpy.double))
     else:
       raise TypeError("Invalid arguments passed to {0} ctor")
 """.format(className, type, n2c(nRow), n2c(nCol))
@@ -633,6 +631,7 @@ def generate_eigen_pyx(out_path, utils_path):
 
 from __future__ import division
 import numpy
+from cython.operator cimport dereference as deref
 from libcpp.vector cimport vector
 cimport c_eigen
 cimport c_eigen_private
