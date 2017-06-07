@@ -19,6 +19,26 @@ This library allows to:
 
 If you want more features you can open an issue or just fork the project :)
 
+### Eigen <-> Numpy conversions
+
+```Python
+import numpy as np
+import eigen
+
+A = np.random.random((2000, 50))
+B = eigen.MatrixXd(A)
+
+n = np.linalg.norm(B) # Implicit conversion to numpy object
+
+# Note:
+# Because of the difference in default storage order between Eigen and Numpy,
+# conversions of big matrix/arrays can be a bit expensive, e.g
+%timeit eigen.MatrixXd(A)
+10000 loops, best of 3: 107 µs per loop
+%timeit np.array(B)
+10000 loops, best of 3: 53.1 µs per loop
+```
+
 ### Fixed size Eigen3 Matrix operations
 
 ```Python
