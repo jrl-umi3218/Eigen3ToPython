@@ -1,34 +1,54 @@
-[![Build Status](https://travis-ci.org/jorisv/Eigen3ToPython.svg?branch=master)](https://travis-ci.org/jorisv/Eigen3ToPython)
+[![Build Status](https://travis-ci.org/jrl-umi3218/Eigen3ToPython.svg?branch=master)](https://travis-ci.org/jrl-umi3218/Eigen3ToPython)
 
 Eigen3ToPython
 ======
 
-Eigen3ToPython is a python library that aims to make a bidirectional bridge between Numpy and Eigen3.
+Eigen3ToPython is a Python library that aims to make a bidirectional bridge between Numpy and Eigen3.
 
-The goal is not to provide a full Eigen3 python binding but to provide easy conversion between Numpy and Eigen3.
+The goal is not to provide a full Eigen3 Python binding but to provide easy conversion between Numpy and Eigen3.
 
 Documentation
 ------
 
 This library allows to:
- * Make operations on fixed size Eigen3 matrices
- * Make operations on dynamic size Eigen3 matrices
- * Use Eigen::Quaterniond in python
- * Convert fixed and dynamic size Eigen3 matrices to Numpy matrices (`np.matrix`)
- * Convert Numpy matrix (`np.matrix`) to fixed or dynamic size Eigen3 matrix
+ * Make operations on fixed size Eigen3 matrices and vectors
+ * Make operations on dynamic size Eigen3 matrices and vectors
+ * Use Eigen::Quaterniond in Python
+ * Use Eigen::AngleAxisd in Python
+ * Convert to/from Numpy arrays (`np.array`) in a transparent manner (however, memory is not shared between both representations)
 
 If you want more features you can open an issue or just fork the project :)
 
+### Eigen <-> Numpy conversions
+
+```Python
+import numpy as np
+import eigen
+
+A = np.random.random((2000, 50))
+B = eigen.MatrixXd(A)
+
+n = np.linalg.norm(B) # Implicit conversion to numpy object
+
+# Note:
+# Because of the difference in default storage order between Eigen and Numpy,
+# conversions of big matrix/arrays can be a bit expensive, e.g
+%timeit eigen.MatrixXd(A)
+10000 loops, best of 3: 107 µs per loop
+%timeit np.array(B)
+10000 loops, best of 3: 53.1 µs per loop
+```
+
 ### Fixed size Eigen3 Matrix operations
 
-```python
-import eigen3 as e3
+```Python
+import eigen as e3
 
 # Fixed size vector constructors (Vector2d, Vector3d, Vector4d, Vector6d)
 e3.Vector3d.Zero() # Eigen::Vector3d::Zero()
 v3d = e3.Vector3d.Random() # Eigen::Vector3d::Random()
-e3.Vector4d.UnitX() # Eigen::Vector4d::UnitX() (also Unit{Y,Z,W})
-e3.Vector3d() # Eigen::Vector3d() (uninitialized values)
+e3.Vector4d.UnitX() # Eigen::Vector4d::UnitX() (also Unit{Y,Z,W} when it makes sense)
+e3.Vector3d() # Eigen::Vector3d::Zero() (no uninitialized values)
 e3.Vector3d(v3d) # Eigen::Vector3d(Eigen::Vector3d) (copy constructor)
 v4d = e3.Vector4d(1., 2., 3., 4.) # Eigen::Vector4d(double, double, double, double)
 
@@ -40,11 +60,15 @@ for i in xrange(4):
   v4d[i]
 v4d.rows(), v4d.cols() # Eigen::Vector4d::{rows,cols}()
 len(v4d) # Eigen::Vector4d::size()
+# Slice getter
+v4d[1:3] # No equivalent in C++
 
 # Fixed size vector setters
 # Eigen::Vector4d::setItem(int, int, double)
 v4d.coeff(1, 0, 0.4)
 v4d[1] = 0.4
+# Slice setter
+v4d[1:3] = [0., 1.]
 
 # Fixed size vector operations
 v4d.norm() # Eigen::Vector4d::norm()
@@ -53,13 +77,13 @@ v4d.normalize() # Eigen::Vector4d::normalize()
 v4d.normalized() # Eigen::Vector4d::normalized()
 v4d.transpose() # Eigen::Vector4d::transpose() (return a MatrixXd)
 v4d.dot(v4d)
-v3d.cross(v3d)
+v3d.cross(v3d) # Returns an eigen.Vector3d object
 
+# Arithmetic operations
 v4d + v4d, v4d - v4d
 2.*-v4d*2., v4d/2.
 v4d += v4d
 v4d -= v4d
-
 
 # Fixed size matrix constructors (Matrix2d, Matrix3d, Matrix6d)
 e3.Matrix3d.Zero() # Eigen::Matrix3d::Zero()
@@ -91,19 +115,20 @@ m3d.transpose() # Eigen::Matrix3d::transpose() (return a Matrix3d)
 m3d.inverse() # Eigen::Matrix3d::inverse()
 m3d.eulerAngles(0,1,2) # Eigen::Matrix3d::eulerAngles(int, int, int)
 
+# Arithmetic operations
 m3d + m3d, m3d - m3d
 2.*-m3d*2., m3d/2.
 m3d += m3d
 m3d -= m3d
 
-m3d*v3d # give a e3.Vector3d
-m3d*m3d # give a e3.Matrix3d
+m3d*v3d # give a eigen.Vector3d
+m3d*m3d # give a eigen.Matrix3d
 ```
 
 ### Quaterniond operations
 
-```python
-import eigen3 as e3
+```Python
+import eigen as e3
 
 # constructors
 e3.Quaterniond() # Eigen::Quaterniond() (uninitialized values)
@@ -117,7 +142,7 @@ e3.Quaterniond.Identity() # Eigen::Quaterniond::Identity()
 # getters
 quat.x(), quat.y(), quat.z(), quat.w() # Eigen::Quaterniond::{x,y,z,w}()
 quat.vec() # Eigen::Quaterniond.vec()
-quat.coeffs() # Eigen::Quaterniond.coeffs()o
+quat.coeffs() # Eigen::Quaterniond.coeffs()
 
 # setters
 quat.setIdentity() # Eigen::Quaterniond::setIdentity()
@@ -145,7 +170,7 @@ quat*quat
 Few operations are defined for dynamic size vector/matrix.
 It's recommended to convert them into Numpy matrix.
 
-```python
+```Python
 import eigen3 as e3
 
 # constructors
@@ -186,37 +211,6 @@ m10d.normalized() # Eigen::MatrixXd::normalized()
 m10d.transpose() # Eigen::MatrixXd::transpose() (return a MatrixXd)
 ```
 
-### Converting Eigen3 <=> Numpy
-
-```python
-import numpy as np
-import eigen3 as e3
-
-# toNumpy converts a fixed/dynamic Eigen matrix to numpy.matrix
-e3.toNumpy(e3.Vector3d.UnitX()) # np.mat([1., 0., 0.]).T
-e3.toNumpy(e3.VectorXd.Zero(5)) # np.mat([0., 0., 0., 0., 0.]).T
-e3.toNumpy(e3.Matrix3d.Identity()) # np.mat(np.eye(3))
-
-# toEigen converts a numpy.matrix into a Eigen matrix
-# If the numpy matrix fits an Eigen fixed matrix the matrix
-# will be converted to a fixed size Eigen matrix
-# If it's not the case, the method will convert the
-# numpy matrix to a dynamic size Eigen matrix
-e3.toEigen(np.mat([1., 0., 0.]).T) # Eigen::Vector3d
-e3.toEigen(np.mat(np.arange(10)).T) # Eigen::VectorXd
-e3.toEigen(np.mat(np.eye(3)).T) # Eigen::Matrix3d
-e3.toEigen(np.mat(np.eye(10)).T) # Eigen::MatrixXd
-
-# toEigenX forces the conversion of a Numpy matrix
-# to a dynamic size Eigen matrix
-# even if a fixed size Eigen matrix exists
-e3.toEigenX(np.mat([1., 0., 0.]).T) # Eigen::VectorXd
-e3.toEigenX(np.mat(np.arange(10)).T) # Eigen::VectorXd
-e3.toEigenX(np.mat(np.eye(3)).T) # Eigen::MatrixXd
-e3.toEigenX(np.mat(np.eye(10)).T) # Eigen::MatrixXd
-```
-
-
 Installing
 ------
 
@@ -225,45 +219,28 @@ Installing
 #### Dependencies
 
 To compile you need the following tools:
- 
- * [Git]()
- * [CMake]() >= 2.8
+
+ * [Git](https://git-scm.com/)
  * [pkg-config]()
  * [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) >= 3.2
- * [PyBindGen](https://launchpad.net/pybindgen) = 0.16 (build with 0.17 but a bug
-in this version prevents the use of `len()` on Eigen3 matrix)
+ * [pip](https://pypi.python.org/pypi/pip)
+ * [Cython](http://cython.org/) >= 0.25
 
 #### Building
 
 ```sh
-git clone --recursive https://github.com/jorisv/Eigen3ToPython.git
+git clone https://github.com/jrl-umi3218/Eigen3ToPython.git
 cd Eigen3ToPython
-mkdir _build
-cd _build
-cmake [options] ..
-make && make intall
+pip install -r requirements.txt
+pip install .
 ```
-
-Where the main options are:
-
- * `-DCMAKE_BUIlD_TYPE=Release` Build in Release mode
- * `-DCMAKE_INSTALL_PREFIX=some/path/to/install` default is `/usr/local`
- * `-DPYTHON_DEB_LAYOUT=OFF` install python library in `site-packages` (ON will install in `dist-packages`)
-
-### Arch Linux
-
-You can use the following [AUR package](https://aur.archlinux.org/packages/eigen3topython-git).
-
 
 Pulling git subtree
 ------
 
-To update/sync cmake or .travis directory with their upstream git repository:
+To update/sync .travis directory with their upstream git repository:
 
 ```sh
-git fetch git://github.com/jrl-umi3218/jrl-cmakemodules.git master
-git subtree pull --prefix cmake git://github.com/jrl-umi3218/jrl-cmakemodules.git master --squash
-
 git fetch git://github.com/jrl-umi3218/jrl-travis.git master
 git subtree pull --prefix .travis git://github.com/jrl-umi3218/jrl-travis.git master --squash
 ```

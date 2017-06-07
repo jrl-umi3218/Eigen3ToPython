@@ -1,23 +1,21 @@
-sudo: required
 dist: trusty
-language: cpp
-compiler: gcc
-env:
-  global:
-  - APT_DEPENDENCIES="gccxml doxygen doxygen-latex libboost-all-dev"
-  - DEBSIGN_KEYID=5AE5CD75
-notifications:
-  email:
-  - idh-devel@lirmm.fr
-branches:
-  only:
-  - master
-script: ./.travis/run build
-after_success: ./.travis/run after_success
-after_failure: ./.travis/run after_failure
+language: python
+python:
+- '2.7'
+- '3.4'
+- '3.5'
+addons:
+  apt:
+    packages:
+    - g++
+    - cmake
+script:
+- . ./.travis/common.sh
+- pip install .
+- nosetests
 before_install:
-  - sudo apt-get -y update
-  - sudo apt-get install -y gccxml
-  - ./.travis/dependencies/pybindgen-0.16 `which python|sed -e's@bin/python@@'`
-  - ./.travis/run  before_install
-  - ./.travis/dependencies/eigen-3.2
+- ./.travis/dependencies/eigen-3.2
+- pip install -r requirements.txt
+notifications:
+  slack:
+    secure: AQEc0L8IPw0G+61qoFZ4ceGVuKP6G+XO9UQpoeAbL4IMwJvTsFtbSerFH9lQih2OEz3+iV1muEye9ISW1GuUIyJReQfZNI+sSpCYfxDTeDDdUseMqpFRp0KazVAAhPNZ+zADANKwMisofwQmBhwz0w+LSZ34nhj0Gm7/OGxiU2E=
