@@ -29,7 +29,13 @@ typedef Matrix<double, 6, 6> Matrix6d;
 typedef Stride<Dynamic, Dynamic> DynStride;
 
 template <typename Mtype>
+#if EIGEN_VERSION_AT_LEAST(3, 3, 0)
+using DynMap = Map<Mtype, AlignmentType::Aligned16, DynStride>;
+#elif EIGEN_VERSION_AT_LEAST(3, 2, 9)
 using DynMap = Map<Mtype, AlignmentType::Aligned, DynStride>;
+#else
+using DynMap = Map<Mtype, Aligned, DynStride>;
+#endif
 
 }
 

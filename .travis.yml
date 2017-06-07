@@ -9,12 +9,19 @@ addons:
     packages:
     - g++
     - cmake
+    - libeigen3-dev
+env:
+  matrix:
+    - USE_SRC_EIGEN=false
+    - USE_SRC_EIGEN=true USE_EIGEN33=false
+    - USE_SRC_EIGEN=true USE_EIGEN33=true
 script:
 - . ./.travis/common.sh
 - pip install .
 - nosetests
 before_install:
-- ./.travis/dependencies/eigen-3.2
+- if [ $USE_SRC_EIGEN = true ] && [ $USE_EIGEN33 = true ]; then ./.travis/dependencies/eigen-3.3; fi
+- if [ $USE_SRC_EIGEN = true ] && [ $USE_EIGEN33 = false ]; then ./.travis/dependencies/eigen-3.2; fi
 - pip install -r requirements.txt
 notifications:
   slack:
