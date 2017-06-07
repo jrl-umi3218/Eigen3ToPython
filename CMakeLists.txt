@@ -20,12 +20,25 @@ cmake_minimum_required(VERSION 2.8)
 option(PYTHON_BINDING_USER_INSTALL "Install the Python bindings in user space" OFF)
 option(DISABLE_TESTS "Disable unit tests." OFF)
 
+set(PIP_EXTRA_OPTIONS "")
+if(${PYTHON_BINDING_USER_INSTALL})
+  set(PIP_EXTRA_OPTIONS "--user")
+endif()
+
+# Install requirements
+add_custom_target(eigen-python-bindings-requirements ALL
+  COMMAND pip install -r requirements.txt ${PIP_EXTRA_OPTIONS}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  DEPENDS requirements.txt
+)
+
 # Build the bindings locally
 add_custom_target(eigen-python-bindings ALL
   COMMAND python setup.py build_ext --inplace
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   COMMENT "Generating Eigen Python bindings"
-  DEPENDS include/eigen_wrapper.hpp
+  DEPENDS eigen-python-bindings-requirements
+          include/eigen_wrapper.hpp
           eigen/c_eigen.pxd
           eigen/c_eigen_private.pxd
           setup.py
@@ -42,10 +55,6 @@ if(NOT ${DISABLE_TESTS})
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
-set(PIP_EXTRA_OPTIONS "")
-if(${PYTHON_BINDING_USER_INSTALL})
-  set(PIP_EXTRA_OPTIONS "--user")
-endif()
 # Install the bindings
 add_custom_target(install-eigen-python-bindings
   COMMAND pip install . ${PIP_EXTRA_OPTIONS}
