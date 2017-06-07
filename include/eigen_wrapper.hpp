@@ -33,6 +33,12 @@ using DynMap = Map<Mtype, AlignmentType::Aligned, DynStride>;
 
 }
 
+template<typename T, int r, int c>
+Eigen::Matrix<T, r, c> MatrixFromDynMap(const Eigen::DynMap<Eigen::Matrix<T, r, c>> & map)
+{
+  return Eigen::Matrix<T, r, c>(map);
+}
+
 template<typename T, int r, int c, int opr, int opc>
 Eigen::Matrix<T, r, opc> EigenMul(const Eigen::Matrix<T, r, c> & lhs, const Eigen::Matrix<T, opr, opc> & rhs)
 {

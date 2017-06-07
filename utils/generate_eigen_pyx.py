@@ -57,7 +57,7 @@ def generateBaseBinding(className, type, nRow, nCol):
   def __copyctor__(self, {0} other):
     self.impl = other.impl
   def __arrayctor(self, numpy.ndarray[dtype=numpy.double_t, ndim=2] array):
-    self.impl = c_eigen.{0}(c_eigen.DynMap[c_eigen.{0}](<double*>array.data, array.shape[0], array.shape[1], c_eigen.DynStride(array.strides[1]/array.itemsize, array.strides[0]/array.itemsize)))
+    self.impl = c_eigen_private.MatrixFromDynMap[{1}, {2}, {3}](c_eigen_private.DynMap[c_eigen.{0}](<double*>array.data, array.shape[0], array.shape[1], c_eigen_private.DynStride(array.strides[1]/array.itemsize, array.strides[0]/array.itemsize)))
   def __copy__(self):
     return {0}(self)
   def __deepcopy__(self, memo):

@@ -26,13 +26,6 @@ cdef extern from *:
   ctypedef int four "4"
   ctypedef int six "6"
 
-cdef extern from "eigen_wrapper.hpp" namespace "Eigen":
-  cdef cppclass DynStride:
-    DynStride(int, int);
-
-  cdef cppclass DynMap[M]:
-    DynMap(double*, int, int, DynStride)
-
 cdef extern from "<Eigen/Dense>" namespace "Eigen":
   cdef cppclass Map[M]:
     Map(double*, int, int)
@@ -41,7 +34,6 @@ cdef extern from "<Eigen/Dense>" namespace "Eigen":
     Matrix()
     Matrix(const Matrix[T,nRow,nCol] &)
     Matrix(const Map[Matrix[T,nRow,nCol]]&)
-    Matrix(const DynMap[Matrix[T,nRow,nCol]]&)
     T& operator[](int)
     Matrix[T,nRow,nCol] operator+(const Matrix[T,nRow,nCol] &)
     Matrix[T,nRow,nCol] operator-()
