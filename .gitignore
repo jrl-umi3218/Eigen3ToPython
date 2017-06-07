@@ -1,3 +1,4 @@
+eigen/__init__.py
 eigen/eigen.pyx
 eigen/eigen.pxd
 *.pyc
