@@ -1,3 +1,6 @@
+branches:
+  except:
+    - debian
 dist: trusty
 language: python
 python:
