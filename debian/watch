@@ -1,0 +1,3 @@
+version=3
+opts=filenamemangle=s/.+\/v?(\d\S*)\.tar\.gz/pkgconfig-$1\.tar\.gz/ \
+  https://github.com/jrl-umi3218/Eigen3ToPython/tags .*/v?(\d\S*)\.tar\.gz

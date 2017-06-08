@@ -1,0 +1,5 @@
+python-eigen (1.0.0-1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Pierre Gergondet <pierre.gergondet+ppa@gmail.com>  Thu, 08 Jun 2017 14:05:39 +0900

@@ -1,0 +1,34 @@
+Source: python-eigen
+Section: python
+Priority: optional
+Maintainer: Pierre Gergondet <pierre.gergondet+ppa@gmail.com>
+Build-Depends: debhelper (>=9),
+ python-all,
+ python-setuptools,
+ python-nose,
+ python-numpy,
+ cython,
+ python3-all,
+ python3-setuptools,
+ python3-nose,
+ python3-numpy,
+ cython3,
+ libeigen3-dev
+Standards-Version: 3.9.5
+Homepage: https://github.com/jrl-umi3218/Eigen3ToPython
+Vcs-Git: git://github.com/jrl-umi3218/Eigen3ToPython -b debian
+Vcs-Browser: https://github.com/jrl-umi3218/Eigen3ToPython
+
+Package: python-eigen
+Architecture: any
+Depends: ${python:Depends}, ${misc:Depends}, ${shlibs:Depends}
+Description: Python library that aims to make a bidirectional bridge
+ between Numpy and Eigen3 and facilitate the use of Eigen in Cython
+ bindings. Supports Python 2.
+
+Package: python3-eigen
+Architecture: any
+Depends: ${python3:Depends}, ${misc:Depends}, ${shlibs:Depends}
+Description: Python library that aims to make a bidirectional bridge
+ between Numpy and Eigen3 and facilitate the use of Eigen in Cython
+ bindings. Supports Python 3.
