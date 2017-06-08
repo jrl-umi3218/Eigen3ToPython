@@ -91,39 +91,13 @@ class pkg_config(object):
   def __repr__(self):
     return str(self.include_dirs)+", "+str(self.library_dirs)+", "+str(self.libraries)
 
-python_libs = []
-python_lib_dirs = []
-python_others = []
-python_config_exec = 'python-config'
-if sys.version_info.major >= 3:
-  python_config_exec = 'python3-config'
-if not win32_build:
-  tokens = subprocess.check_output([python_config_exec, '--ldflags']).split()
-  tokens = [ token.decode('ascii') for token in tokens ]
-  for token in tokens:
-    flag = token[:2]
-    value = token[2:]
-    if flag == '-l':
-      python_libs.append(value)
-    elif flag == '-L':
-      python_lib_dirs.append(value)
-    elif token[:1] == '-':
-      python_others.append(token)
-
 configs = { pkg: pkg_config(pkg) for pkg in ['eigen3'] }
 
 for p,c in configs.items():
   c.compile_args.append('-std=c++11')
-  for o in python_others:
-    c.compile_args.append(o)
   c.include_dirs.append(os.getcwd() + "/include")
-  if not win32_build:
-    c.library_dirs.extend(python_lib_dirs)
-    c.libraries.extend(python_libs)
-  else:
+  if win32_build:
     c.compile_args.append("-DWIN32")
-  if p != 'eigen3':
-    c.include_dirs.extend(configs['eigen3'].include_dirs)
 
 def GenExtension(name, pkg, ):
   pyx_src = name.replace('.', '/')
