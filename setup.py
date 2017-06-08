@@ -18,11 +18,9 @@
 from __future__ import print_function
 try:
   from setuptools import setup
-  from setuptools.command.build_ext import build_ext
   from setuptools import Extension
 except ImportError:
   from distutils.core import setup
-  from distutils.command.build_ext import build_ext
   from distutils.extension import Extension
 
 from Cython.Build import cythonize
@@ -52,12 +50,7 @@ for f in src_files:
         break
 version_hash = sha512.hexdigest()[:7]
 
-class BuildPyxCommand(build_ext):
-  """Custom command to generate eigen/eigen.pyx"""
-  def run(self):
-    global this_path, version_hash
-    generate_eigen_pyx(this_path + "/eigen", this_path + "/utils")
-    build_ext.run(self)
+generate_eigen_pyx(this_path + "/eigen", this_path + "/utils")
 
 class pkg_config(object):
   def __init__(self, package):
@@ -157,5 +150,4 @@ setup(
     ext_modules = extensions,
     packages = packages,
     package_data = { 'eigen': data },
-    cmdclass = { 'build_ext': BuildPyxCommand }
 )
