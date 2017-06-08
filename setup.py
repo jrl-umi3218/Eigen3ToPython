@@ -29,6 +29,7 @@ import hashlib
 import numpy
 import os
 import subprocess
+import sys
 
 win32_build = os.name == 'nt'
 
@@ -93,8 +94,11 @@ class pkg_config(object):
 python_libs = []
 python_lib_dirs = []
 python_others = []
+python_config_exec = 'python-config'
+if sys.version_info.major >= 3:
+  python_config_exec = 'python3-config'
 if not win32_build:
-  tokens = subprocess.check_output(['python-config', '--ldflags']).split()
+  tokens = subprocess.check_output([python_config_exec, '--ldflags']).split()
   tokens = [ token.decode('ascii') for token in tokens ]
   for token in tokens:
     flag = token[:2]
