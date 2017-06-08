@@ -18,22 +18,46 @@
 from __future__ import print_function
 try:
   from setuptools import setup
+  from setuptools.command.build_ext import build_ext
   from setuptools import Extension
 except ImportError:
   from distutils.core import setup
+  from distutils.command.build_ext import build_ext
   from distutils.extension import Extension
 
 from Cython.Build import cythonize
+
+import hashlib
+import numpy
 import os
 import subprocess
-import numpy
 
 win32_build = os.name == 'nt'
 
 from utils import generate_eigen_pyx
 
 this_path  = os.path.dirname(os.path.realpath(__file__))
-version_hash = generate_eigen_pyx(this_path + "/eigen", this_path + "/utils")
+sha512 = hashlib.sha512()
+src_files = ['eigen/c_eigen.pxd', 'eigen/c_eigen_private.pxd', 'include/eigen_wrapper.hpp']
+src_files.extend(['utils/angleaxis.in.pyx', 'utils/generate_eigen_pyx.py', 'utils/quaternion.in.pyx'])
+src_files = [ '{}/{}'.format(this_path, f) for f in src_files ]
+for f in src_files:
+  chunk = 2**16
+  with open(f, 'r') as fd:
+    while True:
+      data = fd.read(chunk)
+      if data:
+        sha512.update(data.encode('ascii'))
+      else:
+        break
+version_hash = sha512.hexdigest()[:7]
+
+class BuildPyxCommand(build_ext):
+  """Custom command to generate eigen/eigen.pyx"""
+  def run(self):
+    global this_path, version_hash
+    generate_eigen_pyx(this_path + "/eigen", this_path + "/utils")
+    build_ext.run(self)
 
 class pkg_config(object):
   def __init__(self, package):
@@ -121,7 +145,7 @@ extensions = [
 
 extensions = [ x for x in extensions if x is not None ]
 packages = ['eigen']
-data = ['__init__.py', 'c_eigen.pxd', 'eigen.pxd', 'eigen.so']
+data = ['__init__.py', 'c_eigen.pxd', 'eigen.pxd']
 
 cython_packages = [ x for x in packages if any([ext.name.startswith(x) for ext in extensions]) ]
 
@@ -132,5 +156,6 @@ setup(
     version='1.0.0-{}'.format(version_hash),
     ext_modules = extensions,
     packages = packages,
-    package_data = { 'eigen': data }
+    package_data = { 'eigen': data },
+    cmdclass = { 'build_ext': BuildPyxCommand }
 )

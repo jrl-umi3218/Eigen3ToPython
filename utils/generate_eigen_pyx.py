@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 #
 # Copyright 2012-2017 CNRS-UM LIRMM, CNRS-AIST JRL
 #
@@ -621,9 +622,25 @@ cdef class {0}Vector(object):
   return ret
 
 def generate_eigen_pyx(out_path, utils_path):
+  if os.path.exists(out_path + '/eigen.pyx'):
+    assert(os.path.exists(out_path + '/eigen.pxd'))
+    sha512 = hashlib.sha512()
+    src_files = [out_path + '/eigen.pyx', out_path + '/eigen.pxd']
+    for f in src_files:
+      chunk = 2**16
+      with open(f, 'r') as fd:
+        while True:
+          data = fd.read(chunk)
+          if data:
+            sha512.update(data.encode('ascii'))
+          else:
+            break
+    output_hash = sha512.hexdigest()[:7]
+  else:
+    output_hash = None
   with open("{}/__init__.py".format(out_path), 'w') as fd:
     fd.write("from .eigen import *\n")
-  with open("{}/eigen.pyx".format(out_path), 'w') as fd:
+  with open("{}/eigen.pyx.tmp".format(out_path), 'w') as fd:
     fd.write("""# distutils: language = c++
 
 from __future__ import division
@@ -649,7 +666,7 @@ cimport c_eigen_private
       fd.write(qfd.read())
     with open('{}/angleaxis.in.pyx'.format(utils_path),'r') as effd:
       fd.write(effd.read())
-  with open("{}/eigen.pxd".format(out_path), 'w') as fd:
+  with open("{}/eigen.pxd.tmp".format(out_path), 'w') as fd:
     fd.write("# This file was automatically generated, do not modify it\n")
     fd.write("cimport numpy\n")
     fd.write("from cython.view cimport array as cvarray\n")
@@ -667,16 +684,22 @@ cimport c_eigen_private
     fd.write(generateDeclaration("Vector6d"))
     fd.write(generateDeclaration("Quaterniond"))
     fd.write(generateDeclaration("AngleAxisd"))
-  # Generate a hash from eigen.pyx, c_eigen.pxd and eigen.pxd
-  files = ['{}/eigen.pyx'.format(out_path), '{}/c_eigen.pxd'.format(out_path), '{}/eigen.pxd'.format(out_path)]
-  chunk = 65536 # 64kb chunk
-  sha512 = hashlib.sha512()
-  for f in files:
-    with open(f, 'r') as fd:
-      while True:
-        data = fd.read(chunk)
-        if data:
-          sha512.update(data.encode('ascii'))
-        else:
-          break
-  return sha512.hexdigest()[:7]
+  if output_hash is not None:
+    sha512 = hashlib.sha512()
+    src_files = [out_path + '/eigen.pyx.tmp', out_path + '/eigen.pxd.tmp']
+    for f in src_files:
+      chunk = 2**16
+      with open(f, 'r') as fd:
+        while True:
+          data = fd.read(chunk)
+          if data:
+            sha512.update(data.encode('ascii'))
+          else:
+            break
+    new_output_hash = sha512.hexdigest()[:7]
+    if output_hash == new_output_hash:
+      os.unlink('{}/eigen.pyx.tmp'.format(out_path))
+      os.unlink('{}/eigen.pxd.tmp'.format(out_path))
+      return
+  os.rename('{}/eigen.pyx.tmp'.format(out_path), '{}/eigen.pyx'.format(out_path))
+  os.rename('{}/eigen.pxd.tmp'.format(out_path), '{}/eigen.pxd'.format(out_path))
