@@ -22,7 +22,7 @@ from c_eigen cimport *
 # The wrapper is needed for templated static functions, string conversion and disambiguating some operators
 cdef extern from "eigen_wrapper.hpp" namespace "Eigen":
   cdef cppclass DynStride:
-    DynStride(int, int);
+    DynStride(int, int)
 
   cdef cppclass DynMap[M]:
     DynMap(double*, int, int, DynStride)
