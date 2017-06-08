@@ -9,4 +9,4 @@ export PYBUILD_INSTALL_ARGS_python3=--install-layout=deb
 	dh $@ --with python2,python3 --buildsystem=pybuild
 
 override_dh_auto_test:
-	nosetests
+	:
