@@ -23,14 +23,14 @@ Vcs-Browser: https://github.com/jrl-umi3218/Eigen3ToPython
 
 Package: python-eigen
 Architecture: any
-Depends: ${python:Depends}, ${misc:Depends}, ${shlibs:Depends}
+Depends: ${python:Depends}, ${misc:Depends}, ${shlibs:Depends}, python-numpy
 Description: Python library that aims to make a bidirectional bridge
  between Numpy and Eigen3 and facilitate the use of Eigen in Cython
  bindings. Supports Python 2.
 
 Package: python3-eigen
 Architecture: any
-Depends: ${python3:Depends}, ${misc:Depends}, ${shlibs:Depends}
+Depends: ${python3:Depends}, ${misc:Depends}, ${shlibs:Depends}, python3-numpy
 Description: Python library that aims to make a bidirectional bridge
  between Numpy and Eigen3 and facilitate the use of Eigen in Cython
  bindings. Supports Python 3.
