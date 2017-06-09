@@ -214,6 +214,15 @@ m10d.transpose() # Eigen::MatrixXd::transpose() (return a MatrixXd)
 Installing
 ------
 
+### Ubuntu 14.04 and 16.04 binary ppa install
+
+Use the [multi-contact-unstable](https://launchpad.net/~pierre-gergondet+ppa/+archive/ubuntu/multi-contact-unstable) ppa:
+```bash
+sudo add-apt-repository ppa:pierre-gergondet+ppa/multi-contact-unstable
+sudo apt-get update
+sudo apt-get install python-eigen python3-eigen
+```
+
 ### Manual
 
 #### Dependencies
