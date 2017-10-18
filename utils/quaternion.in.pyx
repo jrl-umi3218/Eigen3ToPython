@@ -85,6 +85,11 @@ cdef class Quaterniond(object):
     return ret
   def squaredNorm(self):
     return self.impl.squaredNorm()
+  @staticmethod
+  def Identity():
+    ret = Quaterniond()
+    ret.setIdentity()
+    return ret
 
 cdef Quaterniond QuaterniondFromC(const c_eigen.Quaterniond & arg):
   cdef Quaterniond ret = Quaterniond()

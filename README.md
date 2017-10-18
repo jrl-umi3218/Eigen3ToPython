@@ -144,7 +144,7 @@ quat.x(), quat.y(), quat.z(), quat.w() # Eigen::Quaterniond::{x,y,z,w}()
 quat.vec() # Eigen::Quaterniond.vec()
 quat.coeffs() # Eigen::Quaterniond.coeffs()
 
-# setters
+# setters (in-place)
 quat.setIdentity() # Eigen::Quaterniond::setIdentity()
 # Eigen::Quaterniond::setFromTwoVectors(Eigen::Vector3d, Eigen::Vector3d)
 quat.setFromTwoVectors(e3.Vector3d.UnitX(), e3.Vector3d.UnitY())

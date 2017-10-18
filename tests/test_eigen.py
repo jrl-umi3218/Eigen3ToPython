@@ -469,3 +469,66 @@ def check_negative_mat_access(mat):
   for i in range(1, mat.rows()+1):
     for j in range(1, mat.cols()+1):
       assert(mat[-i, -j] == mat[mat.rows()-i, mat.cols()-j])
+
+def check_quaternion_almost_equals(q1, q2):
+  assert((q1.coeffs() - q2.coeffs()).norm() < 1e-6)
+
+def test_quaternion():
+  q = e.Quaterniond()
+  id_v = e.Vector4d(0., 0., 0., 1.)
+  v4 = e.Vector4d.Random()
+  while v4 == id_v:
+    v4 = e.Vector4d.Random()
+  v4.normalize()
+  q = e.Quaterniond(v4) # Vector4d ctor
+  assert(q.coeffs() == v4)
+  q = e.Quaterniond(v4[3], v4[0], v4[1], v4[2]) # 4 doubles ctor
+  assert(q.coeffs() == v4)
+  q_copy = e.Quaterniond(q) # Copy ctor
+  assert(q_copy.coeffs() == q.coeffs())
+  q_copy.setIdentity()
+  assert(q_copy.coeffs() != q.coeffs()) # Check the two objects are actually different
+  q = e.Quaterniond(np.pi, e.Vector3d.UnitZ()) # Angle-Axis
+  assert((q.coeffs() - e.Vector4d(0., 0., 1., 0.)).norm() < 1e-6)
+  q = e.Quaterniond(e.AngleAxisd(np.pi, e.Vector3d.UnitZ()))
+  assert((q.coeffs() - e.Vector4d(0., 0., 1., 0.)).norm() < 1e-6)
+  q = e.Quaterniond(e.Matrix3d.Identity())
+  assert(q.coeffs() == id_v)
+  q = e.Quaterniond.Identity()
+  assert(q.coeffs() == id_v)
+
+  # Check getters
+  assert(q.x() == 0)
+  assert(q.y() == 0)
+  assert(q.z() == 0)
+  assert(q.w() == 1)
+  assert(q.vec() == e.Vector3d.Zero())
+  assert(q.coeffs() == id_v)
+
+  # Check setters
+  q = e.Quaterniond(v4) # Rebuild from something else than Identity
+  q.setIdentity()
+  assert(q.coeffs() == id_v)
+  q.setFromTwoVectors(e.Vector3d.UnitX(), e.Vector3d.UnitY())
+  assert(q.isApprox(e.Quaterniond(np.pi/2, e.Vector3d.UnitZ())))
+  q.setIdentity()
+
+  # Operations
+  assert(e.Quaterniond(id_v).angularDistance(e.Quaterniond(np.pi, e.Vector3d.UnitZ())) == np.pi)
+  assert(e.Quaterniond(v4).conjugate().coeffs() == e.Vector4d(-v4.x(), -v4.y(), -v4.z(), v4.w()))
+  assert(e.Quaterniond(id_v).dot(e.Quaterniond(np.pi, e.Vector3d.UnitZ())) == np.cos(np.pi/2))
+  check_quaternion_almost_equals(e.Quaterniond(v4).inverse(), e.Quaterniond(v4).conjugate())
+  assert(q.isApprox(q))
+  assert(q.isApprox(q, 1e-8))
+  assert(q.matrix() == e.Matrix3d.Identity())
+  assert(q.toRotationMatrix() == e.Matrix3d.Identity())
+  v4_2 = e.Vector4d.Random()
+  v4_2 = 2 * v4_2 / v4_2.norm()
+  q = e.Quaterniond(v4_2)
+  assert(q.norm() != 1.0)
+  q_n = q.normalized()
+  assert(q.norm() != 1.0 and q_n.norm() == 1.0)
+  q.normalize()
+  assert(q.norm() == 1.0)
+  check_quaternion_almost_equals(e.Quaterniond.Identity().slerp(1.0, q), q)
+  assert(q.squaredNorm() == 1.0)
