@@ -79,8 +79,11 @@ cdef extern from "<Eigen/Dense>" namespace "Eigen":
   cdef cppclass AngleAxis[T]:
     AngleAxis()
     AngleAxis(T, const Matrix[T, three, one] &)
+    AngleAxis(const Quaternion[T] &)
     Matrix[T, three, three] matrix()
     AngleAxis[T] inverse()
+    T angle() const
+    Matrix[T, three, one] axis() const
 
   ctypedef AngleAxis[double] AngleAxisd
 
