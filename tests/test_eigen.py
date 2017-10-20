@@ -482,6 +482,8 @@ def test_quaternion():
   q2 = e.Quaterniond(id_v)
   # Both identity quaternions must be equal.
   assert(q.angularDistance(q2) == 0)
+  q3 = q2*q
+  assert(q.angularDistance(q3) == 0)
   v4 = e.Vector4d.Random()
   while v4 == id_v:
     v4 = e.Vector4d.Random()
@@ -538,7 +540,7 @@ def test_quaternion():
   assert(q.norm() == 1.0)
   check_quaternion_almost_equals(e.Quaterniond.Identity().slerp(1.0, q), q)
   assert(q.squaredNorm() == 1.0)
-  q = q2*q_inv
+
 
 
 def test_angle_axis():
