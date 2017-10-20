@@ -555,7 +555,5 @@ def test_angle_axis():
   aa2.inverse()
   aa.inverse()
   aa2.inverse()
-  assert(aa == aa2)
   aa = e.AngleAxisd(q)
   aa = e.AngleAxisd(aa2)
-  assert(aa == aa2)
