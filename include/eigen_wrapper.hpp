@@ -136,3 +136,9 @@ T poly_eval(const Eigen::Matrix<T, -1, 1> & m, const T & x)
 {
   return Eigen::poly_eval(m, x);
 }
+
+template<typename T>
+Eigen::AngleAxis<T> EigenAAFromQ(const Eigen::Quaternion<T> & q)
+{
+  return Eigen::AngleAxis<T>(q);
+}
