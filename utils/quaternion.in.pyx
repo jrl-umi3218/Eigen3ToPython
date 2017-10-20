@@ -52,6 +52,14 @@ cdef class Quaterniond(object):
     ret = Quaterniond()
     ret.impl = self.impl.conjugate()
     return ret
+  def __mul__(self, other):
+    if isinstance(self, Quaterniond):
+      if isinstance(other, Quaterniond):
+        return self.__mvec_mul(other)
+      else:
+        raise TypeError("Unsupported operands PTransformd and {0}".format(type(other)))
+    else:
+      return other.__mul__(self)
   def dot(self, Quaterniond other):
     return self.impl.dot(other.impl)
   def inverse(self):
