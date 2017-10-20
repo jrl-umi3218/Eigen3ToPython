@@ -542,7 +542,6 @@ def test_quaternion():
   assert(q.squaredNorm() == 1.0)
 
 
-
 def test_angle_axis():
   aa = e.AngleAxisd()
   # quaternion xyzw coefficient order
