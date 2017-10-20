@@ -25,7 +25,7 @@ cdef class Quaterniond(object):
     elif len(args) == 4:
       self.impl = c_eigen.Quaterniond(args[0], args[1], args[2], args[3])
     else:
-      raise TypeError("Invalid arguments passed to MatrixXd ctor")
+      raise TypeError("Invalid argument ({}) passed to Quaterniond ctor".format(type(args[0])))
   def x(self):
     return self.impl.x()
   def y(self):
@@ -61,7 +61,7 @@ cdef class Quaterniond(object):
       if isinstance(other, Quaterniond):
         return self.__q_mul(other)
       else:
-        raise TypeError("Unsupported operands PTransformd and {0}".format(type(other)))
+        raise TypeError("Unsupported operands Quaterniond and {0}".format(type(other)))
     else:
       return other.__mul__(self)
   def dot(self, Quaterniond other):
