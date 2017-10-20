@@ -217,34 +217,24 @@ A demonstration of how interacting with Quaterniond affects the values:
 ```
 $ q = e.Quaterniond()
 $ q.setIdentity()
+# coefficients are in x, y, z, w order
 $ print(np.array(q.coeffs()))
 [[ 0.]
  [ 0.]
  [ 0.]
  [ 1.]]
-# w, x, y, z should also be identity for q2
+# scalar constructor is w, x, y, z
+# this is also the identity
 $ q2 = e.Quaterniond(1,0,0,0)
-$ qcoeffs = np.array(q.coeffs())
-$ q2 = e.Quaterniond(qcoeffs[0,0],qcoeffs[1,0],qcoeffs[2,0],qcoeffs[3,0])
-$ print(np.array(q2.coeffs()))
-[[ 0.]
- [ 0.]
- [ 1.]
- [ 0.]]
-# the angular distance between two identity quaternions should be zero
-$ q.angularDistance(q2)
-3.141592653589793
-# The above doesn't seem right, it should be 0...
-$ q2 = e.Quaterniond(1,0,0,0)
+# coefficients are in x, y, z, w order
 $ print(np.array(q2.coeffs()))
 [[ 0.]
  [ 0.]
  [ 0.]
  [ 1.]]
-# shouldn't this be 1, 0, 0, 0?
 $ q.angularDistance(q2)
 0.0
-# this is what I expected
+# This is what is expected
 $ q.w()
 1.0
 $ q.x()
@@ -253,6 +243,20 @@ $ q.y()
 0.0
 $ q.z()
 0.0
+
+
+# BAD EXAMPLE illustrating a common mistake:
+# The angular distance between two identity quaternions is zero
+# The test below shows how the bad example does 
+# not create two identity quaternions as intended:
+$ q2 = e.Quaterniond(qcoeffs[0,0],qcoeffs[1,0],qcoeffs[2,0],qcoeffs[3,0])
+$ print(np.array(q2.coeffs()))
+[[ 0.]
+ [ 0.]
+ [ 1.]
+ [ 0.]]
+$ q.angularDistance(q2)
+3.141592653589793
 $ vq2 = e.Vector4d(np.array([1,0,0,0]))
 $ q2 = e.Quaterniond(vq2)
 $ np.array(q2.coeffs())
@@ -262,6 +266,7 @@ array([[ 1.],
        [ 0.]])
 $ q.angularDistance(q2)
 3.141592653589793
+# END BAD EXAMPLE
 ```
 
 Installing
