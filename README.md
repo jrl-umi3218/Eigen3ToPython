@@ -3,21 +3,20 @@
 Eigen3ToPython
 ======
 
-Eigen3ToPython is a Python library that aims to make a bidirectional bridge between Numpy and Eigen3.
+Eigen3ToPython is a Python interface for [Eigen3](eigen.tuxfamily.org/) with support for [NumPy](http://www.numpy.org/).
 
-The goal is not to provide a full Eigen3 Python binding but to provide easy conversion between Numpy and Eigen3.
+This library supports:
+ * operations on fixed size Eigen3 matrices and vectors
+ * operations on dynamic size Eigen3 matrices and vectors
+ * Use Eigen::Quaterniond in Python
+ * Use Eigen::AngleAxisd in Python
+ * Transparent conversion to/from Numpy arrays (`np.array`)
+     * Note that memory is not shared between numpy and eigen
+
+If you want more features feel free to open an issue or submit a pull request. :-)
 
 Documentation
 ------
-
-This library allows to:
- * Make operations on fixed size Eigen3 matrices and vectors
- * Make operations on dynamic size Eigen3 matrices and vectors
- * Use Eigen::Quaterniond in Python
- * Use Eigen::AngleAxisd in Python
- * Convert to/from Numpy arrays (`np.array`) in a transparent manner (however, memory is not shared between both representations)
-
-If you want more features you can open an issue or just fork the project :)
 
 ### Eigen <-> Numpy conversions
 
@@ -42,21 +41,21 @@ n = np.linalg.norm(B) # Implicit conversion to numpy object
 ### Fixed size Eigen3 Matrix operations
 
 ```Python
-import eigen as e3
+import eigen as e
 
 # Fixed size vector constructors (Vector2d, Vector3d, Vector4d, Vector6d)
-e3.Vector3d.Zero() # Eigen::Vector3d::Zero()
-v3d = e3.Vector3d.Random() # Eigen::Vector3d::Random()
-e3.Vector4d.UnitX() # Eigen::Vector4d::UnitX() (also Unit{Y,Z,W} when it makes sense)
-e3.Vector3d() # Eigen::Vector3d::Zero() (no uninitialized values)
-e3.Vector3d(v3d) # Eigen::Vector3d(Eigen::Vector3d) (copy constructor)
-v4d = e3.Vector4d(1., 2., 3., 4.) # Eigen::Vector4d(double, double, double, double)
+e.Vector3d.Zero() # Eigen::Vector3d::Zero()
+v3d = e.Vector3d.Random() # Eigen::Vector3d::Random()
+e.Vector4d.UnitX() # Eigen::Vector4d::UnitX() (also Unit{Y,Z,W} when it makes sense)
+e.Vector3d() # Eigen::Vector3d::Zero() (no uninitialized values)
+e.Vector3d(v3d) # Eigen::Vector3d(Eigen::Vector3d) (copy constructor)
+v4d = e.Vector4d(1., 2., 3., 4.) # Eigen::Vector4d(double, double, double, double)
 
 # Fixed size vector getters
 v4d.x(), v4d.y(), v4d.z(), v4d.w() # Eigen::Vector4d::{x,y,z,w}()
 for i in xrange(4):
   # Eigen::Vector4d::getItem(int, int)
-  v4d.coeff(i,0) 
+  v4d.coeff(i,0)
   v4d[i]
 v4d.rows(), v4d.cols() # Eigen::Vector4d::{rows,cols}()
 len(v4d) # Eigen::Vector4d::size()
@@ -86,11 +85,11 @@ v4d += v4d
 v4d -= v4d
 
 # Fixed size matrix constructors (Matrix2d, Matrix3d, Matrix6d)
-e3.Matrix3d.Zero() # Eigen::Matrix3d::Zero()
-e3.Matrix3d.Random() # Eigen::Matrix3d::Random()
-m3d = e3.Matrix3d.Identity() # Eigen::Matrix3d::Identity()
-e3.Matrix3d(m3d) # Eigen::Matrix3d(Eigen::Matrix3d) (copy constructor)
-e3.Matrix3d() # Eigen::Matrix3d() (uninitialized values)
+e.Matrix3d.Zero() # Eigen::Matrix3d::Zero()
+e.Matrix3d.Random() # Eigen::Matrix3d::Random()
+m3d = e.Matrix3d.Identity() # Eigen::Matrix3d::Identity()
+e.Matrix3d(m3d) # Eigen::Matrix3d(Eigen::Matrix3d) (copy constructor)
+e.Matrix3d() # Eigen::Matrix3d() (uninitialized values)
 
 # Fixed size matrix getters
 for row in xrange(3):
@@ -125,19 +124,21 @@ m3d*v3d # give a eigen.Vector3d
 m3d*m3d # give a eigen.Matrix3d
 ```
 
-### Quaterniond operations
+### Quaternions via Quaterniond
+
+[Unit Quaternions](https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation) are used to represent rigid body rotations in 3D. Unit Quaternions are the ideal representation for numerical calculations on rotations because of their stability compared to other representations. The Quaterniond class is a python interface for the C++ [Eigen::Quaterniond](https://eigen.tuxfamily.org/dox/classEigen_1_1Quaternion.html).
 
 ```Python
-import eigen as e3
+import eigen as e
 
 # constructors
-e3.Quaterniond() # Eigen::Quaterniond() (uninitialized values)
-e3.Quaterniond(e3.Vector4d(0., 0., 0., 1.)) # Eigen::Quaterniond(Eigen::Vector4d)
-quat = e3.Quaterniond(1., 0., 0., 0.) # Eigen::Quaterniond(double w, double x, double y, double z)
-e3.Quaterniond(quat) # Eigen::Quaterniond(Eigen::Quaterniond) (copy constructor)
-e3.Quaterniond(0.1, e3.Vector3d.UnitX()) # Eigen::Quaterniond(Eigen::AngleAxisd(double, Eigen::Vector3d));
-e3.Quaterniond(e3.Matrix3d.Identity()) # Eigen::Quaterniond(Eigen::AngleAxisd(Eigen::Matrix3d))
-e3.Quaterniond.Identity() # Eigen::Quaterniond::Identity()
+e.Quaterniond() # Eigen::Quaterniond() (uninitialized values)
+e.Quaterniond(e.Vector4d(0., 0., 0., 1.)) # Eigen::Quaterniond(Eigen::Vector4d)
+quat = e.Quaterniond(1., 0., 0., 0.) # Eigen::Quaterniond(double w, double x, double y, double z)
+e.Quaterniond(quat) # Eigen::Quaterniond(Eigen::Quaterniond) (copy constructor)
+e.Quaterniond(0.1, e.Vector3d.UnitX()) # Eigen::Quaterniond(Eigen::AngleAxisd(double, Eigen::Vector3d));
+e.Quaterniond(e.Matrix3d.Identity()) # Eigen::Quaterniond(Eigen::AngleAxisd(Eigen::Matrix3d))
+e.Quaterniond.Identity() # Eigen::Quaterniond::Identity()
 
 # getters
 quat.x(), quat.y(), quat.z(), quat.w() # Eigen::Quaterniond::{x,y,z,w}()
@@ -147,7 +148,7 @@ quat.coeffs() # Eigen::Quaterniond.coeffs()
 # setters (in-place)
 quat.setIdentity() # Eigen::Quaterniond::setIdentity()
 # Eigen::Quaterniond::setFromTwoVectors(Eigen::Vector3d, Eigen::Vector3d)
-quat.setFromTwoVectors(e3.Vector3d.UnitX(), e3.Vector3d.UnitY())
+quat.setFromTwoVectors(e.Vector3d.UnitX(), e.Vector3d.UnitY())
 
 # operations
 quat.angularDistance(quat) # Eigen::Quaterniond::angularDistance(Eigen::Quaterniond)
@@ -171,20 +172,20 @@ Few operations are defined for dynamic size vector/matrix.
 It's recommended to convert them into Numpy matrix.
 
 ```Python
-import eigen3 as e3
+import eigen3 as e
 
 # constructors
-m10d = e3.MatrixXd(10, 10) # Eigen::MatrixXd(double, double)
-e3.MatrixXd() # Eigen::MatrixXd()
-e3.MatrixXd(m10d) # Eigen::MatrixXd(Eigen::MatrixXd)
+m10d = e.MatrixXd(10, 10) # Eigen::MatrixXd(double, double)
+e.MatrixXd() # Eigen::MatrixXd()
+e.MatrixXd(m10d) # Eigen::MatrixXd(Eigen::MatrixXd)
 
-e3.MatrixXd.Identity(10,10)
-e3.MatrixXd.Zero(10,10)
-e3.MatrixXd.Random(10,10)
+e.MatrixXd.Identity(10,10)
+e.MatrixXd.Zero(10,10)
+e.MatrixXd.Random(10,10)
 
-e3.VectorXd(10) # Eigen::VectorXd(double)
-v10d = e3.VectorXd.Zero(10)
-e3.VectorXd.Random(10)
+e.VectorXd(10) # Eigen::VectorXd(double)
+v10d = e.VectorXd.Zero(10)
+e.VectorXd.Random(10)
 
 # getters
 for i in xrange(10):
@@ -209,6 +210,26 @@ m10d.squaredNorm() # Eigen::MatrixXd::squaredNorm()
 m10d.normalize() # Eigen::MatrixXd::normalize()
 m10d.normalized() # Eigen::MatrixXd::normalized()
 m10d.transpose() # Eigen::MatrixXd::transpose() (return a MatrixXd)
+```
+
+### Angle Axis representation
+
+The [Angle Axis](https://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation) representation of 3D rotations is useful because it is easy for humans to understand to define rotations which can then be converted to a more numerically stable representation.
+
+```Python
+
+  aa = e.AngleAxisd()
+  # quaternion xyzw coefficient order
+  q = e.Quaterniond(e.Vector4d(0., 0., 0., 1.))
+  aa = e.AngleAxisd(q)
+  aa.angle()
+  v = e.Vector3d.UnitX()
+  # construct with angle in radians and axis vector v
+  aa = e.AngleAxisd(0.1, v)
+  aa.axis()
+  aa.angle()
+  aa.inverse()
+  q = e.Quaterniond(aa)
 ```
 
 Installing
