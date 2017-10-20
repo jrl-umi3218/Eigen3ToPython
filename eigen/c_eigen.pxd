@@ -85,7 +85,7 @@ cdef extern from "<Eigen/Dense>" namespace "Eigen":
     AngleAxis(const AngleAxis[T] &)
     AngleAxis(T, const Matrix[T, three, one] &)
     AngleAxis(const Matrix3d &)
-#    AngleAxis(const Quaternion[T] &)
+    AngleAxis(const T &)
     Matrix[T, three, three] matrix()
     AngleAxis[T] inverse()
     T angle()
