@@ -54,10 +54,12 @@ cdef class Quaterniond(object):
     return ret
 #  def __str__(self):
 #    return c_eigen_private.QtoString(self.impl)
+  def __q_mul(self, Quaterniond other):
+    return QuaterniondFromC(self.impl*other.impl)
   def __mul__(self, other):
     if isinstance(self, Quaterniond):
       if isinstance(other, Quaterniond):
-        return self.__mvec_mul(other)
+        return self.__q_mul(other)
       else:
         raise TypeError("Unsupported operands PTransformd and {0}".format(type(other)))
     else:
