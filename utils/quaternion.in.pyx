@@ -52,6 +52,8 @@ cdef class Quaterniond(object):
     ret = Quaterniond()
     ret.impl = self.impl.conjugate()
     return ret
+#  def __str__(self):
+#    return c_eigen_private.QtoString(self.impl)
   def __mul__(self, other):
     if isinstance(self, Quaterniond):
       if isinstance(other, Quaterniond):
@@ -97,6 +99,11 @@ cdef class Quaterniond(object):
   def Identity():
     ret = Quaterniond()
     ret.setIdentity()
+    return ret
+  @staticmethod
+  def UnitRandom():
+    ret = Quaterniond()
+    ret.UnitRandom
     return ret
 
 cdef Quaterniond QuaterniondFromC(const c_eigen.Quaterniond & arg):

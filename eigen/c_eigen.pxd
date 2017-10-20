@@ -30,10 +30,6 @@ cdef extern from "<Eigen/Dense>" namespace "Eigen":
   cdef cppclass Map[M]:
     Map(double*, int, int)
 
-  # # Forward Declarations
-  # cdef cppclass Quaternion[T]
-  # cdef cppclass AngleAxis[T]
-
   cdef cppclass Matrix[T,nRow,nCol]:
     Matrix()
     Matrix(const Matrix[T,nRow,nCol] &)
@@ -87,13 +83,12 @@ cdef extern from "<Eigen/Dense>" namespace "Eigen":
     AngleAxis(const Matrix3d &)
     AngleAxis(const T &)
     Matrix[T, three, three] matrix()
+    Matrix[T,three,three] toRotationMatrix()
     AngleAxis[T] inverse()
     T angle()
     Matrix[T, three, one] axis()
  #   Quaternion[T] operator*(const AngleAxis[T]&)
  #   Quaternion[T] operator*(const Quaternion[T]&)
- #   Matrix[T,three,three] matrix()
- #   Matrix[T,three,three] toRotationMatrix()
 
   ctypedef AngleAxis[double] AngleAxisd
 
@@ -113,7 +108,7 @@ cdef extern from "<Eigen/Dense>" namespace "Eigen":
     void setFromTwoVectors(const Vector3d &, const Vector3d &)
     T angularDistance(const Quaternion[T] &)
     Quaternion[T] conjugate()
-#    Quaternion[T] operator*(const Quaternion[T]&)
+    Quaternion[T] operator*(const Quaternion[T]&)
     T dot(const Quaternion[T] &)
     Quaternion[T] inverse()
     bool isApprox(const Quaternion[T] &)
@@ -125,6 +120,6 @@ cdef extern from "<Eigen/Dense>" namespace "Eigen":
     Quaternion[T] normalized()
     Quaternion[T] slerp(double, const Quaternion[T] &)
     T squaredNorm()
-#    Quaternion[T] UnitRandom()
+    Quaternion[T] UnitRandom()
 
   ctypedef Quaternion[double] Quaterniond

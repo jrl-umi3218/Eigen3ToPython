@@ -22,12 +22,17 @@ cdef class AngleAxisd(object):
       raise TypeError("Wrong arguments passed to AngleAxisd ctor")
   def matrix(self):
     return Matrix3dFromC(<c_eigen.Matrix3d>(self.impl.matrix()))
+  def toRotationMatrix(self):
+    ret = Matrix3d()
+    ret.impl = <c_eigen.Matrix3d>(self.impl.toRotationMatrix())
   def inverse(self):
     return AngleAxisdFromC(self.impl.inverse())
   def angle(self):
     return self.impl.angle()
   def axis(self):
     return Vector3dFromC(<c_eigen.Vector3d>(self.impl.axis()))
+ # def __str__(self):
+ #   return c_eigen_private.AAtoString[double](self.impl)
 
 cdef AngleAxisd AngleAxisdFromC(const c_eigen.AngleAxisd & arg):
   cdef AngleAxisd ret = AngleAxisd()

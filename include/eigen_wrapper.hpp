@@ -126,6 +126,22 @@ std::string toString(const Eigen::Matrix<T,r,c> &m)
   return ss.str();
 }
 
+template<typename T>
+std::string QtoString(const Eigen::Quaternion<T> &q)
+{
+  std::stringstream ss;
+  ss << q;
+  return ss.str();
+}
+
+template<typename T>
+std::string AAtoString(const Eigen::AngleAxis<T> &aa)
+{
+  std::stringstream ss;
+  ss << aa;
+  return ss.str();
+}
+
 Eigen::Quaterniond EigenQFromM(const Eigen::Matrix3d & m)
 {
   return Eigen::Quaterniond(m);
@@ -148,4 +164,3 @@ Eigen::AngleAxis<T> EigenAAFromM(const Eigen::Matrix3d & m)
 {
   return Eigen::AngleAxis<T>(m);
 }
-

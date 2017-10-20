@@ -43,6 +43,8 @@ cdef extern from "eigen_wrapper.hpp":
   Matrix[T,nRow,nCol] EigenIdentity[T,nRow,nCol](int,int)
   void EigenSetValue[T,nRow,nCol](const Matrix[T,nRow,nCol]&, int, int, const T&)
   string toString[T,nRow,nCol](const Matrix[T,nRow,nCol]&)
+  string AAtoString[T](const AngleAxis[T]&)
+  string QtoString[T](const Quaternion[T]&)
   Quaterniond EigenQFromM(const Matrix3d &)
   T poly_eval[T](const Matrix[T,dynamic,one]&, const T&)
   AngleAxis[T] EigenAAFromQ[T](const Quaternion[T] &)
