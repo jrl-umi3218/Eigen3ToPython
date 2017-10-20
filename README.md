@@ -133,12 +133,13 @@ import eigen as e
 
 # constructors
 e.Quaterniond() # Eigen::Quaterniond() (uninitialized values)
-e.Quaterniond(e.Vector4d(0., 0., 0., 1.)) # Eigen::Quaterniond(Eigen::Vector4d)
-quat = e.Quaterniond(1., 0., 0., 0.) # Eigen::Quaterniond(double w, double x, double y, double z)
-e.Quaterniond(quat) # Eigen::Quaterniond(Eigen::Quaterniond) (copy constructor)
-e.Quaterniond(0.1, e.Vector3d.UnitX()) # Eigen::Quaterniond(Eigen::AngleAxisd(double, Eigen::Vector3d));
-e.Quaterniond(e.Matrix3d.Identity()) # Eigen::Quaterniond(Eigen::AngleAxisd(Eigen::Matrix3d))
-e.Quaterniond.Identity() # Eigen::Quaterniond::Identity()
+# Important: coefficients are in xyzw order, while the scalar constructor is in wxyz order!
+e3.Quaterniond(e3.Vector4d(0., 0., 0., 1.)) # Eigen::Quaterniond(Eigen::Vector4d) (x, y, z, w)
+quat = e3.Quaterniond(1., 0., 0., 0.) # Eigen::Quaterniond(double w, double x, double y, double z)
+e3.Quaterniond(quat) # Eigen::Quaterniond(Eigen::Quaterniond) (copy constructor)
+e3.Quaterniond(0.1, e3.Vector3d.UnitX()) # Eigen::Quaterniond(Eigen::AngleAxisd(double, Eigen::Vector3d));
+e3.Quaterniond(e3.Matrix3d.Identity()) # Eigen::Quaterniond(Eigen::AngleAxisd(Eigen::Matrix3d))
+e3.Quaterniond.Identity() # Eigen::Quaterniond::Identity()
 
 # getters
 quat.x(), quat.y(), quat.z(), quat.w() # Eigen::Quaterniond::{x,y,z,w}()
@@ -211,6 +212,65 @@ m10d.normalize() # Eigen::MatrixXd::normalize()
 m10d.normalized() # Eigen::MatrixXd::normalized()
 m10d.transpose() # Eigen::MatrixXd::transpose() (return a MatrixXd)
 ```
+
+A demonstration of how interacting with Quaterniond affects the values:
+
+
+```
+$ q = e.Quaterniond()
+$ q.setIdentity()
+# coefficients are in x, y, z, w order
+$ print(np.array(q.coeffs()))
+[[ 0.]
+ [ 0.]
+ [ 0.]
+ [ 1.]]
+# scalar constructor is w, x, y, z
+# this is also the identity
+$ q2 = e.Quaterniond(1,0,0,0)
+# coefficients are in x, y, z, w order
+$ print(np.array(q2.coeffs()))
+[[ 0.]
+ [ 0.]
+ [ 0.]
+ [ 1.]]
+$ q.angularDistance(q2)
+0.0
+# This is what is expected
+$ q.w()
+1.0
+$ q.x()
+0.0
+$ q.y()
+0.0
+$ q.z()
+0.0
+
+
+# BAD EXAMPLE illustrating a common mistake:
+# The angular distance between two identity quaternions is zero
+# The test below shows how the bad example does 
+# not create two identity quaternions as intended:
+$ q2 = e.Quaterniond(qcoeffs[0,0],qcoeffs[1,0],qcoeffs[2,0],qcoeffs[3,0])
+$ print(np.array(q2.coeffs()))
+[[ 0.]
+ [ 0.]
+ [ 1.]
+ [ 0.]]
+$ q.angularDistance(q2)
+3.141592653589793
+$ vq2 = e.Vector4d(np.array([1,0,0,0]))
+$ q2 = e.Quaterniond(vq2)
+$ np.array(q2.coeffs())
+array([[ 1.],
+       [ 0.],
+       [ 0.],
+       [ 0.]])
+$ q.angularDistance(q2)
+3.141592653589793
+# END BAD EXAMPLE
+```
+
 
 ### Angle Axis representation
 
