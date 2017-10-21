@@ -104,9 +104,7 @@ cdef class Quaterniond(object):
     return ret
   @staticmethod
   def UnitRandom():
-    ret = Quaterniond()
-    ret.UnitRandom
-    return ret
+    return QuaterniondFromC(c_eigen_private.EigenQuaternionUnitRandom())
 
 cdef Quaterniond QuaterniondFromC(const c_eigen.Quaterniond & arg):
   cdef Quaterniond ret = Quaterniond()

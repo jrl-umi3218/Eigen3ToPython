@@ -120,6 +120,7 @@ cdef extern from "<Eigen/Dense>" namespace "Eigen":
     Quaternion[T] normalized()
     Quaternion[T] slerp(double, const Quaternion[T] &)
     T squaredNorm()
+    @staticmethod
     Quaternion[T] UnitRandom()
 
   ctypedef Quaternion[double] Quaterniond

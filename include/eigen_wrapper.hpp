@@ -164,3 +164,8 @@ Eigen::AngleAxis<T> EigenAAFromM(const Eigen::Matrix3d & m)
 {
   return Eigen::AngleAxis<T>(m);
 }
+
+Eigen::Quaterniond EigenQuaternionUnitRandom()
+{
+  return Eigen::Quaterniond::UnitRandom();
+}
