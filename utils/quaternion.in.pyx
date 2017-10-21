@@ -25,7 +25,7 @@ cdef class Quaterniond(object):
     elif len(args) == 4:
       self.impl = c_eigen.Quaterniond(args[0], args[1], args[2], args[3])
     else:
-      raise TypeError("Invalid arguments passed to MatrixXd ctor")
+      raise TypeError("Invalid argument ({}) passed to Quaterniond ctor".format(type(args[0])))
   def x(self):
     return self.impl.x()
   def y(self):
@@ -52,6 +52,18 @@ cdef class Quaterniond(object):
     ret = Quaterniond()
     ret.impl = self.impl.conjugate()
     return ret
+#  def __str__(self):
+#    return c_eigen_private.QtoString(self.impl)
+  def __q_mul(self, Quaterniond other):
+    return QuaterniondFromC(self.impl*other.impl)
+  def __mul__(self, other):
+    if isinstance(self, Quaterniond):
+      if isinstance(other, Quaterniond):
+        return self.__q_mul(other)
+      else:
+        raise TypeError("Unsupported operands Quaterniond and {0}".format(type(other)))
+    else:
+      return other.__mul__(self)
   def dot(self, Quaterniond other):
     return self.impl.dot(other.impl)
   def inverse(self):
@@ -90,6 +102,9 @@ cdef class Quaterniond(object):
     ret = Quaterniond()
     ret.setIdentity()
     return ret
+  @staticmethod
+  def UnitRandom():
+    return QuaterniondFromC(c_eigen_private.EigenQuaternionUnitRandom())
 
 cdef Quaterniond QuaterniondFromC(const c_eigen.Quaterniond & arg):
   cdef Quaterniond ret = Quaterniond()
