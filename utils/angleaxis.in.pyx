@@ -25,6 +25,7 @@ cdef class AngleAxisd(object):
   def toRotationMatrix(self):
     ret = Matrix3d()
     ret.impl = <c_eigen.Matrix3d>(self.impl.toRotationMatrix())
+    return ret
   def inverse(self):
     return AngleAxisdFromC(self.impl.inverse())
   def angle(self):
