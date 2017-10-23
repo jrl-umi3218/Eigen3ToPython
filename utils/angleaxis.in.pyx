@@ -6,7 +6,7 @@ cdef class AngleAxisd(object):
   def __quatctor__(self, Quaterniond other):
     self.impl = c_eigen_private.EigenAAFromQ[double](other.impl)
   def __m3ctor__(self, Matrix3d other):
-    self.impl = c_eigen.AngleAxisd[double](other.impl)
+    self.impl = c_eigen.AngleAxisd(other.impl)
   def __cinit__(self, *args):
     if len(args) == 0:
       self.impl = c_eigen.AngleAxisd()
