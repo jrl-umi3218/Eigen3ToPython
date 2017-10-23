@@ -104,7 +104,13 @@ cdef class Quaterniond(object):
     return ret
   @staticmethod
   def UnitRandom():
-    return Quaterniond(Vector4d.Random()).normalized()
+    u1 = numpy.random.random()
+    u2 = 2 * numpy.pi * numpy.random.random()
+    u3 = 2 * numpy.pi * numpy.random.random()
+    a = numpy.sqrt(1 - u1)
+    b = numpy.sqrt(u1)
+    return Quaterniond(a*numpy.sin(u2), a*numpy.cos(u2),
+                       b*numpy.sin(u3), b*numpy.cos(u3)).normalized()
 
 cdef Quaterniond QuaterniondFromC(const c_eigen.Quaterniond & arg):
   cdef Quaterniond ret = Quaterniond()
