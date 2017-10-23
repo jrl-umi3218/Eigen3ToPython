@@ -130,7 +130,7 @@ template<typename T>
 std::string QtoString(const Eigen::Quaternion<T> &q)
 {
   std::stringstream ss;
-  ss << q;
+  ss << q.coeffs().transpose();
   return ss.str();
 }
 
@@ -138,7 +138,7 @@ template<typename T>
 std::string AAtoString(const Eigen::AngleAxis<T> &aa)
 {
   std::stringstream ss;
-  ss << aa;
+  ss << "Angle: " << aa.angle() << ", Axis: " << aa.axis().transpose();
   return ss.str();
 }
 

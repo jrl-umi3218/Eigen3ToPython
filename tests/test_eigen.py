@@ -541,6 +541,10 @@ def test_quaternion():
   check_quaternion_almost_equals(e.Quaterniond.Identity().slerp(1.0, q), q)
   assert(q.squaredNorm() == 1.0)
 
+  # Static method
+  q = e.Quaterniond.UnitRandom()
+  assert(q.norm() == 1.0)
+
 
 def test_angle_axis():
   aa = e.AngleAxisd()

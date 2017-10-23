@@ -80,8 +80,7 @@ cdef extern from "<Eigen/Dense>" namespace "Eigen":
     AngleAxis()
     AngleAxis(const AngleAxis[T] &)
     AngleAxis(T, const Matrix[T, three, one] &)
-    AngleAxis(const Matrix3d &)
-    AngleAxis(const T &)
+    AngleAxis(const Matrix[T, three, one] &)
     Matrix[T, three, three] matrix()
     Matrix[T,three,three] toRotationMatrix()
     AngleAxis[T] inverse()
@@ -120,6 +119,5 @@ cdef extern from "<Eigen/Dense>" namespace "Eigen":
     Quaternion[T] normalized()
     Quaternion[T] slerp(double, const Quaternion[T] &)
     T squaredNorm()
-    Quaternion[T] UnitRandom()
 
   ctypedef Quaternion[double] Quaterniond

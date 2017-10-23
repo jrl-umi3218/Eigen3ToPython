@@ -52,8 +52,8 @@ cdef class Quaterniond(object):
     ret = Quaterniond()
     ret.impl = self.impl.conjugate()
     return ret
-#  def __str__(self):
-#    return c_eigen_private.QtoString(self.impl)
+  def __str__(self):
+    return c_eigen_private.QtoString[double](self.impl)
   def __q_mul(self, Quaterniond other):
     return QuaterniondFromC(self.impl*other.impl)
   def __mul__(self, other):
@@ -104,9 +104,7 @@ cdef class Quaterniond(object):
     return ret
   @staticmethod
   def UnitRandom():
-    ret = Quaterniond()
-    ret.UnitRandom
-    return ret
+    return Quaterniond(Vector4d.Random()).normalized()
 
 cdef Quaterniond QuaterniondFromC(const c_eigen.Quaterniond & arg):
   cdef Quaterniond ret = Quaterniond()

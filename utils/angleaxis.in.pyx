@@ -6,7 +6,7 @@ cdef class AngleAxisd(object):
   def __quatctor__(self, Quaterniond other):
     self.impl = c_eigen_private.EigenAAFromQ[double](other.impl)
   def __m3ctor__(self, Matrix3d other):
-    self.impl = c_eigen_private.EigenAAFromM[double](other.impl)
+    self.impl = c_eigen.AngleAxisd[double](other.impl)
   def __cinit__(self, *args):
     if len(args) == 0:
       self.impl = c_eigen.AngleAxisd()
@@ -31,8 +31,8 @@ cdef class AngleAxisd(object):
     return self.impl.angle()
   def axis(self):
     return Vector3dFromC(<c_eigen.Vector3d>(self.impl.axis()))
- # def __str__(self):
- #   return c_eigen_private.AAtoString[double](self.impl)
+  def __str__(self):
+    return c_eigen_private.AAtoString[double](self.impl)
 
 cdef AngleAxisd AngleAxisdFromC(const c_eigen.AngleAxisd & arg):
   cdef AngleAxisd ret = AngleAxisd()
