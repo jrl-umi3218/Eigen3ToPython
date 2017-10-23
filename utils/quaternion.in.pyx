@@ -8,7 +8,7 @@ cdef class Quaterniond(object):
   def __aaxisdctor__(self, AngleAxisd aax):
     self.impl = c_eigen.Quaterniond(aax.impl)
   def __m3ctor__(self, Matrix3d other):
-    self.impl = c_eigen_private.EigenQFromM(other.impl)
+    self.impl = c_eigen.Quaterniond(other.impl)
   def __cinit__(self, *args):
     if len(args) == 0:
       self.impl = c_eigen.Quaterniond()
@@ -25,7 +25,7 @@ cdef class Quaterniond(object):
     elif len(args) == 4:
       self.impl = c_eigen.Quaterniond(args[0], args[1], args[2], args[3])
     else:
-      raise TypeError("Invalid arguments passed to MatrixXd ctor")
+      raise TypeError("Invalid argument ({}) passed to Quaterniond ctor".format(type(args[0])))
   def x(self):
     return self.impl.x()
   def y(self):
@@ -52,6 +52,18 @@ cdef class Quaterniond(object):
     ret = Quaterniond()
     ret.impl = self.impl.conjugate()
     return ret
+  def __str__(self):
+    return c_eigen_private.QtoString[double](self.impl)
+  def __q_mul(self, Quaterniond other):
+    return QuaterniondFromC(self.impl*other.impl)
+  def __mul__(self, other):
+    if isinstance(self, Quaterniond):
+      if isinstance(other, Quaterniond):
+        return self.__q_mul(other)
+      else:
+        raise TypeError("Unsupported operands Quaterniond and {0}".format(type(other)))
+    else:
+      return other.__mul__(self)
   def dot(self, Quaterniond other):
     return self.impl.dot(other.impl)
   def inverse(self):
@@ -85,6 +97,20 @@ cdef class Quaterniond(object):
     return ret
   def squaredNorm(self):
     return self.impl.squaredNorm()
+  @staticmethod
+  def Identity():
+    ret = Quaterniond()
+    ret.setIdentity()
+    return ret
+  @staticmethod
+  def UnitRandom():
+    u1 = numpy.random.random()
+    u2 = 2 * numpy.pi * numpy.random.random()
+    u3 = 2 * numpy.pi * numpy.random.random()
+    a = numpy.sqrt(1 - u1)
+    b = numpy.sqrt(u1)
+    return Quaterniond(a*numpy.sin(u2), a*numpy.cos(u2),
+                       b*numpy.sin(u3), b*numpy.cos(u3)).normalized()
 
 cdef Quaterniond QuaterniondFromC(const c_eigen.Quaterniond & arg):
   cdef Quaterniond ret = Quaterniond()
