@@ -211,6 +211,28 @@ m10d.normalized() # Eigen::MatrixXd::normalized()
 m10d.transpose() # Eigen::MatrixXd::transpose() (return a MatrixXd)
 ```
 
+### Converting from C++
+
+Eigen3ToPython doesn't allow reference-based access.
+
+The following code is valid in C++, where `pt.translation()` returns a reference to the object:
+
+```C++
+auto pt = sva::PTransformd::Identity();
+pt.translation().z() = 1.0;
+// or
+pt.translation() = Eigen::Vector3d::UnitZ();
+Cannot be ported to Python directly:
+```
+
+However the equivalent Python code is not valid, and `pt.translation()` is a copy of the PTransform translation:
+
+```python
+pt = sva.PTransformd.Identity()
+pt.translation().z() = 1.0 # SyntaxError: can't assign to function call
+pt.translation() = eigen.Vector3d.UnitZ() # SyntaxError: can't assign to function call
+```
+
 Installing
 ------
 
