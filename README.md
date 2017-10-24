@@ -222,9 +222,7 @@ auto pt = sva::PTransformd::Identity();
 pt.translation().z() = 1.0;
 // or
 pt.translation() = Eigen::Vector3d::UnitZ();
-Cannot be ported to Python directly:
 ```
-
 However the equivalent Python code is not valid, and `pt.translation()` is a copy of the PTransform translation:
 
 ```python
@@ -232,6 +230,8 @@ pt = sva.PTransformd.Identity()
 pt.translation().z() = 1.0 # SyntaxError: can't assign to function call
 pt.translation() = eigen.Vector3d.UnitZ() # SyntaxError: can't assign to function call
 ```
+
+Instead you might construct a new object with the updated values.
 
 Installing
 ------
