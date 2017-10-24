@@ -19,7 +19,7 @@ cdef class AngleAxisd(object):
     elif len(args) == 1 and isinstance(args[0], Matrix3d):
       self.__m3ctor__(*args)
     else:
-      raise TypeError("Wrong arguments passed to AngleAxisd ctor")
+      raise TypeError("Unsupported argument types passed to AngleAxisd ctor: ".join([str(type(x)) for x in args] ))
   def matrix(self):
     return Matrix3dFromC(<c_eigen.Matrix3d>(self.impl.matrix()))
   def toRotationMatrix(self):

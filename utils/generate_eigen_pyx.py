@@ -184,7 +184,7 @@ def generateMatrixBinding(className, type, nRow, nCol):
         for j, el in enumerate(row):
           self.coeff(i,j,el)
     else:
-      raise TypeError("Invalid arguments passed to {0} ctor")
+      raise TypeError("Unsupported argument types passed to {0} ctor: ".join([str(type(x)) for x in args] ))
 """.format(className, type, n2c(nRow), n2c(nCol), nRow, nCol)
   else:
     ret += """    if len(args) == 0:
@@ -198,7 +198,7 @@ def generateMatrixBinding(className, type, nRow, nCol):
     elif len(args) == 1:
       self.__arrayctor(numpy.asanyarray(args[0], dtype=numpy.double))
     else:
-      raise TypeError("Invalid arguments passed to {0} ctor")
+      raise TypeError("Unsupported argument types passed to {0} ctor: ".join([str(type(x)) for x in args] ))
 """.format(className, type, n2c(nRow), n2c(nCol))
   ret += """  def __getitem__(self, pos):
     if isinstance(pos, tuple):
@@ -474,7 +474,7 @@ def generateVectorBinding(className, type, nRow, nCol):
           self.impl = c_eigen_private.EigenZero[{1},{2},{3}](len(args[0]))
           self.__vctor(args[0])
     else:
-      raise TypeError('Invalid arguments passed to {0} constructor')
+      raise TypeError("Unsupported argument types passed to {0} ctor: ".join([str(type(x)) for x in args] ))
   def __getitem__(self, idx):
     if isinstance(idx, tuple):
       if idx[1] == 0:
