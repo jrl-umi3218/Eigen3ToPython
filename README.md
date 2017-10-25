@@ -292,6 +292,28 @@ The [Angle Axis](https://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation
   q = e.Quaterniond(aa)
 ```
 
+### Converting from C++
+
+Eigen3ToPython doesn't allow reference-based access.
+
+The following code is valid in C++, where `pt.translation()` returns a reference to the object:
+
+```C++
+auto pt = sva::PTransformd::Identity();
+pt.translation().z() = 1.0;
+// or
+pt.translation() = Eigen::Vector3d::UnitZ();
+```
+However the equivalent Python code is not valid, and `pt.translation()` is a copy of the PTransform translation:
+
+```python
+pt = sva.PTransformd.Identity()
+pt.translation().z() = 1.0 # SyntaxError: can't assign to function call
+pt.translation() = eigen.Vector3d.UnitZ() # SyntaxError: can't assign to function call
+```
+
+Instead you might construct a new object with the updated values.
+
 Installing
 ------
 
