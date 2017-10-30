@@ -78,9 +78,16 @@ cdef extern from "<Eigen/Dense>" namespace "Eigen":
 
   cdef cppclass AngleAxis[T]:
     AngleAxis()
+    AngleAxis(const AngleAxis[T] &)
     AngleAxis(T, const Matrix[T, three, one] &)
+    AngleAxis(const Matrix[T, three, three] &)
     Matrix[T, three, three] matrix()
+    Matrix[T,three,three] toRotationMatrix()
     AngleAxis[T] inverse()
+    T angle()
+    Matrix[T, three, one] axis()
+ #   Quaternion[T] operator*(const AngleAxis[T]&)
+ #   Quaternion[T] operator*(const Quaternion[T]&)
 
   ctypedef AngleAxis[double] AngleAxisd
 
@@ -88,6 +95,7 @@ cdef extern from "<Eigen/Dense>" namespace "Eigen":
     Quaternion()
     Quaternion(const Quaternion[T] &)
     Quaternion(const Matrix[T, four, one] &)
+    # Quaternion(const Matrix[T, three, three] &)
     Quaternion(const AngleAxis[T] &)
     Quaternion(T,T,T,T)
     T x()
@@ -100,6 +108,7 @@ cdef extern from "<Eigen/Dense>" namespace "Eigen":
     void setFromTwoVectors(const Vector3d &, const Vector3d &)
     T angularDistance(const Quaternion[T] &)
     Quaternion[T] conjugate()
+    Quaternion[T] operator*(const Quaternion[T]&)
     T dot(const Quaternion[T] &)
     Quaternion[T] inverse()
     bool isApprox(const Quaternion[T] &)

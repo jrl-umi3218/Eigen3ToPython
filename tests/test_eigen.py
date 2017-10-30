@@ -475,7 +475,15 @@ def check_quaternion_almost_equals(q1, q2):
 
 def test_quaternion():
   q = e.Quaterniond()
+  # Identity, xyzw coefficient order.
   id_v = e.Vector4d(0., 0., 0., 1.)
+  # Identity, wxyz scalar constructor order.
+  q = e.Quaterniond(1., 0., 0., 0.)
+  q2 = e.Quaterniond(id_v)
+  # Both identity quaternions must be equal.
+  assert(q.angularDistance(q2) == 0)
+  q3 = q2*q
+  assert(q.angularDistance(q3) == 0)
   v4 = e.Vector4d.Random()
   while v4 == id_v:
     v4 = e.Vector4d.Random()
@@ -506,7 +514,7 @@ def test_quaternion():
   assert(q.coeffs() == id_v)
 
   # Check setters
-  q = e.Quaterniond(v4) # Rebuild from something else than Identity
+  q = e.Quaterniond(v4) # Rebuild from something other than Identity
   q.setIdentity()
   assert(q.coeffs() == id_v)
   q.setFromTwoVectors(e.Vector3d.UnitX(), e.Vector3d.UnitY())
@@ -532,3 +540,22 @@ def test_quaternion():
   assert(q.norm() == 1.0)
   check_quaternion_almost_equals(e.Quaterniond.Identity().slerp(1.0, q), q)
   assert(q.squaredNorm() == 1.0)
+
+  # Static method
+  q = e.Quaterniond.UnitRandom()
+  assert(q.norm() == 1.0)
+
+
+def test_angle_axis():
+  aa = e.AngleAxisd()
+  # quaternion xyzw coefficient order
+  q = e.Quaterniond(e.Vector4d(0., 0., 0., 1.))
+  aa = e.AngleAxisd(q)
+  assert(aa.angle() == 0)
+  v = e.Vector3d.UnitX()
+  aa = e.AngleAxisd(0.1, v)
+  assert(aa.axis() == v)
+  assert(aa.angle() == 0.1)
+  aa2 = aa.inverse()
+  assert(aa2.axis() == v)
+  assert(aa2.angle() == -0.1)
