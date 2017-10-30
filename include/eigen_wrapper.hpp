@@ -153,3 +153,9 @@ Eigen::AngleAxis<T> EigenAAFromQ(const Eigen::Quaternion<T> & q)
 {
   return Eigen::AngleAxis<T>(q);
 }
+
+template<typename T>
+Eigen::Quaternion<T> QuaternionFromM3(const Eigen::Matrix<T, 3, 3> & m)
+{
+  return Eigen::Quaternion<T>(m);
+}

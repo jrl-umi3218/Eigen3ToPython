@@ -47,3 +47,4 @@ cdef extern from "eigen_wrapper.hpp":
   string QtoString[T](const Quaternion[T]&)
   T poly_eval[T](const Matrix[T,dynamic,one]&, const T&)
   AngleAxis[T] EigenAAFromQ[T](const Quaternion[T] &)
+  Quaternion[T] QuaternionFromM3[T](const Matrix[T, three, three]&)

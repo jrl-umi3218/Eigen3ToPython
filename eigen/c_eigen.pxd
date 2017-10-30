@@ -95,7 +95,7 @@ cdef extern from "<Eigen/Dense>" namespace "Eigen":
     Quaternion()
     Quaternion(const Quaternion[T] &)
     Quaternion(const Matrix[T, four, one] &)
-    Quaternion(const Matrix[T, three, three] &)
+    # Quaternion(const Matrix[T, three, three] &)
     Quaternion(const AngleAxis[T] &)
     Quaternion(T,T,T,T)
     T x()
