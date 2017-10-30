@@ -12,12 +12,12 @@ cdef class AngleAxisd(object):
       self.impl = c_eigen.AngleAxisd()
     elif len(args) == 1 and isinstance(args[0], AngleAxisd):
       self.__copyctor__(args[0])
+    elif len(args) == 1 and isinstance(args[0], Matrix3d):
+      self.__m3ctor__(*args)
     elif len(args) == 1 and isinstance(args[0], Quaterniond):
       self.__quatctor__(*args)
     elif len(args) == 2 and isinstance(args[1], Vector3d):
       self.__aaxisctor__(*args)
-    elif len(args) == 1 and isinstance(args[0], Matrix3d):
-      self.__m3ctor__(*args)
     else:
       raise TypeError("Unsupported argument types passed to AngleAxisd ctor: ".join([str(type(x)) for x in args] ))
   def matrix(self):
