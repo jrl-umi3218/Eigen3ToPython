@@ -25,7 +25,7 @@ cdef class Quaterniond(object):
     elif len(args) == 4:
       self.impl = c_eigen.Quaterniond(args[0], args[1], args[2], args[3])
     else:
-      raise TypeError("Unsupported argument types passed to Quaterniond ctor: {0}".format(",".join([str(type(x)) for x in args])))
+      raise TypeError("Unsupported argument types passed to Quaterniond ctor: {0}".format(", ".join([str(type(x)) for x in args])))
   def x(self):
     return self.impl.x()
   def y(self):
