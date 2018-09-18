@@ -64,7 +64,7 @@ def generateBaseBinding(className, type, nRow, nCol):
   def __deepcopy__(self, memo):
     return {0}(self)
   def __str__(self):
-    return c_eigen_private.toString[{1}, {2}, {3}](self.impl)
+    return c_eigen_private.toString[{1}, {2}, {3}](self.impl).decode('utf-8')
   def __repr__(self):
     return "{0} [%sx%s]"%(self.rows(), self.cols())
   def __len__(self):
@@ -701,5 +701,9 @@ cimport c_eigen_private
       os.unlink('{}/eigen.pyx.tmp'.format(out_path))
       os.unlink('{}/eigen.pxd.tmp'.format(out_path))
       return
+  if os.path.exists('{}/eigen.pyx'.format(out_path)):
+    os.unlink('{}/eigen.pyx'.format(out_path))
+  if os.path.exists('{}/eigen.pxd'.format(out_path)):
+    os.unlink('{}/eigen.pxd'.format(out_path))
   os.rename('{}/eigen.pyx.tmp'.format(out_path), '{}/eigen.pyx'.format(out_path))
   os.rename('{}/eigen.pxd.tmp'.format(out_path), '{}/eigen.pxd'.format(out_path))

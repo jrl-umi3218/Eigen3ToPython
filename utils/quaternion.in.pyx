@@ -53,7 +53,7 @@ cdef class Quaterniond(object):
     ret.impl = self.impl.conjugate()
     return ret
   def __str__(self):
-    return c_eigen_private.QtoString[double](self.impl)
+    return c_eigen_private.QtoString[double](self.impl).decode('utf-8')
   def __q_mul(self, Quaterniond other):
     return QuaterniondFromC(self.impl*other.impl)
   def __mul__(self, other):

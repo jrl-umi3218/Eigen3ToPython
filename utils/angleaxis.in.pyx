@@ -33,7 +33,7 @@ cdef class AngleAxisd(object):
   def axis(self):
     return Vector3dFromC(<c_eigen.Vector3d>(self.impl.axis()))
   def __str__(self):
-    return c_eigen_private.AAtoString[double](self.impl)
+    return c_eigen_private.AAtoString[double](self.impl).decode('utf-8')
 
 cdef AngleAxisd AngleAxisdFromC(const c_eigen.AngleAxisd & arg):
   cdef AngleAxisd ret = AngleAxisd()
