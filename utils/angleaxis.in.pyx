@@ -19,7 +19,7 @@ cdef class AngleAxisd(object):
     elif len(args) == 2 and isinstance(args[1], Vector3d):
       self.__aaxisctor__(*args)
     else:
-      raise TypeError("Unsupported argument types passed to AngleAxisd ctor: ".join([str(type(x)) for x in args] ))
+      raise TypeError("Unsupported argument types passed to AngleAxisd ctor: {0}".format(", ".join([str(type(x)) for x in args])))
   def matrix(self):
     return Matrix3dFromC(<c_eigen.Matrix3d>(self.impl.matrix()))
   def toRotationMatrix(self):
@@ -33,7 +33,7 @@ cdef class AngleAxisd(object):
   def axis(self):
     return Vector3dFromC(<c_eigen.Vector3d>(self.impl.axis()))
   def __str__(self):
-    return c_eigen_private.AAtoString[double](self.impl)
+    return c_eigen_private.AAtoString[double](self.impl).decode('utf-8')
 
 cdef AngleAxisd AngleAxisdFromC(const c_eigen.AngleAxisd & arg):
   cdef AngleAxisd ret = AngleAxisd()
