@@ -666,6 +666,8 @@ cimport c_eigen_private
       fd.write(qfd.read())
     with open('{}/angleaxis.in.pyx'.format(utils_path),'r') as effd:
       fd.write(effd.read())
+    with open('{}/extras.in.pyx'.format(utils_path), 'r') as extrafd:
+      fd.write(extrafd.read())
   with open("{}/eigen.pxd.tmp".format(out_path), 'w') as fd:
     fd.write("# This file was automatically generated, do not modify it\n")
     fd.write("cimport numpy\n")

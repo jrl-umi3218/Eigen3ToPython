@@ -159,3 +159,8 @@ Eigen::Quaternion<T> QuaternionFromM3(const Eigen::Matrix<T, 3, 3> & m)
 {
   return Eigen::Quaternion<T>(m);
 }
+
+std::string EigenVersion()
+{
+  return std::to_string(EIGEN_WORLD_VERSION) + "." + std::to_string(EIGEN_MAJOR_VERSION) + "." + std::to_string(EIGEN_MINOR_VERSION);
+}
