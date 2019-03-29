@@ -7,4 +7,5 @@ class Eigen3ToPythonTestConan(ConanFile):
       # self.conanfile_directory
       with tools.pythonpath(self):
           import eigen
-          print("Random Vector3d: %s" % eigen.Vector3d.Random())
+          print("Eigen version: %s" % eigen.EigenVersion())
+          print("Random Vector3d: %s" % eigen.Vector3d.Random().transpose())

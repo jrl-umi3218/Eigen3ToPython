@@ -17,6 +17,11 @@
 
 cmake_minimum_required(VERSION 2.8)
 
+find_package(Eigen3 REQUIRED)
+message("Found Eigen3: ${EIGEN3_VERSION_STRING}")
+message("Eigen include directory: ${EIGEN3_INCLUDE_DIR}")
+configure_file(setup.in.py setup.py)
+
 option(PYTHON_BINDING_USER_INSTALL "Install the Python bindings in user space" OFF)
 option(DISABLE_TESTS "Disable unit tests." OFF)
 

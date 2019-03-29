@@ -18,7 +18,7 @@ class Eigen3ToPythonConan(ConanFile):
     license = "BSD-2-Clause"  # Indicates license type of the packaged library; please use SPDX Identifiers https://spdx.org/licenses/
     exports = ["COPYING", "COPYING.LESSER"]      # Packages the license for the conanfile.py
     # Remove following lines if the target lib does not use cmake.
-    exports_sources = ["CMakeLists.txt", "requirements.txt", "setup.py", "conan/CMakeLists.txt", "eigen/*", "include/*", "tests/*", "utils/*"]
+    exports_sources = ["CMakeLists.txt", "requirements.txt", "setup.in.py", "conan/CMakeLists.txt", "eigen/*", "include/*", "tests/*", "utils/*"]
     generators = "cmake"
 
     # Options may need to change depending on the packaged library.
