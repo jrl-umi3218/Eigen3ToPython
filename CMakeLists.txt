@@ -24,10 +24,13 @@ set(PIP_EXTRA_OPTIONS "")
 if(${PYTHON_BINDING_USER_INSTALL})
   set(PIP_EXTRA_OPTIONS "--user")
 endif()
+if(DEFINED PIP_INSTALL_PREFIX)
+  set(PIP_EXTRA_OPTIONS --prefix ${PIP_INSTALL_PREFIX})
+endif()
 
 # Install requirements
 add_custom_target(eigen-python-bindings-requirements ALL
-  COMMAND pip install -r requirements.txt ${PIP_EXTRA_OPTIONS}
+  COMMAND pip install ${PIP_EXTRA_OPTIONS} -r requirements.txt
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDS requirements.txt
 )
