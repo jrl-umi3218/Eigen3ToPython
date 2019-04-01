@@ -3,6 +3,7 @@
 from conans import ConanFile, CMake, tools
 import os
 import shutil
+import subprocess
 import sys
 
 
@@ -33,20 +34,23 @@ class Eigen3ToPythonConan(ConanFile):
         shutil.move("CMakeLists.txt", "CMakeListsOriginal.txt")
         shutil.move(os.path.join("conan", "CMakeLists.txt"), "CMakeLists.txt")
 
+    def _python_version(self):
+        # Get the version of the Python executable, not this one
+        return '.'.join(subprocess.check_output('python -V'.split(), stderr = subprocess.STDOUT).strip().split()[1].decode().split('.')[0:2])
+
     def _extra_path(self):
         return os.path.join(self.package_folder, 'bin')
 
     def _extra_python_path(self):
-        return os.path.join(self.package_folder, 'lib', 'python{}.{}'.format(sys.version_info.major, sys.version_info.minor), 'site-packages')
+        return os.path.join(self.package_folder, 'lib', 'python{}'.format(self._python_version()), 'site-packages')
 
     def _configure_cmake(self):
-        os.environ['PATH'] =  self._extra_path() + os.pathsep + os.environ['PATH']
-        os.environ['PYTHONPATH'] =  self._extra_python_path() + os.pathsep + os.environ['PYTHONPATH']
+        os.environ['PATH'] =  self._extra_path() + os.pathsep + os.environ.get('PATH', '')
+        os.environ['PYTHONPATH'] =  self._extra_python_path() + os.pathsep + os.environ.get('PYTHONPATH', '')
         cmake = CMake(self)
         cmake.definitions['DISABLE_TESTS'] = True
         cmake.definitions['PIP_INSTALL_PREFIX'] = self.package_folder
         cmake.configure()
-        print("PYTHONPATH", os.environ['PYTHONPATH'])
         return cmake
 
     def build(self):
