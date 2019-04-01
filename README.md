@@ -1,4 +1,6 @@
+[![License](https://img.shields.io/badge/License-BSD%202--Clause-green.svg)](https://opensource.org/licenses/BSD-2-Clause)
 [![Build Status](https://travis-ci.org/jrl-umi3218/Eigen3ToPython.svg?branch=master)](https://travis-ci.org/jrl-umi3218/Eigen3ToPython)
+[![Download](https://api.bintray.com/packages/gergondet/multi-contact/Eigen3ToPython%3Agergondet/images/download.svg) ](https://bintray.com/gergondet/multi-contact/Eigen3ToPython%3Agergondet/_latestVersion)
 
 Eigen3ToPython
 ======

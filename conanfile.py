@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+#
+# Copyright 2012-2019 CNRS-UM LIRMM, CNRS-AIST JRL
+#
 
 from conans import ConanFile, CMake, tools
 import os
@@ -17,7 +20,7 @@ class Eigen3ToPythonConan(ConanFile):
     homepage = "https://github.com/jrl-umi3218/Eigen3ToPython"
     author = "Pierre Gergondet <pierre.gergondet@gmail.com>"
     license = "BSD-2-Clause"  # Indicates license type of the packaged library; please use SPDX Identifiers https://spdx.org/licenses/
-    exports = ["COPYING", "COPYING.LESSER"]      # Packages the license for the conanfile.py
+    exports = ["LICENSE"]      # Packages the license for the conanfile.py
     # Remove following lines if the target lib does not use cmake.
     exports_sources = ["CMakeLists.txt", "requirements.txt", "setup.in.py", "conan/CMakeLists.txt", "eigen/*", "include/*", "tests/*", "utils/*"]
     generators = "cmake"
