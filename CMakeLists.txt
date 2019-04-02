@@ -12,12 +12,28 @@ configure_file(setup.in.py ${CMAKE_CURRENT_SOURCE_DIR}/setup.py)
 option(PYTHON_BINDING_USER_INSTALL "Install the Python bindings in user space" OFF)
 option(DISABLE_TESTS "Disable unit tests." OFF)
 
+# Check whether pip install has a --system option
+#
+# If it has, pip install --system outputs an error message but still returns 0,
+# otherwise the command actually fails
+execute_process(COMMAND pip install --system
+                RESULT_VARIABLE PIP_HAS_SYSTEM_INSTALL
+                OUTPUT_QUIET ERROR_QUIET)
+if(${PIP_HAS_SYSTEM_INSTALL} EQUAL 0)
+  set(PIP_HAS_SYSTEM_INSTALL True)
+else()
+  set(PIP_HAS_SYSTEM_INSTALL False)
+endif()
+
 set(PIP_EXTRA_OPTIONS "")
 if(${PYTHON_BINDING_USER_INSTALL})
   set(PIP_EXTRA_OPTIONS "--user")
 endif()
 if(DEFINED PIP_INSTALL_PREFIX)
   set(PIP_EXTRA_OPTIONS --prefix ${PIP_INSTALL_PREFIX})
+  if(${PIP_HAS_SYSTEM_INSTALL})
+    set(PIP_EXTRA_OPTIONS --system ${PIP_EXTRA_OPTIONS})
+  endif()
 endif()
 
 # Install requirements

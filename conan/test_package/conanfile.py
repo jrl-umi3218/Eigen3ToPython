@@ -1,11 +1,9 @@
 from conans import ConanFile, tools
+import os
+import subprocess
 
 class Eigen3ToPythonTestConan(ConanFile):
     requires = "Eigen3ToPython/1.0.0@gergondet/stable"
 
     def test(self):
-      # self.conanfile_directory
-      with tools.pythonpath(self):
-          import eigen
-          print("Eigen version: %s" % eigen.EigenVersion())
-          print("Random Vector3d: %s" % eigen.Vector3d.Random().transpose())
+      subprocess.check_call(['python', os.path.join(os.path.dirname(__file__), 'test.py')])

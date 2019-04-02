@@ -9,6 +9,9 @@ import shutil
 import subprocess
 import sys
 
+def get_python_version():
+    # Get the version of the Python executable, not this one
+    return '.'.join(subprocess.check_output('python -V'.split(), stderr = subprocess.STDOUT).strip().split()[1].decode().split('.')[0:2])
 
 class Eigen3ToPythonConan(ConanFile):
     name = "Eigen3ToPython"
@@ -24,6 +27,8 @@ class Eigen3ToPythonConan(ConanFile):
     # Remove following lines if the target lib does not use cmake.
     exports_sources = ["CMakeLists.txt", "requirements.txt", "setup.in.py", "conan/CMakeLists.txt", "eigen/*", "include/*", "tests/*", "utils/*"]
     generators = "cmake"
+    options = { "python_version": ["2.7", "3.3", "3.4", "3.5", "3.6", "3.7"] }
+    default_options = { "python_version": get_python_version() }
 
     # Options may need to change depending on the packaged library.
     settings = "os", "arch"
@@ -37,15 +42,11 @@ class Eigen3ToPythonConan(ConanFile):
         shutil.move("CMakeLists.txt", "CMakeListsOriginal.txt")
         shutil.move(os.path.join("conan", "CMakeLists.txt"), "CMakeLists.txt")
 
-    def _python_version(self):
-        # Get the version of the Python executable, not this one
-        return '.'.join(subprocess.check_output('python -V'.split(), stderr = subprocess.STDOUT).strip().split()[1].decode().split('.')[0:2])
-
     def _extra_path(self):
         return os.path.join(self.package_folder, 'bin')
 
     def _extra_python_path(self):
-        return os.path.join(self.package_folder, 'lib', 'python{}'.format(self._python_version()), 'site-packages')
+        return os.path.join(self.package_folder, 'lib', 'python{}'.format(get_python_version()), 'site-packages')
 
     def _configure_cmake(self):
         os.environ['PATH'] =  self._extra_path() + os.pathsep + os.environ.get('PATH', '')
