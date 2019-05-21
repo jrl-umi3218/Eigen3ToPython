@@ -65,6 +65,10 @@ class Eigen3ToPythonConan(ConanFile):
         cmake = self._configure_cmake()
         cmake.install()
 
+    def deploy(self):
+        self.copy("*")
+        self.copy_deps("*")
+
     def package_info(self):
         self.env_info.PATH.append(self._extra_path())
         self.env_info.PYTHONPATH.append(self._extra_python_path())
