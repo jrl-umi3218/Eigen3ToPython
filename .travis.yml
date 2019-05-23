@@ -21,6 +21,15 @@ env:
     - USE_SRC_EIGEN=false
     - USE_SRC_EIGEN=true USE_EIGEN33=false
     - USE_SRC_EIGEN=true USE_EIGEN33=true
+matrix:
+  include:
+    - language: cpp
+      compiler: gcc
+      env:
+        - APT_DEPENDENCIES="python-pip python3-pip cython cython3 python-nose python3-nose python-numpy python3-numpy python-coverage python3-coverage"
+        - CMAKE_ADDITIONAL_OPTIONS=-DPYTHON_BINDING_BUILD_PYTHON2_AND_PYTHON3:BOOL=ON"
+      before_install: ./.travis/run before_install
+      script: ./.travis/run build
 script: ./.travis/run build
 before_install:
 - if [ $USE_SRC_EIGEN = true ] && [ $USE_EIGEN33 = true ]; then ./.travis/dependencies/eigen-3.3; fi
