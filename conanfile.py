@@ -59,6 +59,9 @@ class Eigen3ToPythonConan(ConanFile):
 
     def build(self):
         cmake = self._configure_cmake()
+        # This recipe is used down the line but we only want to run this in this package
+        if isinstance(self, Eigen3ToPythonConan):
+            subprocess.run(["pip", "install", "-r", "{}/requirements.txt".format(self.source_folder)])
         cmake.build()
 
     def package(self):
