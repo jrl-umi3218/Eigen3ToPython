@@ -1,12 +1,17 @@
 #!/usr/bin/make -f
+# -*- makefile -*-
 
-#DH_VERBOSE = 1
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
 
-export PYBUILD_NAME=eigen
-export PYBUILD_INSTALL_ARGS_python3=--install-layout=deb
+TMP = $(CURDIR)/debian/tmp
 
 %:
-	dh $@ --with python2,python3 --buildsystem=pybuild
+	dh $@
 
-override_dh_auto_test:
-	:
+override_dh_auto_configure:
+	dh_auto_configure -- -DPYTHON_DEB_ROOT=$(TMP)
+
+override_dh_auto_install:
+	dh_auto_install
+	cd $(TMP) && rm -f `find . -name '*.pyc'` && rm -rf `find . -type d -name '__pycache__'`
