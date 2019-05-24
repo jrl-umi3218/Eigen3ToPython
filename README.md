@@ -1,4 +1,7 @@
+[![License](https://img.shields.io/badge/License-BSD%202--Clause-green.svg)](https://opensource.org/licenses/BSD-2-Clause)
 [![Build Status](https://travis-ci.org/jrl-umi3218/Eigen3ToPython.svg?branch=master)](https://travis-ci.org/jrl-umi3218/Eigen3ToPython)
+[![Build status](https://ci.appveyor.com/api/projects/status/5hrx27e909f3jc0n?svg=true)](https://ci.appveyor.com/project/gergondet/eigen3topython)
+[![Download](https://api.bintray.com/packages/gergondet/multi-contact/Eigen3ToPython%3Agergondet/images/download.svg) ](https://bintray.com/gergondet/multi-contact/Eigen3ToPython%3Agergondet/_latestVersion)
 
 Eigen3ToPython
 ======
@@ -14,6 +17,50 @@ This library supports:
      * Note that memory is not shared between numpy and eigen
 
 If you want more features feel free to open an issue or submit a pull request. :-)
+
+Installing
+------
+
+### Ubuntu LTS (14.04, 16.04, 18.04): PPA
+
+Use the [multi-contact-unstable PPA](https://launchpad.net/~pierre-gergondet+ppa/+archive/ubuntu/multi-contact-unstable):
+```bash
+sudo add-apt-repository ppa:pierre-gergondet+ppa/multi-contact-unstable
+sudo apt-get update
+sudo apt-get install python-eigen python3-eigen
+```
+
+### Manual
+
+#### Dependencies
+
+To compile you need the following tools:
+
+ * [Git](https://git-scm.com/)
+ * [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) >= 3.2
+ * [pip](https://pypi.python.org/pypi/pip)
+ * [CMake](https://cmake.org/)
+
+#### Building
+
+```sh
+git clone https://github.com/jrl-umi3218/Eigen3ToPython.git
+cd Eigen3ToPython
+pip install -r requirements.txt
+mkdir -p build
+cd build
+cmake ../ -DCMAKE_BUILD_TYPE=RelWithDebInfo
+make
+sudo make install
+```
+
+#### CMake options
+
+By default, the build will use the `python` and `pip` command to install the bindings for the default system version (this behaviour can be used to build the bindings in a given virtualenv). The following options allow to control this behaviour:
+
+- `PYTHON_BINDING_FORCE_PYTHON2`: use `python2` and `pip2` instead of `python` and `pip`
+- `PYTHON_BINDING_FORCE_PYTHON3`: use `python3` and `pip3` instead of `python` and `pip`
+- `PYTHON_BINDING_BUILD_PYTHON2_AND_PYTHON2`: builds two sets of bindings one with `python2` and `pip2`, the other with `python3` and `pip3`
 
 Documentation
 ------
@@ -314,38 +361,6 @@ pt.translation() = eigen.Vector3d.UnitZ() # SyntaxError: can't assign to functio
 
 Instead you might construct a new object with the updated values.
 
-Installing
-------
-
-### Ubuntu 14.04 and 16.04 binary ppa install
-
-Use the [multi-contact-unstable](https://launchpad.net/~pierre-gergondet+ppa/+archive/ubuntu/multi-contact-unstable) ppa:
-```bash
-sudo add-apt-repository ppa:pierre-gergondet+ppa/multi-contact-unstable
-sudo apt-get update
-sudo apt-get install python-eigen python3-eigen
-```
-
-### Manual
-
-#### Dependencies
-
-To compile you need the following tools:
-
- * [Git](https://git-scm.com/)
- * [pkg-config]()
- * [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) >= 3.2
- * [pip](https://pypi.python.org/pypi/pip)
- * [Cython](http://cython.org/) >= 0.25
-
-#### Building
-
-```sh
-git clone https://github.com/jrl-umi3218/Eigen3ToPython.git
-cd Eigen3ToPython
-pip install -r requirements.txt
-pip install .
-```
 
 Pulling git subtree
 ------

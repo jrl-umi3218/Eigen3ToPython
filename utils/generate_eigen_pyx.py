@@ -1,22 +1,8 @@
 #!/usr/bin/env python
 
 #
-# Copyright 2012-2017 CNRS-UM LIRMM, CNRS-AIST JRL
+# Copyright 2012-2019 CNRS-UM LIRMM, CNRS-AIST JRL
 #
-# This file is part of Eigen3ToPython.
-#
-# Eigen3ToPython is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Eigen3ToPython is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public License
-# along with Eigen3ToPython.  If not, see <http://www.gnu.org/licenses/>.
 
 import hashlib
 import os
@@ -666,6 +652,8 @@ cimport c_eigen_private
       fd.write(qfd.read())
     with open('{}/angleaxis.in.pyx'.format(utils_path),'r') as effd:
       fd.write(effd.read())
+    with open('{}/extras.in.pyx'.format(utils_path), 'r') as extrafd:
+      fd.write(extrafd.read())
   with open("{}/eigen.pxd.tmp".format(out_path), 'w') as fd:
     fd.write("# This file was automatically generated, do not modify it\n")
     fd.write("cimport numpy\n")

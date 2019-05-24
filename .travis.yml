@@ -1,12 +1,15 @@
+sudo: required
+dist: xenial
 branches:
   except:
     - debian
-dist: trusty
 language: python
 python:
 - '2.7'
 - '3.4'
 - '3.5'
+- '3.6'
+- '3.7'
 addons:
   apt:
     packages:
@@ -18,14 +21,19 @@ env:
     - USE_SRC_EIGEN=false
     - USE_SRC_EIGEN=true USE_EIGEN33=false
     - USE_SRC_EIGEN=true USE_EIGEN33=true
-script:
-- . ./.travis/common.sh
-- pip install .
-- nosetests
+matrix:
+  include:
+    - language: cpp
+      compiler: gcc
+      env:
+        - APT_DEPENDENCIES="python-pip python3-pip cython cython3 python-nose python3-nose python-numpy python3-numpy python-coverage python3-coverage"
+        - CMAKE_ADDITIONAL_OPTIONS=-DPYTHON_BINDING_BUILD_PYTHON2_AND_PYTHON3:BOOL=ON"
+      before_install: ./.travis/run before_install
+      script: ./.travis/run build
+script: ./.travis/run build
 before_install:
 - if [ $USE_SRC_EIGEN = true ] && [ $USE_EIGEN33 = true ]; then ./.travis/dependencies/eigen-3.3; fi
 - if [ $USE_SRC_EIGEN = true ] && [ $USE_EIGEN33 = false ]; then ./.travis/dependencies/eigen-3.2; fi
-- pip install -r requirements.txt
 notifications:
   slack:
     secure: AQEc0L8IPw0G+61qoFZ4ceGVuKP6G+XO9UQpoeAbL4IMwJvTsFtbSerFH9lQih2OEz3+iV1muEye9ISW1GuUIyJReQfZNI+sSpCYfxDTeDDdUseMqpFRp0KazVAAhPNZ+zADANKwMisofwQmBhwz0w+LSZ34nhj0Gm7/OGxiU2E=

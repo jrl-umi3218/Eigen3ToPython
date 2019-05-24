@@ -1,3 +1,7 @@
+#
+# Copyright 2012-2019 CNRS-UM LIRMM, CNRS-AIST JRL
+#
+
 cdef class AngleAxisd(object):
   def __copyctor__(self, AngleAxisd other):
     self.impl = other.impl
