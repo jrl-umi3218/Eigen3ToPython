@@ -13,14 +13,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v1
+    - uses: jrl-umi3218/github-actions/get-eigen@master
     - name: Install dependencies (Linux)
       run: |
-        sudo apt-get update
-        sudo apt-get install -qq cython cython3 python-nose python3-nose python-numpy python3-numpy python-coverage python3-coverage libeigen3-dev python-setuptools python3-setuptools
+        sudo apt-get install -qq cython cython3 python-nose python3-nose python-numpy python3-numpy python-coverage python3-coverage python-setuptools python3-setuptools
       if: startsWith(matrix.os, 'ubuntu')
     - name: Install dependencies (MacOS)
       run: |
-        brew install eigen
         sudo pip install -r requirements.txt
         sudo pip3 install -r requirements.txt
       if: startsWith(matrix.os, 'macos')
@@ -28,17 +27,6 @@ jobs:
       shell: powershell
       run: |
         pip install -r requirements.txt
-        Invoke-WebRequest -Uri "http://bitbucket.org/eigen/eigen/get/3.3.7.zip" -OutFile "3.3.7.zip"
-        Expand-Archive -Path "3.3.7.zip" -DestinationPath .
-      if: matrix.os == 'windows-latest'
-    - name: Install Eigen (Windows)
-      shell: cmd
-      run: |
-        cd eigen-eigen-323c052e1731
-        md build
-        cd build
-        cmake ../ -DCMAKE_INSTALL_PREFIX="C:\devel\install"
-        cmake --build . --target install --config RelWithDebInfo
       if: matrix.os == 'windows-latest'
     - name: Configure
       run: |
