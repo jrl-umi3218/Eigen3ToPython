@@ -1,6 +1,4 @@
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-green.svg)](https://opensource.org/licenses/BSD-2-Clause)
-[![Build Status](https://travis-ci.org/jrl-umi3218/Eigen3ToPython.svg?branch=master)](https://travis-ci.org/jrl-umi3218/Eigen3ToPython)
-[![Build status](https://ci.appveyor.com/api/projects/status/5hrx27e909f3jc0n?svg=true)](https://ci.appveyor.com/project/gergondet/eigen3topython)
 [![Download](https://api.bintray.com/packages/gergondet/multi-contact/Eigen3ToPython%3Agergondet/images/download.svg) ](https://bintray.com/gergondet/multi-contact/Eigen3ToPython%3Agergondet/_latestVersion)
 
 Eigen3ToPython
@@ -360,14 +358,3 @@ pt.translation() = eigen.Vector3d.UnitZ() # SyntaxError: can't assign to functio
 ```
 
 Instead you might construct a new object with the updated values.
-
-
-Pulling git subtree
-------
-
-To update/sync .travis directory with their upstream git repository:
-
-```sh
-git fetch git://github.com/jrl-umi3218/jrl-travis.git master
-git subtree pull --prefix .travis git://github.com/jrl-umi3218/jrl-travis.git master --squash
-```

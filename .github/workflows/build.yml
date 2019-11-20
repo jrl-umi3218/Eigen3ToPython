@@ -1,0 +1,77 @@
+name: CI of Eigen3ToPython
+
+on: [push,pull_request]
+
+jobs:
+
+  build:
+
+    strategy:
+      matrix:
+        os: [ubuntu-16.04, ubuntu-18.04, macos-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install dependencies (Linux)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -qq cython cython3 python-nose python3-nose python-numpy python3-numpy python-coverage python3-coverage libeigen3-dev python-setuptools python3-setuptools
+      if: startsWith(matrix.os, 'ubuntu')
+    - name: Install dependencies (MacOS)
+      run: |
+        brew install eigen
+        sudo pip install -r requirements.txt
+        sudo pip3 install -r requirements.txt
+      if: startsWith(matrix.os, 'macos')
+    - name: Install dependencies (Windows)
+      shell: powershell
+      run: |
+        pip install -r requirements.txt
+        Invoke-WebRequest -Uri "http://bitbucket.org/eigen/eigen/get/3.3.7.zip" -OutFile "3.3.7.zip"
+        Expand-Archive -Path "3.3.7.zip" -DestinationPath .
+      if: matrix.os == 'windows-latest'
+    - name: Install Eigen (Windows)
+      shell: cmd
+      run: |
+        cd eigen-eigen-323c052e1731
+        md build
+        cd build
+        cmake ../ -DCMAKE_INSTALL_PREFIX="C:\devel\install"
+        cmake --build . --target install --config RelWithDebInfo
+      if: matrix.os == 'windows-latest'
+    - name: Configure
+      run: |
+        mkdir -p build
+        cd build
+        cmake ../ -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPYTHON_BINDING_BUILD_PYTHON2_AND_PYTHON3:BOOL=ON || exit 1
+      if: matrix.os != 'windows-latest'
+    - name: Configure (Windows)
+      shell: cmd
+      run: |
+        md build
+        cd build
+        cmake ../ -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX="C:\devel\install"
+      if: matrix.os == 'windows-latest'
+    - name: Build
+      shell: bash
+      run: cmake --build . --config RelWithDebInfo || exit 1
+      working-directory: ./build
+    - name: Install
+      shell: bash
+      run: cmake --build . --target install --config RelWithDebInfo || exit 1
+      working-directory: ./build
+    - name: Test
+      shell: bash
+      run: ctest -C RelWithDebInfo || exit 1
+      working-directory: ./build
+    - name: Slack Notification
+      uses: homoluctus/slatify@master
+      if: always()
+      with:
+        type: ${{ job.status }}
+        job_name: 'Build ${{ matrix.os }}'
+        mention_if: 'always'
+        username: "GitHub Actions Report"
+        channel: '#ci'
+        url: ${{ secrets.SLACK_WEBHOOK }}
