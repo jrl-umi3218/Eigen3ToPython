@@ -13,21 +13,19 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v1
-    - uses: jrl-umi3218/github-actions/get-eigen@master
-    - name: Install dependencies (Linux)
-      run: |
-        sudo apt-get install -qq cython cython3 python-nose python3-nose python-numpy python3-numpy python-coverage python3-coverage python-setuptools python3-setuptools
-      if: startsWith(matrix.os, 'ubuntu')
-    - name: Install dependencies (MacOS)
-      run: |
-        sudo pip install -r requirements.txt
-        sudo pip3 install -r requirements.txt
-      if: startsWith(matrix.os, 'macos')
-    - name: Install dependencies (Windows)
-      shell: powershell
-      run: |
-        pip install -r requirements.txt
-      if: matrix.os == 'windows-latest'
+    - name: Install dependencies
+      uses: jrl-umi3218/github-actions/install-dependencies@master
+      with:
+        ubuntu: |
+          apt: cython cython3 python-nose python3-nose python-numpy python3-numpy python-coverage python3-coverage python-setuptools python3-setuptools libeigen3-dev
+        macos: |
+          brew: eigen
+          pip: Cython coverage nose numpy
+        windows: |
+          pip: Cython coverage nose numpy
+          github:
+            - path: eigenteam/eigen-git-mirror
+              ref: 3.3.7
     - name: Configure
       run: |
         mkdir -p build
