@@ -26,31 +26,8 @@ jobs:
           github:
             - path: eigenteam/eigen-git-mirror
               ref: 3.3.7
-    - name: Configure
-      run: |
-        mkdir -p build
-        cd build
-        cmake ../ -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPYTHON_BINDING_BUILD_PYTHON2_AND_PYTHON3:BOOL=ON || exit 1
-      if: matrix.os != 'windows-latest'
-    - name: Configure (Windows)
-      shell: cmd
-      run: |
-        md build
-        cd build
-        cmake ../ -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX="C:\devel\install"
-      if: matrix.os == 'windows-latest'
-    - name: Build
-      shell: bash
-      run: cmake --build . --config RelWithDebInfo || exit 1
-      working-directory: ./build
-    - name: Install
-      shell: bash
-      run: cmake --build . --target install --config RelWithDebInfo || exit 1
-      working-directory: ./build
-    - name: Test
-      shell: bash
-      run: ctest -C RelWithDebInfo || exit 1
-      working-directory: ./build
+    - name: Build and test
+      uses: jrl-umi3218/github-actions/build-cmake-project@master
     - name: Slack Notification
       uses: homoluctus/slatify@master
       if: always()
