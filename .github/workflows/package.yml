@@ -1,0 +1,62 @@
+name: Package Eigen3ToPython
+
+# This workflow only runs when pushing to master or pushing a tag
+#
+# On master, it will:
+# - Build packages for selected Debian/Ubuntu distro
+# - Upload the packages to https://dl.bintray.com/gergondet/multi-contact-head
+#
+# On tagged versions it will:
+# - Create a GitHub release draft
+# - Attach the sources to the release
+# - Build packages for selected Debian/Ubuntu distro
+# - Upload the packages to https://dl.bintray.com/gergondet/multi-contact
+# - Finalize the release
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - v*
+
+jobs:
+  build-packages:
+
+    strategy:
+      matrix:
+        dist: [xenial]
+        arch: [amd64]
+
+    runs-on: ubuntu-18.04
+    env:
+      DIST: ${{ matrix.dist }}
+      ARCH: ${{ matrix.arch }}
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup pbuilder
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -qq packaging-dev debootstrap devscripts git-buildpackage debian-archive-keyring unzip pkg-kde-tools dput python3-setuptools python-pip python3-pip git-build-recipe
+        cp -f .github/workflows/pbuilderrc $HOME/.pbuilderrc
+        sed -i "s/@DIST@/${DIST}/g" $HOME/.pbuilderrc
+        sed -i "s/@ARCH@/${ARCH}/g" $HOME/.pbuilderrc
+        sed -i "s/@ROS_SETUP@//g" $HOME/.pbuildercc
+        sed -i "s/@OTHERMIRRORS@//g" $HOME/.pbuilderrc
+        echo "echo \"force-unsafe-io\" > /etc/dpkg/dpkg.cfg.d/02apt-speedup" | pbuilder login --save-after-exec
+        pbuilder update
+    - name: Build recipe
+      run: |
+        cp .github/workflows/Eigen3ToPython.recipe /tmp/Eigen3ToPython.recipe
+        sed -i "s/@REF@/${{ github.ref }}" /tmp/Eigen3ToPython.recipe
+        echo "Using the following recipe"
+        echo "##########################"
+        cat /tmp/Eigen3ToPython.recipe
+        git-build-recipe --allow-fallback-to-native /tmp/Eigen3ToPython.recipe /tmp/brewing_Eigen3ToPython
+    - name: Build package
+      run: |
+        pbuilder build /tmp/brewing_Eigen3ToPython/*.dsc
+    - uses: actions/upload-artifact@v1
+      with:
+        name: package-${{ matrix.dist }}-${{ matrix.arch }}
+        path: /var/cache/pbuilder/${{ matrix.dist }}-${{ matrix.arch }}/result/*.deb
