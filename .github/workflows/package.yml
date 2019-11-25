@@ -39,11 +39,9 @@ jobs:
     - name: Setup pbuilder
       run: |
         set -x
-        ls -la
         sudo apt-get update -qq
         sudo apt-get install -qq packaging-dev debootstrap devscripts git-buildpackage debian-archive-keyring unzip pkg-kde-tools dput python3-setuptools python-pip python3-pip git-build-recipe python-all python3-all cython cython3 python-nose python3-nose python-numpy python3-numpy python-coverage python3-coverage python-setuptools python3-setuptools libeigen3-dev
         cp -f .github/workflows/pbuilderrc $HOME/.pbuilderrc
-        ls -la $HOME
         sed -i "s/@DIST@/${DIST}/g" $HOME/.pbuilderrc
         sed -i "s/@ARCH@/${ARCH}/g" $HOME/.pbuilderrc
         sed -i "s/@ROS_SETUP@//g" $HOME/.pbuilderrc
@@ -65,8 +63,44 @@ jobs:
         git-build-recipe --allow-fallback-to-native /tmp/Eigen3ToPython.recipe /tmp/pbuilder
     - name: Build package
       run: |
+        set -x
         sudo pbuilder build /tmp/pbuilder/*.dsc
+        mkdir /tmp/packages-${DIST}-${ARCH}
+        sudo mv /var/cache/pbuilder/${DIST}-${ARCH}/result/*.deb /tmp/packages-${DIST}-${ARCH}
     - uses: actions/upload-artifact@v1
       with:
-        name: package-${{ matrix.dist }}-${{ matrix.arch }}
-        path: /var/cache/pbuilder/${{ matrix.dist }}-${{ matrix.arch }}/result/
+        name: packages-${{ matrix.dist }}-${{ matrix.arch }}
+        path: /tmp/packages-${{ matrix.dist }}-${{ matrix.arch }}/
+
+  upload-packages:
+    needs: build-packages
+    strategy:
+      matrix:
+        dist: [xenial]
+        arch: [amd64]
+
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Set upload URL (master)
+      run: |
+        echo "::set-env name=BINTRAY_URL::api.bintray.com/content/gergondet/multi-contact-head"
+        echo "::set-env name=VERSION_NAME::HEAD"
+      if: github.ref == 'refs/heads/master'
+    - name: Set upload URL (tag)
+      run: |
+        echo "::set-env name=BINTRAY_URL::api.bintray.com/content/gergondet/multi-contact"
+        export REF=`echo ${{ github.ref }} | sed -e 's@refs/[a-z]*/@@'`
+        echo "::set-env name=VERSION_NAME::${REF}"
+      if: github.ref != 'refs/heads/master'
+    - name: Download packages
+      uses: actions/download-artifact@v1
+      with:
+        name: packages-${{ matrix.dist }}-${{ matrix.arch }}
+    - name: Upload
+      run: |
+        set -x
+        cd packages-${{ matrix.dist }}-${{ matrix.arch }}
+        for f in `ls *.deb`
+        do
+          curl -T $f -ugergondet:${{ secrets.BINTRAY_API_KEY }} "https://${BINTRAY_URL}/Eigen3ToPython/${VERSION_NAME}/${{ matrix.dist }}/${{ matrix.arch }}/$f;deb_distribution=${{ matrix.dist }};deb_component=main;deb_architecture=${{ matrix.arch }};publish=1;override=1" --header "X-GPG-PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}"
+        done
