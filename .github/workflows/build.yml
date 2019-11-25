@@ -36,13 +36,13 @@ jobs:
       uses: jrl-umi3218/github-actions/build-cmake-project@master
       with:
         build-type: ${{ matrix.build-type }}
-    - name: Slack Notification
-      uses: homoluctus/slatify@master
-      if: always()
-      with:
-        type: ${{ job.status }}
-        job_name: 'Build ${{ matrix.os }}'
-        mention_if: 'always'
-        username: "GitHub Actions Report"
-        channel: '#ci'
-        url: ${{ secrets.SLACK_WEBHOOK }}
+#    - name: Slack Notification
+#      uses: homoluctus/slatify@master
+#      if: always()
+#      with:
+#        type: ${{ job.status }}
+#        job_name: 'Build ${{ matrix.os }}'
+#        mention_if: 'always'
+#        username: "GitHub Actions Report"
+#        channel: '#ci'
+#        url: ${{ secrets.SLACK_WEBHOOK }}
