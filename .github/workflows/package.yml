@@ -24,6 +24,7 @@ jobs:
   build-packages:
 
     strategy:
+      fail-fast: false
       matrix:
         dist: [xenial, bionic, focal]
         arch: [i386, amd64]
@@ -62,6 +63,7 @@ jobs:
   upload-packages:
     needs: build-packages
     strategy:
+      fail-fast: false
       matrix:
         dist: [xenial, bionic, focal]
         arch: [i386, amd64]
