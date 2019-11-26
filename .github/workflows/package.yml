@@ -53,8 +53,9 @@ jobs:
         dist: ${{ matrix.dist }}
         arch: ${{ matrix.arch }}
         recipe: /tmp/Eigen3ToPython.recipe
-        other-mirrors: ${{ env.EXTRA_MIRROR }}
-        other-gpg-keys: "0x892EA6EE273707C6495A6FB6220D644C64666806"
+        # These don't exist yet, keep it around to copy-paste it later
+        #other-mirrors: ${{ env.EXTRA_MIRROR }}
+        #other-gpg-keys: "0x892EA6EE273707C6495A6FB6220D644C64666806"
     - uses: actions/upload-artifact@v1
       with:
         name: packages-${{ matrix.dist }}-${{ matrix.arch }}
