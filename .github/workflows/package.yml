@@ -29,44 +29,27 @@ jobs:
         arch: [amd64]
 
     runs-on: ubuntu-18.04
-    env:
-      DEBFULLNAME: JRL/IDH Continuous Integration Tool
-      DEBEMAIL: jrl-idh+ci@gmail.com
-      DIST: ${{ matrix.dist }}
-      ARCH: ${{ matrix.arch }}
     steps:
     - uses: actions/checkout@v1
-    - name: Setup pbuilder
+    - name: Prepare recipe
       run: |
         set -x
-        sudo apt-get update -qq
-        sudo apt-get install -qq packaging-dev debootstrap devscripts git-buildpackage debian-archive-keyring unzip pkg-kde-tools dput python3-setuptools python-pip python3-pip git-build-recipe python-all python3-all cython cython3 python-nose python3-nose python-numpy python3-numpy python-coverage python3-coverage python-setuptools python3-setuptools libeigen3-dev
-        cp -f .github/workflows/pbuilderrc $HOME/.pbuilderrc
-        sed -i "s/@DIST@/${DIST}/g" $HOME/.pbuilderrc
-        sed -i "s/@ARCH@/${ARCH}/g" $HOME/.pbuilderrc
-        sed -i "s/@ROS_SETUP@//g" $HOME/.pbuilderrc
-        sed -i "s/@OTHERMIRRORS@//g" $HOME/.pbuilderrc
-        sudo pbuilder create
-        echo "echo \"force-unsafe-io\" > /etc/dpkg/dpkg.cfg.d/02apt-speedup" | sudo pbuilder login --save-after-exec
-        sudo pbuilder update
-    - name: Build recipe
-      run: |
-        set -x
-        git config --global user.name "${DEBFULLNAME}"
-        git config --global user.email "${DEBEMAIL}"
         cp .github/workflows/Eigen3ToPython.recipe /tmp/Eigen3ToPython.recipe
         export REF=`echo ${{ github.ref }} | sed -e 's@refs/[a-z]*/@@'`
-        sed -i "s#@REF@#${REF}#" /tmp/Eigen3ToPython.recipe
-        echo "Using the following recipe"
-        echo "##########################"
-        cat /tmp/Eigen3ToPython.recipe
-        git-build-recipe --allow-fallback-to-native /tmp/Eigen3ToPython.recipe /tmp/pbuilder
+        if [ $REF == "master" ]
+        then
+          echo "::set-env name=EXTRA_MIRROR::https://dl.bintray.com/gergondet/multi-contact-head"
+        else
+          echo "::set-env name=EXTRA_MIRROR::https://dl.bintray.com/gergondet/multi-contact-release"
+        fi
     - name: Build package
-      run: |
-        set -x
-        sudo pbuilder build /tmp/pbuilder/*.dsc
-        mkdir /tmp/packages-${DIST}-${ARCH}
-        sudo mv /var/cache/pbuilder/${DIST}-${ARCH}/result/*.deb /tmp/packages-${DIST}-${ARCH}
+      uses: jrl-umi3218/github-actions/build-package@master
+      with:
+        dist: ${{ matrix.dist }}
+        arch: ${{ matrix.arch }}
+        recipe: /tmp/Eigen3ToPython.recipe
+        other-mirrors: ${{ env.EXTRA_MIRROR }}
+        other-gpg-keys: "0x892EA6EE273707C6495A6FB6220D644C64666806"
     - uses: actions/upload-artifact@v1
       with:
         name: packages-${{ matrix.dist }}-${{ matrix.arch }}
@@ -88,7 +71,7 @@ jobs:
       if: github.ref == 'refs/heads/master'
     - name: Set upload URL (tag)
       run: |
-        echo "::set-env name=BINTRAY_URL::api.bintray.com/content/gergondet/multi-contact"
+        echo "::set-env name=BINTRAY_URL::api.bintray.com/content/gergondet/multi-contact-release"
         export REF=`echo ${{ github.ref }} | sed -e 's@refs/[a-z]*/@@'`
         echo "::set-env name=VERSION_NAME::${REF}"
       if: github.ref != 'refs/heads/master'
