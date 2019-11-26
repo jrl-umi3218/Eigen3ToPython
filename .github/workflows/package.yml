@@ -36,12 +36,16 @@ jobs:
         set -x
         cp .github/workflows/Eigen3ToPython.recipe /tmp/Eigen3ToPython.recipe
         export REF=`echo ${{ github.ref }} | sed -e 's@refs/[a-z]*/@@'`
+        sed -i "s#@REF@#${REF}#" /tmp/Eigen3ToPython.recipe
         if [ $REF == "master" ]
         then
           echo "::set-env name=EXTRA_MIRROR::https://dl.bintray.com/gergondet/multi-contact-head"
         else
           echo "::set-env name=EXTRA_MIRROR::https://dl.bintray.com/gergondet/multi-contact-release"
         fi
+        echo "Prepared recipe"
+        echo "###############"
+        cat /tmp/Eigen3ToPython.recipe
     - name: Build package
       uses: jrl-umi3218/github-actions/build-package@master
       with:
