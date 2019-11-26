@@ -25,8 +25,8 @@ jobs:
 
     strategy:
       matrix:
-        dist: [xenial]
-        arch: [amd64]
+        dist: [xenial, bionic, focal]
+        arch: [i386, amd64]
 
     runs-on: ubuntu-18.04
     steps:
@@ -63,8 +63,8 @@ jobs:
     needs: build-packages
     strategy:
       matrix:
-        dist: [xenial]
-        arch: [amd64]
+        dist: [xenial, bionic, focal]
+        arch: [i386, amd64]
 
     runs-on: ubuntu-18.04
     steps:
