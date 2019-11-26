@@ -68,26 +68,34 @@ jobs:
 
     runs-on: ubuntu-18.04
     steps:
-    - name: Set upload URL (master)
+    - name: Set upload parameters
       run: |
-        echo "::set-env name=BINTRAY_URL::api.bintray.com/content/gergondet/multi-contact-head"
-        echo "::set-env name=VERSION_NAME::HEAD"
-      if: github.ref == 'refs/heads/master'
-    - name: Set upload URL (tag)
-      run: |
-        echo "::set-env name=BINTRAY_URL::api.bintray.com/content/gergondet/multi-contact-release"
         export REF=`echo ${{ github.ref }} | sed -e 's@refs/[a-z]*/@@'`
-        echo "::set-env name=VERSION_NAME::${REF}"
-      if: github.ref != 'refs/heads/master'
+        if [ $REF == "master" ]
+        then
+          echo "::set-env name=BINTRAY_REPO::multi-contact-head"
+          echo "::set-env name=BINTRAY_VERSION::HEAD"
+        else
+          echo "::set-env name=BINTRAY_REPO::multi-contact-release"
+          echo "::set-env name=BINTRAY_VERSION::${REF}"
+        fi
     - name: Download packages
       uses: actions/download-artifact@v1
       with:
         name: packages-${{ matrix.dist }}-${{ matrix.arch }}
     - name: Upload
-      run: |
-        set -x
-        cd packages-${{ matrix.dist }}-${{ matrix.arch }}
-        for f in `ls *.deb`
-        do
-          curl -T $f -ugergondet:${{ secrets.BINTRAY_API_KEY }} "https://${BINTRAY_URL}/Eigen3ToPython/${VERSION_NAME}/${{ matrix.dist }}/${{ matrix.arch }}/$f;deb_distribution=${{ matrix.dist }};deb_component=main;deb_architecture=${{ matrix.arch }};publish=1;override=1" --header "X-GPG-PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}"
-        done
+      uses: jrl-umi3218/github-actions/upload-package@master
+      with:
+        dist: ${{ matrix.dist }}
+        arch: ${{ matrix.arch }}
+        subject: gergondet
+        repo: ${{ env.BINTRAY_REPO }}
+        package: |
+          name: Eigen3ToPython
+          desc: "This package provides a bi-directional bridge between numpy and Eigen using Cython"
+          licenses: [BSD 2-Clause]
+          vcs_url: https://github.com/${{ github.repository }}
+        version: ${{ env.BINTRAY_VERSION }}
+        path: packages-${{ matrix.dist }}-${{ matrix.arch }}
+        BINTRAY_API_KEY: ${{ secrets.BINTRAY_API_KEY }}
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
