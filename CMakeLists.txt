@@ -4,7 +4,10 @@
 
 cmake_minimum_required(VERSION 2.8)
 
-find_package(Eigen3 REQUIRED)
+project(Eigen3ToPython)
+set(PROJECT_VERSION 1.0.1)
+
+find_package(Eigen3 REQUIRED NO_CMAKE_PACKAGE_REGISTRY)
 message("Found Eigen3: ${EIGEN3_VERSION_STRING}")
 message("Eigen include directory: ${EIGEN3_INCLUDE_DIR}")
 
@@ -61,7 +64,7 @@ macro(ADD_BINDINGS PYTHON PIP SOURCES)
   set(TARGET_NAME eigen-${PYTHON}-bindings)
   add_custom_target(${TARGET_NAME} ALL
     COMMAND ${CMAKE_COMMAND} -E chdir "${SETUP_LOCATION}" ${PYTHON} setup.py build_ext --inplace
-    COMMENT "Genearting local Eigen ${PYTHON} bindings"
+    COMMENT "Generating local Eigen ${PYTHON} bindings"
     DEPENDS ${SOURCES} SOURCES ${SOURCES}
   )
   # Copy sources
@@ -126,13 +129,18 @@ set(BINDINGS_SOURCES
   tests/test_eigen.py
 )
 
-if(${PYTHON_BINDING_BUILD_PYTHON2_AND_PYTHON3})
-  ADD_BINDINGS("python2" "pip2" "${BINDINGS_SOURCES}")
-  ADD_BINDINGS("python3" "pip3" "${BINDINGS_SOURCES}")
-elseif(${PYTHON_BINDING_FORCE_PYTHON3})
-  ADD_BINDINGS("python3" "pip3" "${BINDINGS_SOURCES}")
-elseif(${PYTHON_BINDING_FORCE_PYTHON2})
-  ADD_BINDINGS("python2" "pip2" "${BINDINGS_SOURCES}")
+if(${PYTHON_BINDING})
+  if(${PYTHON_BINDING_BUILD_PYTHON2_AND_PYTHON3})
+    ADD_BINDINGS("python2" "pip2" "${BINDINGS_SOURCES}")
+    ADD_BINDINGS("python3" "pip3" "${BINDINGS_SOURCES}")
+  elseif(${PYTHON_BINDING_FORCE_PYTHON3})
+    ADD_BINDINGS("python3" "pip3" "${BINDINGS_SOURCES}")
+  elseif(${PYTHON_BINDING_FORCE_PYTHON2})
+    ADD_BINDINGS("python2" "pip2" "${BINDINGS_SOURCES}")
+  else()
+    ADD_BINDINGS("python" "pip" "${BINDINGS_SOURCES}")
+  endif()
 else()
-  ADD_BINDINGS("python" "pip" "${BINDINGS_SOURCES}")
+  enable_testing()
+  install(CODE "message(\"Nothing to install\")")
 endif()

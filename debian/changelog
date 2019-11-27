@@ -1,0 +1,17 @@
+python-eigen (1.0.1-1ubuntu2) unstable; urgency=medium
+
+  * Increment upstream version to force upload
+
+ -- Pierre Gergondet <pierre.gergondet+ppa@gmail.com>  Thu, 08 Jun 2017 19:53:38 +0900
+
+python-eigen (1.0.0-1ubuntu1) unstable; urgency=medium
+
+  * Fixes to the debian package
+
+ -- Pierre Gergondet <pierre.gergondet+ppa@gmail.com>  Thu, 08 Jun 2017 19:40:34 +0900
+
+python-eigen (1.0.0-1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Pierre Gergondet <pierre.gergondet+ppa@gmail.com>  Thu, 08 Jun 2017 14:05:39 +0900

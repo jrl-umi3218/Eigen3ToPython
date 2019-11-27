@@ -20,7 +20,6 @@ except ImportError:
 
 from Cython.Build import cythonize
 
-import hashlib
 import numpy
 import os
 import subprocess
@@ -31,20 +30,9 @@ win32_build = os.name == 'nt'
 from utils import generate_eigen_pyx
 
 this_path  = os.path.dirname(os.path.realpath(__file__))
-sha512 = hashlib.sha512()
 src_files = ['eigen/c_eigen.pxd', 'eigen/c_eigen_private.pxd', 'include/eigen_wrapper.hpp']
 src_files.extend(['utils/angleaxis.in.pyx', 'utils/generate_eigen_pyx.py', 'utils/quaternion.in.pyx'])
 src_files = [ '{}/{}'.format(this_path, f) for f in src_files ]
-for f in src_files:
-  chunk = 2**16
-  with open(f, 'r') as fd:
-    while True:
-      data = fd.read(chunk)
-      if data:
-        sha512.update(data.encode('ascii'))
-      else:
-        break
-version_hash = sha512.hexdigest()[:7]
 
 generate_eigen_pyx(this_path + "/eigen", this_path + "/utils")
 
@@ -70,7 +58,7 @@ extensions = cythonize(extensions)
 
 setup(
     name = 'eigen',
-    version='1.0.0-{}'.format(version_hash),
+    version='@PROJECT_VERSION@',
     ext_modules = extensions,
     packages = packages,
     package_data = { 'eigen': data },

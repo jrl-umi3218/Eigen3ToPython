@@ -1,6 +1,4 @@
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-green.svg)](https://opensource.org/licenses/BSD-2-Clause)
-[![Build Status](https://travis-ci.org/jrl-umi3218/Eigen3ToPython.svg?branch=master)](https://travis-ci.org/jrl-umi3218/Eigen3ToPython)
-[![Build status](https://ci.appveyor.com/api/projects/status/5hrx27e909f3jc0n?svg=true)](https://ci.appveyor.com/project/gergondet/eigen3topython)
 [![Download](https://api.bintray.com/packages/gergondet/multi-contact/Eigen3ToPython%3Agergondet/images/download.svg) ](https://bintray.com/gergondet/multi-contact/Eigen3ToPython%3Agergondet/_latestVersion)
 
 Eigen3ToPython
@@ -21,13 +19,23 @@ If you want more features feel free to open an issue or submit a pull request. :
 Installing
 ------
 
-### Ubuntu LTS (14.04, 16.04, 18.04): PPA
+### Ubuntu LTS (14.04, 16.04, 18.04)
 
-Use the [multi-contact-unstable PPA](https://launchpad.net/~pierre-gergondet+ppa/+archive/ubuntu/multi-contact-unstable):
+You must first setup our package mirror:
+
+1. Make sure you can get our packages over https (`sudo apt install apt-transport-https`)
+2. Setup your key (`sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key 892EA6EE273707C6495A6FB6220D644C64666806`)
+3. Setup your sources.list (`sudo sh -c 'echo "deb https://dl.bintray.com/gergondet/multi-contact-release $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/multi-contact.list'`)
+
+This setup will get you the latest release. Alternatively, you can select our head mirror that will get you the latest version of the package:
+
+3. (HEAD) Setup your sources.list (`sudo sh -c 'echo "deb https://dl.bintray.com/gergondet/multi-contact-head $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/multi-contact.list'`)
+
+You can then install the package:
+
 ```bash
-sudo add-apt-repository ppa:pierre-gergondet+ppa/multi-contact-unstable
-sudo apt-get update
-sudo apt-get install python-eigen python3-eigen
+sudo apt update
+sudo apt install python-eigen python3-eigen
 ```
 
 ### Manual
@@ -360,14 +368,3 @@ pt.translation() = eigen.Vector3d.UnitZ() # SyntaxError: can't assign to functio
 ```
 
 Instead you might construct a new object with the updated values.
-
-
-Pulling git subtree
-------
-
-To update/sync .travis directory with their upstream git repository:
-
-```sh
-git fetch git://github.com/jrl-umi3218/jrl-travis.git master
-git subtree pull --prefix .travis git://github.com/jrl-umi3218/jrl-travis.git master --squash
-```
