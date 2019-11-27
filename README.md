@@ -1,5 +1,6 @@
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-green.svg)](https://opensource.org/licenses/BSD-2-Clause)
 [![Download](https://api.bintray.com/packages/gergondet/multi-contact/Eigen3ToPython%3Agergondet/images/download.svg) ](https://bintray.com/gergondet/multi-contact/Eigen3ToPython%3Agergondet/_latestVersion)
+[![CI](https://github.com/jrl-umi3218/Eigen3ToPython/workflows/CI%20of%20Eigen3ToPython/badge.svg?branch=master)](https://github.com/jrl-umi3218/Eigen3ToPython/actions?query=workflow%3A%22CI+of+Eigen3ToPython%22)
 
 Eigen3ToPython
 ======
