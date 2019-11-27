@@ -5,6 +5,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(Eigen3ToPython)
+set(PROJECT_VERSION 1.0.2)
 
 find_package(Eigen3 REQUIRED NO_CMAKE_PACKAGE_REGISTRY)
 message("Found Eigen3: ${EIGEN3_VERSION_STRING}")
@@ -63,7 +64,7 @@ macro(ADD_BINDINGS PYTHON PIP SOURCES)
   set(TARGET_NAME eigen-${PYTHON}-bindings)
   add_custom_target(${TARGET_NAME} ALL
     COMMAND ${CMAKE_COMMAND} -E chdir "${SETUP_LOCATION}" ${PYTHON} setup.py build_ext --inplace
-    COMMENT "Genearting local Eigen ${PYTHON} bindings"
+    COMMENT "Generating local Eigen ${PYTHON} bindings"
     DEPENDS ${SOURCES} SOURCES ${SOURCES}
   )
   # Copy sources
