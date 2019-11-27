@@ -5,7 +5,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(Eigen3ToPython)
-set(PROJECT_VERSION 1.0.2)
+set(PROJECT_VERSION 1.0.1)
 
 find_package(Eigen3 REQUIRED NO_CMAKE_PACKAGE_REGISTRY)
 message("Found Eigen3: ${EIGEN3_VERSION_STRING}")

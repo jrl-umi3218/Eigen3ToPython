@@ -58,7 +58,7 @@ jobs:
       if: failure()
   # This job build binary packages for Ubuntu
   build-packages:
-    needs: check-tag-and-create-release
+    needs: check-tag
     strategy:
       fail-fast: false
       matrix:
