@@ -99,6 +99,7 @@ jobs:
   upload-packages:
     needs: build-packages
     strategy:
+      max-parallel: 1
       fail-fast: false
       matrix:
         dist: [xenial, bionic, focal]
