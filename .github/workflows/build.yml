@@ -42,13 +42,11 @@ jobs:
       uses: jrl-umi3218/github-actions/build-cmake-project@master
       with:
         build-type: ${{ matrix.build-type }}
-#    - name: Slack Notification
-#      uses: homoluctus/slatify@master
-#      if: always()
-#      with:
-#        type: ${{ job.status }}
-#        job_name: 'Build ${{ matrix.os }}'
-#        mention_if: 'always'
-#        username: "GitHub Actions Report"
-#        channel: '#ci'
-#        url: ${{ secrets.SLACK_WEBHOOK }}
+    - name: Slack Notification
+      if: failure()
+      uses: archive/github-actions-slack@master
+      with:
+        slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_TOKEN }}
+        slack-channel: '#ci'
+        slack-text: >
+          Build *${{ matrix.os }}/${{ matrix.build-type }}* failed on ${{ github.ref }}
