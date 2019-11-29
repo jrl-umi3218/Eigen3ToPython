@@ -7,7 +7,10 @@ cmake_minimum_required(VERSION 2.8)
 project(Eigen3ToPython)
 set(PROJECT_VERSION 1.0.1)
 
-find_package(Eigen3 REQUIRED NO_CMAKE_PACKAGE_REGISTRY)
+find_package(Eigen3 NO_CMAKE_PACKAGE_REGISTRY)
+if(NOT Eigen3_FOUND)
+  find_package(Eigen3 MODULE REQUIRED)
+endif()
 message("Found Eigen3: ${EIGEN3_VERSION_STRING}")
 message("Eigen include directory: ${EIGEN3_INCLUDE_DIR}")
 
