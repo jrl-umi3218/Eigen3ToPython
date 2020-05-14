@@ -4,6 +4,7 @@
 #
 
 from conans import ConanFile, CMake, tools
+from conans.tools import os_info, SystemPackageTool
 import os
 import shutil
 import subprocess
@@ -15,7 +16,7 @@ def get_python_version():
 
 class Eigen3ToPythonConan(ConanFile):
     name = "Eigen3ToPython"
-    version = "1.0.0"
+    version = "1.0.1"
     description = "Python bindings for the Eigen library"
     # topics can get used for searches, GitHub topics, Bintray tags etc. Add here keywords about the library
     topics = ("eigen", "python")
@@ -24,18 +25,23 @@ class Eigen3ToPythonConan(ConanFile):
     author = "Pierre Gergondet <pierre.gergondet@gmail.com>"
     license = "BSD-2-Clause"  # Indicates license type of the packaged library; please use SPDX Identifiers https://spdx.org/licenses/
     exports = ["LICENSE"]      # Packages the license for the conanfile.py
-    # Remove following lines if the target lib does not use cmake.
     exports_sources = ["CMakeLists.txt", "requirements.txt", "setup.in.py", "conan/CMakeLists.txt", "eigen/*", "include/*", "tests/*", "utils/*"]
     generators = "cmake"
-    options = { "python_version": ["2.7", "3.3", "3.4", "3.5", "3.6", "3.7"] }
+    options = { "python_version": ["2.7", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8"] }
     default_options = { "python_version": get_python_version() }
 
-    # Options may need to change depending on the packaged library.
-    settings = "os", "arch"
+    settings = "os", "arch", "compiler"
 
     requires = (
         "eigen/3.3.4@conan/stable"
     )
+
+    def system_requirements(self):
+        if os_info.is_linux:
+            installer = SystemPackageTool()
+            installer.install('cython python-coverage python-nose python-numpy')
+        else:
+            subprocess.run("pip install --user Cython>=0.2 coverage nose numpy>=1.8.2".split())
 
     def source(self):
         # Wrap the original CMake file to call conan_basic_setup
@@ -59,9 +65,6 @@ class Eigen3ToPythonConan(ConanFile):
 
     def build(self):
         cmake = self._configure_cmake()
-        # This recipe is used down the line but we only want to run this in this package
-        if isinstance(self, Eigen3ToPythonConan):
-            subprocess.run(["pip", "install", "-r", "{}/requirements.txt".format(self.source_folder)])
         cmake.build()
 
     def package(self):

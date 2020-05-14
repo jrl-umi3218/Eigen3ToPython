@@ -30,7 +30,7 @@ jobs:
   check-tag:
     runs-on: ubuntu-18.04
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
       if: github.ref != 'refs/heads/master'
     - name: Check version coherency
       run: |
@@ -40,6 +40,8 @@ jobs:
         grep -q "set(PROJECT_VERSION ${VERSION})" CMakeLists.txt
         echo "::set-env name=REJECTION::Upstream version in debian/changelog does not match tag"
         head -n 1 debian/changelog | grep -q "python-eigen (${VERSION}"
+        echo "::set-env name=REJECTION::Conan package version does not match tag"
+        grep -q '    version = "${VERSION}"' conanfile.py
         echo "::set-env name=REJECTION::"
       if: github.ref != 'refs/heads/master'
     - name: Delete tag
@@ -66,7 +68,7 @@ jobs:
         arch: [i386, amd64]
     runs-on: ubuntu-18.04
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Prepare recipe
       run: |
         set -x
