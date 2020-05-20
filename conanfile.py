@@ -10,9 +10,18 @@ import shutil
 import subprocess
 import sys
 
-def get_python_version():
-    # Get the version of the Python executable, not this one
-    return '.'.join(subprocess.check_output('python -V'.split(), stderr = subprocess.STDOUT).strip().split()[1].decode().split('.')[0:2])
+def get_python_version(cmd = 'python'):
+    # Get the version of the `cmd` command assumed to be a python interpreter
+    try:
+        return '.'.join(subprocess.check_output('{} -V'.format(cmd).split(), stderr = subprocess.STDOUT).strip().split()[1].decode().split('.')[0:2])
+    except OSError:
+        return None
+
+def get_default_options():
+    return { "python2_version": get_python_version('python2'), "python3_version": get_python_version('python3') }
+
+def enable_python2_and_python3(options):
+    return options['python2_version'] is not None and options['python3_version'] is not None and not os_info.is_windows
 
 class Eigen3ToPythonConan(ConanFile):
     name = "Eigen3ToPython"
@@ -27,8 +36,11 @@ class Eigen3ToPythonConan(ConanFile):
     exports = ["LICENSE"]      # Packages the license for the conanfile.py
     exports_sources = ["CMakeLists.txt", "requirements.txt", "setup.in.py", "conan/CMakeLists.txt", "eigen/*", "include/*", "tests/*", "utils/*"]
     generators = "cmake"
-    options = { "python_version": ["2.7", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8"] }
-    default_options = { "python_version": get_python_version() }
+    options = {
+            "python2_version": [None, "2.7"],
+            "python3_version": [None, "3.3", "3.4", "3.5", "3.6", "3.7", "3.8"]
+    }
+    default_options = get_default_options()
 
     settings = "os", "arch", "compiler"
 
@@ -39,9 +51,13 @@ class Eigen3ToPythonConan(ConanFile):
     def system_requirements(self):
         if os_info.is_linux:
             installer = SystemPackageTool()
-            installer.install('cython python-coverage python-nose python-numpy')
+            installer.install('cython python-coverage python-nose python-numpy cython3 python3-coverage python3-nose python3-numpy')
         else:
-            subprocess.run("pip install --user Cython>=0.2 coverage nose numpy>=1.8.2".split())
+            if enable_python2_and_python3(self.options):
+                subprocess.run("pip2 install --user Cython>=0.2 coverage nose numpy>=1.8.2".split())
+                subprocess.run("pip3 install --user Cython>=0.2 coverage nose numpy>=1.8.2".split())
+            else:
+                subprocess.run("pip install --user Cython>=0.2 coverage nose numpy>=1.8.2".split())
 
     def source(self):
         # Wrap the original CMake file to call conan_basic_setup
@@ -59,7 +75,9 @@ class Eigen3ToPythonConan(ConanFile):
         os.environ['PYTHONPATH'] =  self._extra_python_path() + os.pathsep + os.environ.get('PYTHONPATH', '')
         cmake = CMake(self)
         cmake.definitions['DISABLE_TESTS'] = True
+        cmake.definitions['CMAKE_BUILD_TYPE'] = 'RelWithDebInfo'
         cmake.definitions['PIP_INSTALL_PREFIX'] = self.package_folder
+        cmake.definitions['PYTHON_BINDING_BUILD_PYTHON2_AND_PYTHON3'] = enable_python2_and_python3(self.options)
         cmake.configure()
         return cmake
 
