@@ -39,6 +39,18 @@ sudo apt update
 sudo apt install python-eigen python3-eigen
 ```
 
+### Conan
+
+Install the latest version using [conan](https://conan.io/)
+
+```bash
+conan remote add multi-contact https://api.bintray.com/conan/gergondet/multi-contact
+# Install the latest release
+conan install Eigen3ToPython/latest@multi-contact/stable
+# Or install the latest development version
+# conan install Eigen3ToPython/latest@multi-contact/dev
+```
+
 ### Manual
 
 #### Dependencies
