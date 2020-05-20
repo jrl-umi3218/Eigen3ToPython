@@ -18,7 +18,10 @@ def get_python_version(cmd = 'python'):
         return None
 
 def get_default_options():
-    return { "python2_version": get_python_version('python2'), "python3_version": get_python_version('python3') }
+    if os_info.is_windows:
+        return { "python2_version": None, "python3_version": get_python_version() }
+    else:
+        return { "python2_version": get_python_version('python2'), "python3_version": get_python_version('python3') }
 
 def enable_python2_and_python3(options):
     return options['python2_version'] is not None and options['python3_version'] is not None and not os_info.is_windows
