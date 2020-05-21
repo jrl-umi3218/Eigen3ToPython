@@ -54,7 +54,13 @@ class Eigen3ToPythonConan(ConanFile):
     def system_requirements(self):
         if os_info.is_linux:
             installer = SystemPackageTool()
-            installer.install('cython python-coverage python-nose python-numpy cython3 python3-coverage python3-nose python3-numpy')
+            packages = ''
+            if self.options['python2_version'] is not None:
+                packages = 'cython python-coverage python-nose python-numpy '
+            if self.options['python3_version'] is not None:
+                packages += 'cython3 python3-coverage python3-nose python3-numpy'
+            if len(packages):
+                installer.install(packages)
         else:
             if enable_python2_and_python3(self.options):
                 subprocess.run("pip2 install --user Cython>=0.2 coverage nose numpy>=1.8.2".split())
@@ -101,9 +107,9 @@ class Eigen3ToPythonConan(ConanFile):
         self.env_info.PYTHONPATH.append(self._extra_python_path())
 
     def package_id(self):
-        if self.options.python2_version is None:
+        if self.options.python2_version == "None":
             self.info.options.python2_version = "2.7"
-        if self.options.python3_version is None:
+        if self.options.python3_version == "None":
             for v3 in ["3.8", "3.7", "3.6", "3.5", "3.4", "3.3"]:
                 compatible_pkg = self.info.clone()
                 compatible_pkg.options.python3_version = v3
