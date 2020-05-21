@@ -99,3 +99,12 @@ class Eigen3ToPythonConan(ConanFile):
     def package_info(self):
         self.env_info.PATH.append(self._extra_path())
         self.env_info.PYTHONPATH.append(self._extra_python_path())
+
+    def package_id(self):
+        if self.options.python2_version is None:
+            self.info.options.python2_version = "2.7"
+        if self.options.python3_version is None:
+            for v3 in ["3.8", "3.7", "3.6", "3.5", "3.4", "3.3"]:
+                compatible_pkg = self.info.clone()
+                compatible_pkg.options.python3_version = v3
+                self.compatible_packages.append(compatible_pkg)
