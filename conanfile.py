@@ -24,7 +24,7 @@ def get_default_options():
         return { "python2_version": get_python_version('python2'), "python3_version": get_python_version('python3') }
 
 def enable_python2_and_python3(options):
-    return options.python2_version is not None and options.python3_version is not None and not os_info.is_windows
+    return options['python2_version'] is not None and options['python3_version'] is not None and not os_info.is_windows
 
 class Eigen3ToPythonConan(ConanFile):
     name = "Eigen3ToPython"
@@ -55,14 +55,14 @@ class Eigen3ToPythonConan(ConanFile):
         if os_info.is_linux:
             installer = SystemPackageTool()
             packages = ''
-            if self.options.python2_version is not None:
+            if self.default_options['python2_version'] is not None:
                 packages = 'cython python-coverage python-nose python-numpy '
-            if self.options.python3_version is not None:
+            if self.default_options['python3_version'] is not None:
                 packages += 'cython3 python3-coverage python3-nose python3-numpy'
             if len(packages):
                 installer.install(packages)
         else:
-            if enable_python2_and_python3(self.options):
+            if enable_python2_and_python3(self.default_options):
                 subprocess.run("pip2 install --user Cython>=0.2 coverage nose numpy>=1.8.2".split())
                 subprocess.run("pip3 install --user Cython>=0.2 coverage nose numpy>=1.8.2".split())
             else:
