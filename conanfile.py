@@ -107,6 +107,7 @@ class Eigen3ToPythonConan(ConanFile):
         self.env_info.PYTHONPATH.append(self._extra_python_path())
 
     def package_id(self):
+        del self.info.settings.compiler.runtime
         if self.options.python2_version == "None":
             self.info.options.python2_version = "2.7"
         if self.options.python3_version == "None":
