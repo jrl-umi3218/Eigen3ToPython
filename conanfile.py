@@ -84,7 +84,7 @@ class Eigen3ToPythonConan(ConanFile):
         os.environ['PYTHONPATH'] =  self._extra_python_path() + os.pathsep + os.environ.get('PYTHONPATH', '')
         cmake = CMake(self)
         cmake.definitions['DISABLE_TESTS'] = True
-        cmake.definitions['CMAKE_BUILD_TYPE'] = 'RelWithDebInfo'
+        cmake.definitions['CMAKE_BUILD_TYPE'] = self.settings.get_safe("build_type", "Release")
         cmake.definitions['PIP_INSTALL_PREFIX'] = self.package_folder
         cmake.definitions['PYTHON_BINDING_BUILD_PYTHON2_AND_PYTHON3'] = enable_python2_and_python3(self.options)
         cmake.configure()
