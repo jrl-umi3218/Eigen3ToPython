@@ -1,3 +1,9 @@
+python-eigen (1.0.2-1ubuntu1) unstable; urgency=medium
+
+  * Updated upstream version
+
+ -- Pierre Gergondet <pierre.gergondet+ppa@gmail.com>  Tue, 08 Sep 2020 18:02:36 +0800
+
 python-eigen (1.0.1-1ubuntu2) unstable; urgency=medium
 
   * Increment upstream version to force upload
