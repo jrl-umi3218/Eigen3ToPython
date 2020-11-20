@@ -41,7 +41,7 @@ class Eigen3ToPythonConan(ConanFile):
     generators = "cmake"
     options = {
             "python2_version": [None, "2.7"],
-            "python3_version": [None, "3.3", "3.4", "3.5", "3.6", "3.7", "3.8"]
+            "python3_version": [None, "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9"]
     }
     default_options = get_default_options()
 
@@ -111,7 +111,7 @@ class Eigen3ToPythonConan(ConanFile):
         if self.options.python2_version == "None":
             self.info.options.python2_version = "2.7"
         if self.options.python3_version == "None":
-            for v3 in ["3.8", "3.7", "3.6", "3.5", "3.4", "3.3"]:
+            for v3 in ["3.9", "3.8", "3.7", "3.6", "3.5", "3.4", "3.3"]:
                 compatible_pkg = self.info.clone()
                 compatible_pkg.options.python3_version = v3
                 self.compatible_packages.append(compatible_pkg)
