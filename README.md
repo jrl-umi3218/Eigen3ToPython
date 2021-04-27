@@ -1,5 +1,5 @@
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-green.svg)](https://opensource.org/licenses/BSD-2-Clause)
-[ ![Download](https://api.bintray.com/packages/gergondet/multi-contact/Eigen3ToPython%3Amulti-contact/images/download.svg) ](https://bintray.com/gergondet/multi-contact/Eigen3ToPython%3Amulti-contact/_latestVersion)
+[![Hosted By: Cloudsmith](https://img.shields.io/badge/OSS%20hosting%20by-cloudsmith-blue?logo=cloudsmith)](https://cloudsmith.com)
 [![CI](https://github.com/jrl-umi3218/Eigen3ToPython/workflows/CI%20of%20Eigen3ToPython/badge.svg?branch=master)](https://github.com/jrl-umi3218/Eigen3ToPython/actions?query=workflow%3A%22CI+of+Eigen3ToPython%22)
 
 Eigen3ToPython
@@ -20,22 +20,27 @@ If you want more features feel free to open an issue or submit a pull request. :
 Installing
 ------
 
-### Ubuntu LTS (14.04, 16.04, 18.04)
+### Ubuntu LTS (16.04, 18.04, 20.04)
 
 You must first setup our package mirror:
 
-1. Make sure you can get our packages over https (`sudo apt install apt-transport-https`)
-2. Setup your key (`sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key 892EA6EE273707C6495A6FB6220D644C64666806`)
-3. Setup your sources.list (`sudo sh -c 'echo "deb https://dl.bintray.com/gergondet/multi-contact-release $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/multi-contact.list'`)
+```
+curl -1sLf \
+  'https://dl.cloudsmith.io/public/mc-rtc/stable/setup.deb.sh' \
+  | sudo -E bash
+```
 
-This setup will get you the latest release. Alternatively, you can select our head mirror that will get you the latest version of the package:
+You can also choose the head mirror which will have the latest version of this package:
 
-3. (HEAD) Setup your sources.list (`sudo sh -c 'echo "deb https://dl.bintray.com/gergondet/multi-contact-head $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/multi-contact.list'`)
+```
+curl -1sLf \
+  'https://dl.cloudsmith.io/public/mc-rtc/stable/setup.deb.sh' \
+  | sudo -E bash
+```
 
 You can then install the package:
 
 ```bash
-sudo apt update
 sudo apt install python-eigen python3-eigen
 ```
 
