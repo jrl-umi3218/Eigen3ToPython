@@ -21,8 +21,8 @@ else()
   set(PYTHON_BINDING_USER_INSTALL_DEFAULT OFF)
 endif()
 option(PYTHON_BINDING_USER_INSTALL "Install the Python binding in user space" ${PYTHON_BINDING_USER_INSTALL_DEFAULT})
-option(PYTHON_BINDING_FORCE_PYTHON2 "Use pip2/python2 instead of pip/python" OFF)
-option(PYTHON_BINDING_FORCE_PYTHON3 "Use pip3/python3 instead of pip/python" OFF)
+option(PYTHON_BINDING_FORCE_PYTHON2 "Use python2 instead of python" OFF)
+option(PYTHON_BINDING_FORCE_PYTHON3 "Use python3 instead of python" OFF)
 set(PYTHON_BINDING_BUILD_PYTHON2_AND_PYTHON3_DEFAULT OFF)
 if(DEFINED PYTHON_DEB_ROOT)
   set(PYTHON_BINDING_BUILD_PYTHON2_AND_PYTHON3_DEFAULT ON)
@@ -35,8 +35,8 @@ endif()
 option(DISABLE_TESTS "Disable unit tests." OFF)
 
 # Check if pip install supports --system
-macro(_pip_has_install_system PIP OUT)
-  execute_process(COMMAND ${PIP} install --system
+macro(_pip_has_install_system PYTHON OUT)
+  execute_process(COMMAND ${PYTHON} -m pip install --system
                   RESULT_VARIABLE ${OUT}
                   OUTPUT_QUIET ERROR_QUIET)
   if(${${OUT}} EQUAL 0)
@@ -48,7 +48,7 @@ endmacro()
 
 configure_file(setup.in.py ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
 
-macro(ADD_BINDINGS PYTHON PIP SOURCES)
+macro(ADD_BINDINGS PYTHON SOURCES)
   # Create the build directory
   set(SETUP_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/${PYTHON}/$<CONFIGURATION>")
   if(DEFINED CMAKE_BUILD_TYPE)
@@ -105,7 +105,7 @@ macro(ADD_BINDINGS PYTHON PIP SOURCES)
       set(PIP_EXTRA_OPTIONS "--user")
     endif()
     if(DEFINED PIP_INSTALL_PREFIX)
-      _pip_has_install_system(${PIP} PIP_HAS_INSTALL_SYSTEM)
+      _pip_has_install_system(${PYTHON} PIP_HAS_INSTALL_SYSTEM)
       execute_process(COMMAND ${PYTHON} -c "import sys; print(\"python{}.{}\".format(sys.version_info.major, sys.version_info.minor));" OUTPUT_VARIABLE PYTHON_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
       set(PIP_TARGET "${PIP_INSTALL_PREFIX}/lib/${PYTHON_VERSION}/site-packages/")
       set(PIP_EXTRA_OPTIONS --target "${PIP_TARGET}")
@@ -114,7 +114,7 @@ macro(ADD_BINDINGS PYTHON PIP SOURCES)
       endif()
     endif()
     add_custom_target(install-${TARGET_NAME}
-      COMMAND ${CMAKE_COMMAND} -E chdir "${SETUP_LOCATION}" ${PIP} install . ${PIP_EXTRA_OPTIONS} --upgrade
+      COMMAND ${CMAKE_COMMAND} -E chdir "${SETUP_LOCATION}" ${PYTHON} -m pip install . ${PIP_EXTRA_OPTIONS} --upgrade
       COMMENT "Install Eigen ${PYTHON} bindings"
     )
   endif()
@@ -136,14 +136,14 @@ set(BINDINGS_SOURCES
 
 if(${PYTHON_BINDING})
   if(${PYTHON_BINDING_BUILD_PYTHON2_AND_PYTHON3})
-    ADD_BINDINGS("python2" "pip2" "${BINDINGS_SOURCES}")
-    ADD_BINDINGS("python3" "pip3" "${BINDINGS_SOURCES}")
+    ADD_BINDINGS("python2" "${BINDINGS_SOURCES}")
+    ADD_BINDINGS("python3" "${BINDINGS_SOURCES}")
   elseif(${PYTHON_BINDING_FORCE_PYTHON3})
-    ADD_BINDINGS("python3" "pip3" "${BINDINGS_SOURCES}")
+    ADD_BINDINGS("python3" "${BINDINGS_SOURCES}")
   elseif(${PYTHON_BINDING_FORCE_PYTHON2})
-    ADD_BINDINGS("python2" "pip2" "${BINDINGS_SOURCES}")
+    ADD_BINDINGS("python2" "${BINDINGS_SOURCES}")
   else()
-    ADD_BINDINGS("python" "pip" "${BINDINGS_SOURCES}")
+    ADD_BINDINGS("python" "${BINDINGS_SOURCES}")
   endif()
 else()
   enable_testing()
