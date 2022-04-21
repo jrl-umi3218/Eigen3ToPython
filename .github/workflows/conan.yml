@@ -3,21 +3,21 @@ name: conan packaging for Eigen3ToPython
 on:
   repository_dispatch:
     types: [conan-master, conan-release]
-  push:
-    branches:
-      - '**'
-    tags:
-      - v*
-  pull_request:
-    branches:
-      - '**'
+#  push:
+#    branches:
+#      - '**'
+#    tags:
+#      - v*
+#  pull_request:
+#    branches:
+#      - '**'
 
 jobs:
   build:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-16.04, ubuntu-18.04, macos-latest, windows-latest]
+        os: [ubuntu-18.04, ubuntu-20.04, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
     - name: Set git to use LF
