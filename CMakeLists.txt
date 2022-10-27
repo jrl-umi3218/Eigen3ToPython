@@ -90,7 +90,7 @@ macro(ADD_BINDINGS PYTHON SOURCES)
   if(NOT ${DISABLE_TESTS})
     enable_testing()
     add_test(NAME test-${TARGET_NAME}
-      COMMAND ${CMAKE_COMMAND} -E chdir "${SETUP_LOCATION}" ${PYTHON} -c "import nose; nose.run()"
+      COMMAND ${CMAKE_COMMAND} -E chdir "${SETUP_LOCATION}" ${PYTHON} -m "pytest"
     )
   endif()
   # Install targets

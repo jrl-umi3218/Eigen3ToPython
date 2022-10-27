@@ -1,4 +1,4 @@
 Cython>=0.2
 coverage
-nose
 numpy>=1.8.2
+pytest
