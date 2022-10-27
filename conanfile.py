@@ -56,17 +56,17 @@ class Eigen3ToPythonConan(ConanFile):
             installer = SystemPackageTool()
             packages = ''
             if self.default_options['python2_version'] is not None:
-                packages = 'cython python-coverage python-nose python-numpy '
+                packages = 'cython python-coverage python-numpy python-pytest '
             if self.default_options['python3_version'] is not None:
-                packages += 'cython3 python3-coverage python3-nose python3-numpy'
+                packages += 'cython3 python3-coverage python3-numpy python3-pytest '
             if len(packages):
                 installer.install(packages)
         else:
             if enable_python2_and_python3(self.default_options):
-                subprocess.run("pip2 install --user Cython>=0.2 coverage nose numpy>=1.8.2".split())
-                subprocess.run("pip3 install --user Cython>=0.2 coverage nose numpy>=1.8.2".split())
+                subprocess.run("pip2 install --user Cython>=0.2 coverage numpy>=1.8.2 pytest".split())
+                subprocess.run("pip3 install --user Cython>=0.2 coverage numpy>=1.8.2 pytest".split())
             else:
-                subprocess.run("pip install --user Cython>=0.2 coverage nose numpy>=1.8.2".split())
+                subprocess.run("pip install --user Cython>=0.2 coverage numpy>=1.8.2 pytest".split())
 
     def source(self):
         # Wrap the original CMake file to call conan_basic_setup

@@ -4,8 +4,7 @@
 
 import eigen as e
 import numpy as np
-from nose import with_setup
-from nose.tools import assert_raises
+import pytest
 
 precision = 1e-6
 
@@ -110,25 +109,45 @@ def test_create_from_array():
     #Check Matrix2d(np.array((2,2)))
     m(matrix_arrays[k])
 
-@with_setup(generate_vectors, teardown_vectors)
-def test_getitem_vector():
-  yield getitem_other, vectors, vector_lists
-  yield getitem_other, vectors, vector_arrays
+@pytest.fixture
+def setup_getitem_vector():
+    generate_vectors()
+    yield
+    teardown_vectors()
 
-@with_setup(generate_vectors, teardown_vectors)
-def test_getslice_vector():
-  yield getitem_other, vectors, vector_lists, vector_slices
-  yield getitem_other, vectors, vector_arrays, vector_slices
+def test_getitem_vector(setup_getitem_vector):
+    getitem_other(vectors, vector_lists)
+    getitem_other(vectors, vector_arrays)
 
-@with_setup(generate_matrices, teardown_matrices)
-def test_getitem_matrix():
-  yield getitem_other, matrices, matrix_lists
-  yield getitem_other, matrices, matrix_arrays
+@pytest.fixture
+def setup_getslice_vector():
+    generate_vectors()
+    yield
+    teardown_vectors()
 
-@with_setup(generate_matrices, teardown_matrices)
-def test_getslice_matrix():
-  yield getitem_other, matrices, matrix_lists, matrix_slices
-  yield getitem_other, matrices, matrix_arrays, matrix_slices
+def test_getslice_vector(setup_getslice_vector):
+    getitem_other(vectors, vector_lists, vector_slices)
+    getitem_other(vectors, vector_arrays, vector_slices)
+
+@pytest.fixture
+def setup_getitem_matrix():
+    generate_matrices()
+    yield
+    teardown_matrices()
+
+def test_getitem_matrix(setup_getitem_matrix):
+  getitem_other(matrices, matrix_lists)
+  getitem_other(matrices, matrix_arrays)
+
+@pytest.fixture
+def setup_getslice_matrix():
+    generate_matrices()
+    yield
+    teardown_matrices()
+
+def test_getslice_matrix(setup_getslice_matrix):
+  getitem_other(matrices, matrix_lists, matrix_slices)
+  getitem_other(matrices, matrix_arrays, matrix_slices)
 
 def getitem_other(first_container, other_container, slicing=None):
   for k, obj in first_container.items():
@@ -152,33 +171,65 @@ def getitem_other(first_container, other_container, slicing=None):
         for j in range(len(left[i])):
           assert(left[i][j] == right[i][j])
 
-@with_setup(generate_vectors, teardown_vectors)
-def test_setitem_vector():
-  yield setitem_other, vectors, vector_lists
-  yield setitem_other, vectors, vector_arrays
+@pytest.fixture
+def setup_setitem_vector():
+    generate_vectors()
+    yield
+    teardown_vectors()
 
-@with_setup(generate_vectors, teardown_vectors)
-def test_setslice_vector():
-  yield setitem_other, vectors, vector_arrays, vector_slices
+def test_setitem_vector(setup_setitem_vector):
+  setitem_other(vectors, vector_lists)
+  setitem_other(vectors, vector_arrays)
 
-@with_setup(generate_vectors, teardown_vectors)
-def test_setslice_vector_vector():
-  for k, v in matrices.items():
+@pytest.fixture
+def setup_setslice_vector():
+    generate_vectors()
+    yield
+    teardown_vectors()
+
+def test_setslice_vector(setup_setslice_vector):
+  setitem_other(vectors, vector_arrays, vector_slices)
+
+@pytest.fixture
+def setup_setslice_vector_vector():
+    generate_vectors()
+    yield
+    teardown_vectors()
+
+def test_setslice_vector_vector(setup_setslice_vector_vector):
+  for k, v in vectors.items():
     vec = e.VectorXd.Zero(v.rows()+2)
-    vec[1:v.rows()] = v
-    assert((v[1:v.rows()+1] == np.array(v)).all())
+    vec[1:v.rows()+1] = v
+    assert(vec[0] == 0)
+    assert(vec[-1] == 0)
+    assert((vec[1:v.rows()+1] == np.array(v)).all())
 
-@with_setup(generate_matrices, teardown_matrices)
-def test_setitem_matrix():
-  yield setitem_other, matrices, matrix_lists
-  yield setitem_other, matrices, matrix_arrays
+@pytest.fixture
+def setup_setitem_matrix():
+    generate_matrices()
+    yield
+    teardown_matrices()
 
-@with_setup(generate_matrices, teardown_matrices)
-def test_setslice_matrix():
-  yield setitem_other, matrices, matrix_arrays, matrix_slices
+def test_setitem_matrix(setup_setitem_matrix):
+  setitem_other(matrices, matrix_lists)
+  setitem_other(matrices, matrix_arrays)
 
-@with_setup(generate_matrices, teardown_matrices)
-def test_setslice_matrix_matrix():
+@pytest.fixture
+def setup_setslice_matrix():
+    generate_matrices()
+    yield
+    teardown_matrices()
+
+def test_setslice_matrix(setup_setslice_matrix):
+  setitem_other(matrices, matrix_arrays, matrix_slices)
+
+@pytest.fixture
+def setup_setslice_matrix_matrix():
+    generate_matrices()
+    yield
+    teardown_matrices()
+
+def test_setslice_matrix_matrix(setup_setslice_matrix_matrix):
   for k, m in matrices.items():
     mat = e.MatrixXd.Zero(m.rows()+2, m.cols()+2)
     mat[1:m.rows()+1, 1:m.cols()+1] = m
@@ -202,25 +253,45 @@ def setitem_other(first_container, other_container, slicing=None):
         obj[slicing] = other[slicing]
   getitem_other(first_container, other_container, slicing)
 
-@with_setup(generate_vectors, teardown_vectors)
-def test_convert_tonumpy_vector():
+@pytest.fixture
+def setup_convert_tonumpy_vector():
+    generate_vectors()
+    yield
+    teardown_vectors()
+
+def test_convert_tonumpy_vector(setup_convert_tonumpy_vector):
   for k, v in vectors.items():
     assert((np.array(v) == vector_arrays[k]).all())
 
-@with_setup(generate_matrices, teardown_matrices)
-def test_convert_tonumpy_matrix():
+@pytest.fixture
+def setup_convert_tonumpy_matrix():
+    generate_matrices()
+    yield
+    teardown_matrices()
+
+def test_convert_tonumpy_matrix(setup_convert_tonumpy_matrix):
   for k, m in matrices.items():
     assert((np.array(m) == matrix_arrays[k]).all())
 
-@with_setup(generate_vectors, teardown_vectors)
-def test_convert_fromnumpy_vector():
+@pytest.fixture
+def setup_convert_fromnumpy_vector():
+    generate_vectors()
+    yield
+    teardown_vectors()
+
+def test_convert_fromnumpy_vector(setup_convert_fromnumpy_vector):
   for k, v in vectors.items():
     # Test both storage orders
     assert((v - vector_types[k](np.ascontiguousarray(vector_arrays[k]))).norm() == 0.0)
     assert((v - vector_types[k](np.asfortranarray(vector_arrays[k]))).norm() == 0.0)
 
-@with_setup(generate_matrices, teardown_matrices)
-def test_convert_fromnumpy_matrix():
+@pytest.fixture
+def setup_convert_fromnumpy_matrix():
+    generate_matrices()
+    yield
+    teardown_matrices()
+
+def test_convert_fromnumpy_matrix(setup_convert_fromnumpy_matrix):
   for k, m in matrices.items():
     # Test both storage orders
     assert((m - matrix_types[k](np.ascontiguousarray(matrix_arrays[k]))).norm() == 0.0)
@@ -293,8 +364,13 @@ def check_op_vec(op, objtype, objlist, scalars):
     else:
       raise ValueError("Only vector addition/substraction is supported")
 
-@with_setup(setup, teardown)
-def test_slicing_eigen():
+@pytest.fixture
+def setup_slicing_eigen():
+    setup()
+    yield
+    teardown()
+
+def test_slicing_eigen(setup_slicing_eigen):
   for k, v in vectors.items():
     start, stop = vector_slices[k].start, vector_slices[k].stop
     eigen_vblock = v.block(start, 0, stop - start, 1)
@@ -314,15 +390,25 @@ def test_slicing_eigen():
       assert(isinstance(eigen_mblock, vector_types['X']))
       assert(np.allclose(np.array(eigen_mblock), m[matrix_slices[k][0],  col_slice.start], precision))
 
-@with_setup(generate_vectors, teardown_vectors)
-def test_norm():
+@pytest.fixture
+def setup_norm():
+    generate_vectors()
+    yield
+    teardown_vectors()
+
+def test_norm(setup_norm):
   for k, v in vectors.items():
     assert(np.sqrt(v.transpose()*v) == np.linalg.norm(v))
     assert(v.norm() == np.linalg.norm(v))
     assert(abs(v.squaredNorm() - np.linalg.norm(v)**2) < precision)
 
-@with_setup(setup, teardown)
-def test_mat_vec_mult():
+@pytest.fixture
+def setup_mat_vec_mult():
+    setup()
+    yield
+    teardown()
+
+def test_mat_vec_mult(setup_mat_vec_mult):
   for k, v in vectors.items():
     m = matrices[k]
     res = m*v
@@ -331,8 +417,13 @@ def test_mat_vec_mult():
       assert(res.rows() == m.rows())
     assert((abs(np.array(res) - np.array(m).dot(np.array(v))) < precision).all())
 
-@with_setup(generate_vectors, teardown_vectors)
-def test_vec_tvec_mult():
+@pytest.fixture
+def setup_vec_tvec_mult():
+    generate_vectors()
+    yield
+    teardown_vectors()
+
+def test_vec_tvec_mult(setup_vec_tvec_mult):
   for k, v in vectors.items():
     res = v*v.transpose()
     assert(isinstance(res, matrix_types[k]))
@@ -341,8 +432,13 @@ def test_vec_tvec_mult():
       assert(res.cols() == v.rows())
     assert((abs(np.array(res) - np.array(v).dot(np.array(v).T)) < precision).all())
 
-@with_setup(generate_vectors, teardown_vectors)
-def test_vec_mat_mult():
+@pytest.fixture
+def setup_vec_mat_mult():
+    generate_vectors()
+    yield
+    teardown_vectors()
+
+def test_vec_mat_mult(setup_vec_mat_mult):
   cols = {'2': 5,
           '3': 7,
           '4': 13,
@@ -356,8 +452,13 @@ def test_vec_mat_mult():
     assert(res.cols() == cols[k])
     assert((abs(np.array(res) - np.array(v).dot(np.array(m))) < precision).all())
 
-@with_setup(generate_vectors, teardown_vectors)
-def test_fail_vec_mat_mult():
+@pytest.fixture
+def setup_fail_vec_mat_mult():
+    generate_vectors()
+    yield
+    teardown_vectors()
+
+def test_fail_vec_mat_mult(setup_fail_vec_mat_mult):
   dims = {'2': (2, 5),
           '3': (3, 7),
           '4': (4, 13),
@@ -365,10 +466,16 @@ def test_fail_vec_mat_mult():
           'X': (6, 4)}
   for k, v in vectors.items():
     m = e.MatrixXd(*dims[k])
-    assert_raises(TypeError, lambda x,y: x*y, v, m)
+    with pytest.raises(TypeError):
+      return v * m
 
-@with_setup(generate_matrices, teardown_matrices)
-def test_mat_mat_mult():
+@pytest.fixture
+def setup_mat_mat_mult():
+    generate_matrices()
+    yield
+    teardown_matrices()
+
+def test_mat_mat_mult(setup_mat_mat_mult):
   for k, m in matrices.items():
     res = m.transpose()*m
     assert(isinstance(res, matrix_types[k]))
@@ -377,8 +484,13 @@ def test_mat_mat_mult():
       assert(res.cols() == m.cols())
     assert((abs(np.array(res) - np.array(m).T.dot(np.array(m))) < precision).all())
 
-@with_setup(generate_matrices, teardown_matrices)
-def test_mat_dynvec_mult():
+@pytest.fixture
+def setup_mat_dynvec_mult():
+    generate_matrices()
+    yield
+    teardown_matrices()
+
+def test_mat_dynvec_mult(setup_mat_dynvec_mult):
   for k, m in matrices.items():
     m = matrices[k]
     v = e.VectorXd.Random(m.cols())
@@ -387,8 +499,13 @@ def test_mat_dynvec_mult():
     assert(res.rows() == m.rows())
     assert((abs(np.array(res) - np.array(m).dot(np.array(v))) < precision).all())
 
-@with_setup(generate_matrices, teardown_matrices)
-def test_mat_dynmat_mult():
+@pytest.fixture
+def setup_mat_dynmat_mult():
+    generate_matrices()
+    yield
+    teardown_matrices()
+
+def test_mat_dynmat_mult(setup_mat_dynmat_mult):
   ncols = {'2': 17,
            '3': 13,
            '4': 7,
@@ -404,8 +521,13 @@ def test_mat_dynmat_mult():
     assert(res.cols() == ncols[k])
     assert((abs(np.array(res) - np.array(m).dot(np.array(m2))) < precision).all())
 
-@with_setup(generate_matrices, teardown_matrices)
-def test_dynmat_mat_mult():
+@pytest.fixture
+def setup_dynmat_mat_mult():
+    generate_matrices()
+    yield
+    teardown_matrices()
+
+def test_dynmat_mat_mult(setup_dynmat_mat_mult):
   ncols = {'2': 17,
            '3': 13,
            '4': 7,
@@ -433,20 +555,24 @@ def test_dynmat_mat_mult():
 def test_access():
   for k, v in vector_types.items():
     vec = v(vector_args[k])
-    yield check_negative_vec_access, vec
-    yield check_oob_access, vec
+    check_negative_vec_access(vec)
+    check_oob_access(vec)
 
   for k, m in matrix_types.items():
     mat = m(matrix_args[k])
-    yield check_negative_mat_access, mat
-    yield check_oob_access, mat
+    check_negative_mat_access(mat)
+    check_oob_access(mat)
 
 def check_oob_access(obj):
   get = lambda v, i : v[i]
-  assert_raises(IndexError, get, obj, obj.rows())
-  assert_raises(IndexError, get, obj, (0, obj.cols()))
-  assert_raises(IndexError, get, obj, -(obj.rows()+1))
-  assert_raises(IndexError, get, obj, (0, -(obj.cols()+1)))
+  with pytest.raises(IndexError):
+    obj[obj.rows()]
+  with pytest.raises(IndexError):
+    obj[0, obj.cols()]
+  with pytest.raises(IndexError):
+    obj[-(obj.rows() + 1)]
+  with pytest.raises(IndexError):
+    obj[0, -(obj.cols() + 1)]
 
 def check_negative_vec_access(vec):
   for index in range(1, vec.rows()+1):
@@ -458,79 +584,82 @@ def check_negative_mat_access(mat):
       assert(mat[-i, -j] == mat[mat.rows()-i, mat.cols()-j])
 
 def check_quaternion_almost_equals(q1, q2):
-  assert((q1.coeffs() - q2.coeffs()).norm() < 1e-6)
+  assert(abs(q1.angularDistance(q2)) < 1e-6)
 
 def test_quaternion():
-  q = e.Quaterniond()
-  # Identity, xyzw coefficient order.
-  id_v = e.Vector4d(0., 0., 0., 1.)
-  # Identity, wxyz scalar constructor order.
-  q = e.Quaterniond(1., 0., 0., 0.)
-  q2 = e.Quaterniond(id_v)
-  # Both identity quaternions must be equal.
-  assert(q.angularDistance(q2) == 0)
-  q3 = q2*q
-  assert(q.angularDistance(q3) == 0)
-  v4 = e.Vector4d.Random()
-  while v4 == id_v:
+  def do_test_quaternion():
+    q = e.Quaterniond()
+    # Identity, xyzw coefficient order.
+    id_v = e.Vector4d(0., 0., 0., 1.)
+    # Identity, wxyz scalar constructor order.
+    q = e.Quaterniond(1., 0., 0., 0.)
+    q2 = e.Quaterniond(id_v)
+    # Both identity quaternions must be equal.
+    assert(q.angularDistance(q2) == 0)
+    q3 = q2*q
+    assert(q.angularDistance(q3) == 0)
     v4 = e.Vector4d.Random()
-  v4.normalize()
-  q = e.Quaterniond(v4) # Vector4d ctor
-  assert(q.coeffs() == v4)
-  q = e.Quaterniond(v4[3], v4[0], v4[1], v4[2]) # 4 doubles ctor
-  assert(q.coeffs() == v4)
-  q_copy = e.Quaterniond(q) # Copy ctor
-  assert(q_copy.coeffs() == q.coeffs())
-  q_copy.setIdentity()
-  assert(q_copy.coeffs() != q.coeffs()) # Check the two objects are actually different
-  q = e.Quaterniond(np.pi, e.Vector3d.UnitZ()) # Angle-Axis
-  assert((q.coeffs() - e.Vector4d(0., 0., 1., 0.)).norm() < 1e-6)
-  q = e.Quaterniond(e.AngleAxisd(np.pi, e.Vector3d.UnitZ()))
-  assert((q.coeffs() - e.Vector4d(0., 0., 1., 0.)).norm() < 1e-6)
-  q = e.Quaterniond(e.Matrix3d.Identity())
-  assert(q.coeffs() == id_v)
-  q = e.Quaterniond.Identity()
-  assert(q.coeffs() == id_v)
+    while v4 == id_v:
+      v4 = e.Vector4d.Random()
+    v4.normalize()
+    q = e.Quaterniond(v4) # Vector4d ctor
+    assert(q.coeffs() == v4)
+    q = e.Quaterniond(v4[3], v4[0], v4[1], v4[2]) # 4 doubles ctor
+    assert(q.coeffs() == v4)
+    q_copy = e.Quaterniond(q) # Copy ctor
+    assert(q_copy.coeffs() == q.coeffs())
+    q_copy.setIdentity()
+    assert(q_copy.coeffs() != q.coeffs()) # Check the two objects are actually different
+    q = e.Quaterniond(np.pi, e.Vector3d.UnitZ()) # Angle-Axis
+    assert((q.coeffs() - e.Vector4d(0., 0., 1., 0.)).norm() < 1e-6)
+    q = e.Quaterniond(e.AngleAxisd(np.pi, e.Vector3d.UnitZ()))
+    assert((q.coeffs() - e.Vector4d(0., 0., 1., 0.)).norm() < 1e-6)
+    q = e.Quaterniond(e.Matrix3d.Identity())
+    assert(q.coeffs() == id_v)
+    q = e.Quaterniond.Identity()
+    assert(q.coeffs() == id_v)
 
-  # Check getters
-  assert(q.x() == 0)
-  assert(q.y() == 0)
-  assert(q.z() == 0)
-  assert(q.w() == 1)
-  assert(q.vec() == e.Vector3d.Zero())
-  assert(q.coeffs() == id_v)
+    # Check getters
+    assert(q.x() == 0)
+    assert(q.y() == 0)
+    assert(q.z() == 0)
+    assert(q.w() == 1)
+    assert(q.vec() == e.Vector3d.Zero())
+    assert(q.coeffs() == id_v)
 
-  # Check setters
-  q = e.Quaterniond(v4) # Rebuild from something other than Identity
-  q.setIdentity()
-  assert(q.coeffs() == id_v)
-  q.setFromTwoVectors(e.Vector3d.UnitX(), e.Vector3d.UnitY())
-  assert(q.isApprox(e.Quaterniond(np.pi/2, e.Vector3d.UnitZ())))
-  q.setIdentity()
+    # Check setters
+    q = e.Quaterniond(v4) # Rebuild from something other than Identity
+    q.setIdentity()
+    assert(q.coeffs() == id_v)
+    q.setFromTwoVectors(e.Vector3d.UnitX(), e.Vector3d.UnitY())
+    assert(q.isApprox(e.Quaterniond(np.pi/2, e.Vector3d.UnitZ())))
+    q.setIdentity()
 
-  # Operations
-  assert(e.Quaterniond(id_v).angularDistance(e.Quaterniond(np.pi, e.Vector3d.UnitZ())) == np.pi)
-  assert(e.Quaterniond(v4).conjugate().coeffs() == e.Vector4d(-v4.x(), -v4.y(), -v4.z(), v4.w()))
-  assert(e.Quaterniond(id_v).dot(e.Quaterniond(np.pi, e.Vector3d.UnitZ())) == np.cos(np.pi/2))
-  check_quaternion_almost_equals(e.Quaterniond(v4).inverse(), e.Quaterniond(v4).conjugate())
-  assert(q.isApprox(q))
-  assert(q.isApprox(q, 1e-8))
-  assert(q.matrix() == e.Matrix3d.Identity())
-  assert(q.toRotationMatrix() == e.Matrix3d.Identity())
-  v4_2 = e.Vector4d.Random()
-  v4_2 = 2 * v4_2 / v4_2.norm()
-  q = e.Quaterniond(v4_2)
-  assert(q.norm() != 1.0)
-  q_n = q.normalized()
-  assert(q.norm() != 1.0 and q_n.norm() == 1.0)
-  q.normalize()
-  assert(q.norm() == 1.0)
-  check_quaternion_almost_equals(e.Quaterniond.Identity().slerp(1.0, q), q)
-  assert(q.squaredNorm() == 1.0)
+    # Operations
+    assert(e.Quaterniond(id_v).angularDistance(e.Quaterniond(np.pi, e.Vector3d.UnitZ())) == np.pi)
+    assert(e.Quaterniond(v4).conjugate().coeffs() == e.Vector4d(-v4.x(), -v4.y(), -v4.z(), v4.w()))
+    assert(e.Quaterniond(id_v).dot(e.Quaterniond(np.pi, e.Vector3d.UnitZ())) == np.cos(np.pi/2))
+    check_quaternion_almost_equals(e.Quaterniond(v4).inverse(), e.Quaterniond(v4).conjugate())
+    assert(q.isApprox(q))
+    assert(q.isApprox(q, 1e-8))
+    assert(q.matrix() == e.Matrix3d.Identity())
+    assert(q.toRotationMatrix() == e.Matrix3d.Identity())
+    v4_2 = e.Vector4d.Random()
+    v4_2 = 2 * v4_2 / v4_2.norm()
+    q = e.Quaterniond(v4_2)
+    assert(q.norm() != 1.0)
+    q_n = q.normalized()
+    assert(q.norm() != 1.0 and abs(q_n.norm() - 1.0) < 1e-9)
+    q.normalize()
+    assert(abs(q.norm() - 1.0) < 1e-9)
+    check_quaternion_almost_equals(e.Quaterniond.Identity().slerp(1.0, q), q)
+    assert(abs(q.squaredNorm() - 1.0) < 1e-9)
 
-  # Static method
-  q = e.Quaterniond.UnitRandom()
-  assert(q.norm() == 1.0)
+    # Static method
+    q = e.Quaterniond.UnitRandom()
+    assert(abs(q.norm() - 1.0) < 1e-9)
+  for i in range(1000):
+    do_test_quaternion()
 
 
 def test_angle_axis():

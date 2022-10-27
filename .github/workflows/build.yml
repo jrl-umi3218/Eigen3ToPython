@@ -36,7 +36,7 @@ jobs:
       with:
         build-type: ${{ matrix.build-type }}
         ubuntu: |
-          apt: cython cython3 python-nose python3-nose python-numpy python3-numpy python-coverage python3-coverage python-setuptools python3-setuptools python-pytest python3-pytest libeigen3-dev
+          apt: cython cython3 python-numpy python3-numpy python-coverage python3-coverage python-setuptools python3-setuptools python-pytest python3-pytest libeigen3-dev
         macos: |
           brew: eigen
           pip: Cython coverage nose numpy pytest
