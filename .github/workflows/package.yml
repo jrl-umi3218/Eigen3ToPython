@@ -34,7 +34,7 @@ jobs:
         echo "REJECTION=Upstream version in debian/changelog does not match tag" >> $GITHUB_ENV
         head -n 1 debian/changelog | grep -q "python-eigen (${VERSION}"
         echo "REJECTION=Conan package version does not match tag" >> $GITHUB_ENV
-        grep -q '    version = "${VERSION}"' conanfile.py
+        grep -q "version = \"${VERSION}\"" conanfile.py
         echo "REJECTION=" >> $GITHUB_ENV
         export TAG=`echo ${{ github.ref }} | sed -e 's@refs/tags/@@'`
         echo "RELEASE_TAG=${TAG}" >> $GITHUB_ENV
