@@ -4,13 +4,13 @@ Priority: optional
 Maintainer: Pierre Gergondet <pierre.gergondet+ppa@gmail.com>
 Build-Depends: debhelper (>=9),
  cmake,
- python-all,
- python-coverage,
- python-dev,
- python-numpy,
- python-pytest,
- python-setuptools,
- cython,
+#PYTHON2  python-all,
+#PYTHON2  python-coverage,
+#PYTHON2  python-dev,
+#PYTHON2  python-numpy,
+#PYTHON2  python-pytest,
+#PYTHON2  python-setuptools,
+#PYTHON2  cython,
  python3-all,
  python3-coverage,
  python3-dev,
@@ -24,12 +24,12 @@ Homepage: https://github.com/jrl-umi3218/Eigen3ToPython
 Vcs-Git: git://github.com/jrl-umi3218/Eigen3ToPython -b debian
 Vcs-Browser: https://github.com/jrl-umi3218/Eigen3ToPython
 
-Package: python-eigen
-Architecture: any
-Depends: ${python:Depends}, ${misc:Depends}, ${shlibs:Depends}, python-numpy
-Description: Python library that aims to make a bidirectional bridge
- between Numpy and Eigen3 and facilitate the use of Eigen in Cython
- bindings. Supports Python 2.
+#PYTHON2 Package: python-eigen
+#PYTHON2 Architecture: any
+#PYTHON2 Depends: ${python:Depends}, ${misc:Depends}, ${shlibs:Depends}, python-numpy
+#PYTHON2 Description: Python library that aims to make a bidirectional bridge
+#PYTHON2  between Numpy and Eigen3 and facilitate the use of Eigen in Cython
+#PYTHON2  bindings. Supports Python 2.
 
 Package: python3-eigen
 Architecture: any
