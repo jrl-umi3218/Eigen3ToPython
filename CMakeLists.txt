@@ -106,11 +106,26 @@ macro(ADD_BINDINGS PYTHON PYTHON_EXECUTABLE SOURCES)
     endif()
     if(DEFINED PIP_INSTALL_PREFIX)
       _pip_has_install_system(${PYTHON_EXECUTABLE} PIP_HAS_INSTALL_SYSTEM)
-      execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import sys; print(\"python{}.{}\".format(sys.version_info.major, sys.version_info.minor));" OUTPUT_VARIABLE PYTHON_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+      execute_process(
+        COMMAND
+          ${PYTHON_EXECUTABLE} -c
+          "from distutils import sysconfig; print(sysconfig.get_python_lib(prefix = '${PIP_INSTALL_PREFIX}', plat_specific = True))"
+        RESULT_VARIABLE PYTHON_INSTALL_DESTINATION_FOUND
+        OUTPUT_VARIABLE PIP_TARGET
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+      # Debian/Ubuntu has a specific problem here See
+      # https://github.com/mesonbuild/meson/issues/8739 for an overview of the
+      # problem
       if(EXISTS /etc/debian_version)
-        set(PIP_TARGET "${PIP_INSTALL_PREFIX}/lib/${PYTHON_VERSION}/dist-packages/")
-      else()
-        set(PIP_TARGET "${PIP_INSTALL_PREFIX}/lib/${PYTHON_VERSION}/site-packages/")
+        execute_process(
+          COMMAND
+            ${PYTHON_EXECUTABLE} -c
+            "import sys; print(\"python{}.{}\".format(sys.version_info.major, sys.version_info.minor));"
+          OUTPUT_VARIABLE PYTHON_VERSION
+          OUTPUT_STRIP_TRAILING_WHITESPACE)
+        string(REPLACE "python3/" "${PYTHON_VERSION}/"
+                       PIP_TARGET
+                       "${PIP_TARGET}")
       endif()
       set(PIP_EXTRA_OPTIONS --target "${PIP_TARGET}")
       if(${PIP_HAS_INSTALL_SYSTEM})
