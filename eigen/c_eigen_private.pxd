@@ -4,7 +4,7 @@
 
 from libcpp.string cimport string
 
-from c_eigen cimport *
+from eigen.c_eigen cimport *
 
 # The wrapper is needed for templated static functions, string conversion and disambiguating some operators
 cdef extern from "eigen_wrapper.hpp" namespace "Eigen":

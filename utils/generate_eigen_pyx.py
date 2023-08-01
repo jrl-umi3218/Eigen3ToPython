@@ -633,8 +633,8 @@ from __future__ import division
 import numpy
 from cython.operator cimport dereference as deref
 from libcpp.vector cimport vector
-cimport c_eigen
-cimport c_eigen_private
+cimport eigen.c_eigen as c_eigen
+cimport eigen.c_eigen_private as c_eigen_private
 
 """)
     fd.write("# This file was automatically generated, do not modify it\n")
@@ -659,7 +659,7 @@ cimport c_eigen_private
     fd.write("cimport numpy\n")
     fd.write("from cython.view cimport array as cvarray\n")
     fd.write("from libcpp.vector cimport vector\n")
-    fd.write("cimport c_eigen\n")
+    fd.write("cimport eigen.c_eigen as c_eigen\n")
     fd.write(generateDeclaration("MatrixXd"))
     fd.write(generateDeclaration("Matrix2d"))
     fd.write(generateDeclaration("Matrix3d"))
