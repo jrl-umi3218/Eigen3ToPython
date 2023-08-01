@@ -628,6 +628,7 @@ def generate_eigen_pyx(out_path, utils_path):
     fd.write("from .eigen import *\n")
   with open("{}/eigen.pyx.tmp".format(out_path), 'w') as fd:
     fd.write("""# distutils: language = c++
+# cython: c_api_binop_methods=True
 
 from __future__ import division
 import numpy
