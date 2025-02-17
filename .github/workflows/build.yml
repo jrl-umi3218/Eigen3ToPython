@@ -49,6 +49,8 @@ jobs:
       uses: jrl-umi3218/github-actions/build-cmake-project@master
       with:
         build-type: ${{ matrix.build-type }}
+      env:
+        ARCHFLAGS: "-arch arm64"
     - name: Slack Notification
       if: failure()
       uses: archive/github-actions-slack@master

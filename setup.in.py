@@ -4,13 +4,6 @@
 
 from __future__ import print_function
 
-import pkg_resources
-requirements_file = "@CMAKE_CURRENT_SOURCE_DIR@/requirements.txt"
-with open(requirements_file) as fd:
-  for pkg in fd:
-    pkg = pkg.strip()
-    pkg_resources.require(pkg)
-
 try:
   from setuptools import setup
   from setuptools import Extension
@@ -46,6 +39,12 @@ def GenExtension(name):
   compile_args = ['-std=c++11']
   if win32_build:
       compile_args = ['-DWIN32']
+  elif sys.platform == 'darwin':
+    from platform import machine
+    osx_arch = machine()
+    os.environ["ARCHFLAGS"] = "-arch " + osx_arch
+    compile_args += ["-arch", osx_arch]
+
   return Extension(name, [ext_src], extra_compile_args = compile_args, include_dirs = include_dirs)
 
 extensions = [
@@ -64,10 +63,17 @@ if cython_cxx_compiler_launcher:
 
 extensions = cythonize(extensions, cache = True)
 
+dependencies = [
+  "Cython>=0.2",
+  "coverage",
+  "numpy>=1.8.2",
+  "pytest"
+]
+
 setup(
     name = 'eigen',
     version='@PROJECT_VERSION@',
     ext_modules = extensions,
-    packages = packages,
-    package_data = { 'eigen': data }
+    package_data = { 'eigen': data },
+    install_requires=dependencies
 )
