@@ -39,15 +39,12 @@ jobs:
           apt: cython cython3 python-numpy python3-numpy python-coverage python3-coverage python-setuptools python3-setuptools python-pytest python3-pytest libeigen3-dev
         macos: |
           brew: eigen
-          pip: Cython coverage nose numpy pytest
+          pip: Cython coverage nose numpy pytest setuptools
         windows: |
           pip: Cython coverage nose numpy pytest
           github:
             - path: eigenteam/eigen-git-mirror
               ref: 3.3.7
-    - name: Fix setuptools (macos)
-      if: matrix.os == 'macos-latest'
-      run: sudo apt install --reinstall -y python3-pkg-resources python3-setuptools
     - name: Build and test
       uses: jrl-umi3218/github-actions/build-cmake-project@master
       with:
