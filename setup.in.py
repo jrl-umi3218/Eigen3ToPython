@@ -4,12 +4,16 @@
 
 from __future__ import print_function
 
-import pkg_resources
 requirements_file = "@CMAKE_CURRENT_SOURCE_DIR@/requirements.txt"
 with open(requirements_file) as fd:
   for pkg in fd:
     pkg = pkg.strip()
-    pkg_resources.require(pkg)
+    try:
+      import importlib
+      importlib.import_module(pkg)
+    except:
+      import pkg_resources
+      pkg_resources.require(pkg)
 
 try:
   from setuptools import setup
