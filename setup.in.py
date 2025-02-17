@@ -28,6 +28,7 @@ import sys
 
 win32_build = os.name == 'nt'
 
+
 from utils import generate_eigen_pyx
 
 this_path  = os.path.dirname(os.path.realpath(__file__))
@@ -46,6 +47,13 @@ def GenExtension(name):
   compile_args = ['-std=c++11']
   if win32_build:
       compile_args = ['-DWIN32']
+  elif sys.platform == 'darwin':
+    from platform import machine
+    osx_arch = machine()
+    print(f"OSX framework used, force to {osx_arch} only")
+    os.environ["ARCHFLAGS"] = os.environ.get("ARCHFLAGS", f"-arch {osx_arch}")
+    compile_args = ['-arch', osx_arch]
+
   return Extension(name, [ext_src], extra_compile_args = compile_args, include_dirs = include_dirs)
 
 extensions = [
