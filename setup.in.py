@@ -4,6 +4,14 @@
 
 from __future__ import print_function
 
+
+import pkg_resources
+requirements_file = "@CMAKE_CURRENT_SOURCE_DIR@/requirements.txt"
+with open(requirements_file) as fd:
+  for pkg in fd:
+    pkg = pkg.strip()
+    pkg_resources.require(pkg)
+
 try:
   from setuptools import setup
   from setuptools import Extension
@@ -63,17 +71,10 @@ if cython_cxx_compiler_launcher:
 
 extensions = cythonize(extensions, cache = True)
 
-dependencies = [
-  "Cython>=0.2",
-  "coverage",
-  "numpy>=1.8.2",
-  "pytest"
-]
-
 setup(
     name = 'eigen',
     version='@PROJECT_VERSION@',
     ext_modules = extensions,
     package_data = { 'eigen': data },
-    install_requires=dependencies
+    packages = packages
 )
