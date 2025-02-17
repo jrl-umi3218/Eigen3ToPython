@@ -17,6 +17,7 @@ try:
 except ImportError:
   from distutils.core import setup
   from distutils.extension import Extension
+import sysconfig
 
 from Cython.Build import cythonize
 
@@ -54,12 +55,19 @@ extensions = [
 packages = ['eigen']
 data = ['__init__.py', 'c_eigen.pxd', 'eigen.pxd']
 
-extensions = cythonize(extensions)
+cython_c_compiler_launcher="@CYTHON_C_COMPILER_LAUNCHER@"
+if cython_c_compiler_launcher:
+  sysconfig.get_config_vars()["CC"] = cython_c_compiler_launcher + " " + sysconfig.get_config_vars()["BINDIR"] + "/" + sysconfig.get_config_vars()["CC"]
+cython_cxx_compiler_launcher="@CYTHON_CXX_COMPILER_LAUNCHER@"
+if cython_cxx_compiler_launcher:
+  sysconfig.get_config_vars()["CXX"] = cython_cxx_compiler_launcher + " " + sysconfig.get_config_vars()["BINDIR"] + "/" + sysconfig.get_config_vars()["CXX"]
+
+extensions = cythonize(extensions, cache = True)
 
 setup(
     name = 'eigen',
     version='@PROJECT_VERSION@',
     ext_modules = extensions,
     packages = packages,
-    package_data = { 'eigen': data },
+    package_data = { 'eigen': data }
 )
