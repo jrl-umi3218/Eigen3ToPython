@@ -4,14 +4,9 @@
 
 from __future__ import print_function
 
-links = []
-requires = []
-requirements_file = "@CMAKE_CURRENT_SOURCE_DIR@/requirements.txt"
-
 try:
   from setuptools import setup
   from setuptools import Extension
-  from setuptools import find_packages
 except ImportError:
   from distutils.core import setup
   from distutils.extension import Extension
@@ -43,14 +38,14 @@ def GenExtension(name):
   ext_src = pyx_src
   include_dirs = [os.path.join(os.getcwd(), "include"), "@EIGEN3_INCLUDE_DIR@", numpy.get_include()]
   compile_args = ['-std=c++11']
+  print(sys.platform)
   if win32_build:
       compile_args = ['-DWIN32']
   elif sys.platform == 'darwin':
     from platform import machine
     osx_arch = machine()
-    print(f"OSX framework used, force to {osx_arch} only")
-    os.environ["ARCHFLAGS"] = os.environ.get("ARCHFLAGS", f"-arch {osx_arch}")
-    compile_args = ['-arch', osx_arch]
+    os.environ["ARCHFLAGS"] = "-arch " + osx_arch
+    compile_args += ["-arch", osx_arch]
 
   return Extension(name, [ext_src], extra_compile_args = compile_args, include_dirs = include_dirs)
 
