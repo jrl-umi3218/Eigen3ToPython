@@ -21,7 +21,6 @@ import sys
 
 win32_build = os.name == 'nt'
 
-
 from utils import generate_eigen_pyx
 
 this_path  = os.path.dirname(os.path.realpath(__file__))
@@ -38,7 +37,6 @@ def GenExtension(name):
   ext_src = pyx_src
   include_dirs = [os.path.join(os.getcwd(), "include"), "@EIGEN3_INCLUDE_DIR@", numpy.get_include()]
   compile_args = ['-std=c++11']
-  print(sys.platform)
   if win32_build:
       compile_args = ['-DWIN32']
   elif sys.platform == 'darwin':
