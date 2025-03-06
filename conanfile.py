@@ -28,7 +28,7 @@ def enable_python2_and_python3(options):
 
 class Eigen3ToPythonConan(ConanFile):
     name = "Eigen3ToPython"
-    version = "1.0.5"
+    version = "1.0.6"
     description = "Python bindings for the Eigen library"
     # topics can get used for searches, GitHub topics, Bintray tags etc. Add here keywords about the library
     topics = ("eigen", "python")
