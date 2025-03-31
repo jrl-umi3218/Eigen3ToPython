@@ -2,7 +2,7 @@
 # Copyright 2012-2019 CNRS-UM LIRMM, CNRS-AIST JRL
 #
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 
 project(Eigen3ToPython)
 set(PROJECT_VERSION 1.0.6)
