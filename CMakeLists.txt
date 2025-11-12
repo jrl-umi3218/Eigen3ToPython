@@ -133,7 +133,7 @@ macro(ADD_BINDINGS PYTHON PYTHON_EXECUTABLE SOURCES)
       endif()
     endif()
     add_custom_target(install-${TARGET_NAME}
-      COMMAND ${CMAKE_COMMAND} -E chdir "${SETUP_LOCATION}" ${PYTHON_EXECUTABLE} -m pip install . ${PIP_EXTRA_OPTIONS} --upgrade
+      COMMAND ${CMAKE_COMMAND} -E chdir "${SETUP_LOCATION}" ${PYTHON_EXECUTABLE} -m pip install . --upgrade ${PIP_EXTRA_OPTIONS}
       COMMENT "Install Eigen ${PYTHON} bindings"
     )
   endif()
