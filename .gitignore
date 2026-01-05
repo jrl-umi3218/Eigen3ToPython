@@ -4,3 +4,4 @@ eigen/eigen.pxd
 *.pyc
 *.cpp
 setup.py
+build

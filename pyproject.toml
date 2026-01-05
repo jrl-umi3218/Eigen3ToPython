@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61,<=68.1.2", "wheel", "Cython"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eigen"
+version = "1.0.0"
+description = "Eigen3 Python bindings"
+authors = [
+    { name = "CNRS-UM LIRMM, CNRS-AIST JRL" }
+]
+dependencies = [
+    "Cython>=0.2",
+    "coverage",
+    "numpy>=1.8.2",
+    "pytest"
+]
+
+[tool.setuptools]
+packages = ["eigen"]
+
+[tool.setuptools.package-data]
+eigen = ["__init__.py", "c_eigen.pxd", "eigen.pxd"]
