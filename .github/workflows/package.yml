@@ -23,7 +23,7 @@ jobs:
       deps: '["jrl-umi3218/SpaceVecAlg"]'
       matrix: |
           {
-            "dist": ["jammy", "noble"],
+            "dist": ["jammy", "noble", "resolute"],
             "arch": ["amd64"]
           }
     secrets:
