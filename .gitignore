@@ -5,3 +5,5 @@ eigen/eigen.pxd
 *.cpp
 setup.py
 build
+result*
+.direnv/
