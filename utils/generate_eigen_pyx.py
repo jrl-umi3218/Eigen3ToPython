@@ -176,11 +176,11 @@ def generateMatrixBinding(className, type, nRow, nCol):
     ret += """    if len(args) == 0:
       self.impl = c_eigen_private.EigenZero[{1},{2},{3}](0,0)
     elif len(args) == 2:
-      self.impl = c_eigen_private.EigenZero[{1},{2},{3}](args[0], args[1])
+      self.impl = c_eigen_private.EigenZero[{1},{2},{3}](<int>args[0], <int>args[1])
     elif len(args) == 1 and isinstance(args[0], {0}):
       self.__copyctor__(args[0])
     elif len(args) == 1 and isinstance(args[0], int):
-      self.impl = c_eigen_private.EigenZero[{1},{2},{3}](args[0],1)
+      self.impl = c_eigen_private.EigenZero[{1},{2},{3}](<int>args[0],1)
     elif len(args) == 1:
       self.__arrayctor(numpy.asanyarray(args[0], dtype=numpy.double))
     else:
@@ -455,7 +455,7 @@ def generateVectorBinding(className, type, nRow, nCol):
         if isinstance(args[0], {0}):
           self.__copyctor__(args[0])
         elif isinstance(args[0], int):
-          self.impl = c_eigen_private.EigenZero[{1},{2},{3}](args[0])
+          self.impl = c_eigen_private.EigenZero[{1},{2},{3}](<int>args[0])
         else:
           self.impl = c_eigen_private.EigenZero[{1},{2},{3}](len(args[0]))
           self.__vctor(args[0])
