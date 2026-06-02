@@ -17,12 +17,11 @@ This library supports:
 
 If you want more features feel free to open an issue or submit a pull request. :-)
 
-Installing
-------
+# Installing
 
-### Nix
+## Nix
 
-#### Run
+### Interactive python interpreter
 
 To get a python shell with Eigen3ToPython installed
 
@@ -35,7 +34,7 @@ Then
 import eigen
 ```
 
-#### Develop
+### How to develop
 
 To develop, use
 
@@ -52,7 +51,7 @@ import eigen
 # latest bindings built from source
 ```
 
-### Ubuntu LTS (22.04, 24.04, 26.04)
+## Ubuntu LTS (22.04, 24.04, 26.04)
 
 You must first setup our package mirror:
 
@@ -76,7 +75,7 @@ You can then install the package:
 sudo apt install python3-eigen
 ```
 
-### Conan
+## Conan
 
 Install the latest version using [conan](https://conan.io/)
 
@@ -88,9 +87,9 @@ conan install Eigen3ToPython/latest@multi-contact/stable
 # conan install Eigen3ToPython/latest@multi-contact/dev
 ```
 
-### Manual
+## Manual
 
-#### Dependencies
+### Dependencies
 
 To compile you need the following tools:
 
@@ -99,7 +98,7 @@ To compile you need the following tools:
  * [pip](https://pypi.python.org/pypi/pip)
  * [CMake](https://cmake.org/)
 
-#### Building
+### Building
 
 ```sh
 git clone https://github.com/jrl-umi3218/Eigen3ToPython.git
@@ -112,7 +111,7 @@ make
 sudo make install
 ```
 
-#### CMake options
+### CMake options
 
 By default, the build will use the `python` and `pip` command to install the bindings for the default system version (this behaviour can be used to build the bindings in a given virtualenv). The following options allow to control this behaviour:
 
@@ -120,10 +119,9 @@ By default, the build will use the `python` and `pip` command to install the bin
 - `PYTHON_BINDING_FORCE_PYTHON3`: use `python3` and `pip3` instead of `python` and `pip`
 - `PYTHON_BINDING_BUILD_PYTHON2_AND_PYTHON2`: builds two sets of bindings one with `python2` and `pip2`, the other with `python3` and `pip3`
 
-Documentation
-------
+# Documentation
 
-### Eigen <-> Numpy conversions
+## Eigen <-> Numpy conversions
 
 ```Python
 import numpy as np
@@ -143,7 +141,7 @@ n = np.linalg.norm(B) # Implicit conversion to numpy object
 10000 loops, best of 3: 53.1 µs per loop
 ```
 
-### Fixed size Eigen3 Matrix operations
+## Fixed size Eigen3 Matrix operations
 
 ```Python
 import eigen as e
@@ -229,7 +227,7 @@ m3d*v3d # give a eigen.Vector3d
 m3d*m3d # give a eigen.Matrix3d
 ```
 
-### Quaternions via Quaterniond
+## Quaternions via Quaterniond
 
 [Unit Quaternions](https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation) are used to represent rigid body rotations in 3D. Unit Quaternions are the ideal representation for numerical calculations on rotations because of their stability compared to other representations. The Quaterniond class is a python interface for the C++ [Eigen::Quaterniond](https://eigen.tuxfamily.org/dox/classEigen_1_1Quaternion.html).
 
@@ -273,7 +271,7 @@ quat.squaredNorm() # Eigen::Quaterniond::squaredNorm()
 quat*quat
 ```
 
-### Dynamic size Eigen3 Matrix operations
+## Dynamic size Eigen3 Matrix operations
 Few operations are defined for dynamic size vector/matrix.
 It's recommended to convert them into Numpy matrix.
 
@@ -377,7 +375,7 @@ $ q.angularDistance(q2)
 ```
 
 
-### Angle Axis representation
+## Angle Axis representation
 
 The [Angle Axis](https://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation) representation of 3D rotations is useful because it is easy for humans to understand to define rotations which can then be converted to a more numerically stable representation.
 
@@ -397,7 +395,7 @@ The [Angle Axis](https://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation
   q = e.Quaterniond(aa)
 ```
 
-### Converting from C++
+## Converting from C++
 
 Eigen3ToPython doesn't allow reference-based access.
 
