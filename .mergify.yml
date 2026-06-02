@@ -21,5 +21,7 @@ pull_request_rules:
 # ensure that required CI jobs suceed
 queue_rules:
   - name: default
-    conditions:
+    merge_conditions:
       - check-success = "check-macos-linux-nix"
+      - check-success = "check-build"
+      - check-success = "check-package"
