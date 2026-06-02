@@ -20,6 +20,38 @@ If you want more features feel free to open an issue or submit a pull request. :
 Installing
 ------
 
+### Nix
+
+#### Run
+
+To get a python shell with Eigen3ToPython installed
+
+```sh
+nix run github:jrl-umi3218/Eigen3ToPython
+```
+
+Then
+```python
+import eigen
+```
+
+#### Develop
+
+To develop, use
+
+```
+gh repo clone jrl-umi3218/Eigen3ToPython
+direnv allow # activates a nix develop environment and set the python path
+cmake -B build $cmakeFlags
+cmake --build build
+```
+
+Then
+```python
+import eigen
+# latest bindings built from source
+```
+
 ### Ubuntu LTS (22.04, 24.04, 26.04)
 
 You must first setup our package mirror:
