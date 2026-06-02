@@ -1,11 +1,11 @@
 #
-# Copyright 2012-2019 CNRS-UM LIRMM, CNRS-AIST JRL
+# Copyright 2012-2026 CNRS-UM LIRMM, CNRS-AIST JRL
 #
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.22)
 
 project(Eigen3ToPython)
-set(PROJECT_VERSION 1.0.6)
+set(PROJECT_VERSION 1.0.7)
 
 find_package(Eigen3 NO_CMAKE_PACKAGE_REGISTRY)
 if(NOT Eigen3_FOUND)

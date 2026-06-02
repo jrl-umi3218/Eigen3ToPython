@@ -41,7 +41,7 @@ curl -1sLf \
 You can then install the package:
 
 ```bash
-sudo apt install python-eigen python3-eigen
+sudo apt install python3-eigen
 ```
 
 ### Conan

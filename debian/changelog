@@ -1,3 +1,9 @@
+python-eigen (1.0.7-1debian1) unstable; urgency=medium
+
+  * Updated upstream version
+
+ -- Arnaud Tanguy <arn.tanguy+ppa@gmail.com>  Tue, 2 Jun 2026 16:00:00 +0000
+
 python-eigen (1.0.6-1debian1) unstable; urgency=medium
 
   * Updated upstream version
