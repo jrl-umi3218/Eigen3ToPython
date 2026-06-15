@@ -24,7 +24,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
     - name: Install dependencies
       uses: jrl-umi3218/github-actions/install-dependencies@master
       with:
