@@ -15,36 +15,9 @@ message("Found Eigen3: ${EIGEN3_VERSION_STRING}")
 message("Eigen include directory: ${EIGEN3_INCLUDE_DIR}")
 
 option(PYTHON_BINDING "Generate Python binding" ON)
-if(WIN32)
-  set(PYTHON_BINDING_USER_INSTALL_DEFAULT ON)
-else()
-  set(PYTHON_BINDING_USER_INSTALL_DEFAULT OFF)
-endif()
+set(PYTHON_BINDING_USER_INSTALL_DEFAULT ON)
 option(PYTHON_BINDING_USER_INSTALL "Install the Python binding in user space" ${PYTHON_BINDING_USER_INSTALL_DEFAULT})
-option(PYTHON_BINDING_FORCE_PYTHON2 "Use python2 instead of python" OFF)
-option(PYTHON_BINDING_FORCE_PYTHON3 "Use python3 instead of python" OFF)
-set(PYTHON_BINDING_BUILD_PYTHON2_AND_PYTHON3_DEFAULT OFF)
-if(DEFINED PYTHON_DEB_ROOT)
-  set(PYTHON_BINDING_BUILD_PYTHON2_AND_PYTHON3_DEFAULT ON)
-endif()
-option(PYTHON_BINDING_BUILD_PYTHON2_AND_PYTHON3 "Build Python 2 and Python 3 bindings" ${PYTHON_BINDING_BUILD_PYTHON2_AND_PYTHON3_DEFAULT})
-if(${PYTHON_BINDING_FORCE_PYTHON2} AND ${PYTHON_BINDING_FORCE_PYTHON3})
-  message(FATAL_ERROR "Cannot enforce Python 2 and Python 3 at the same time")
-endif()
-
 option(DISABLE_TESTS "Disable unit tests." OFF)
-
-# Check if pip install supports --system
-macro(_pip_has_install_system PYTHON OUT)
-  execute_process(COMMAND ${PYTHON} -m pip install --system
-                  RESULT_VARIABLE ${OUT}
-                  OUTPUT_QUIET ERROR_QUIET)
-  if(${${OUT}} EQUAL 0)
-    set(${OUT} True)
-  else()
-    set(${OUT} False)
-  endif()
-endmacro()
 
 configure_file(setup.in.py ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
 
@@ -101,37 +74,7 @@ macro(ADD_BINDINGS PYTHON PYTHON_EXECUTABLE SOURCES)
     )
   else()
     set(PIP_EXTRA_OPTIONS "")
-    if(${PYTHON_BINDING_USER_INSTALL})
-      set(PIP_EXTRA_OPTIONS "--user")
-    endif()
-    if(DEFINED PIP_INSTALL_PREFIX)
-      _pip_has_install_system(${PYTHON_EXECUTABLE} PIP_HAS_INSTALL_SYSTEM)
-      execute_process(
-        COMMAND
-          ${PYTHON_EXECUTABLE} -c
-          "from distutils import sysconfig; print(sysconfig.get_python_lib(prefix = '${PIP_INSTALL_PREFIX}', plat_specific = True))"
-        RESULT_VARIABLE PYTHON_INSTALL_DESTINATION_FOUND
-        OUTPUT_VARIABLE PIP_TARGET
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-      # Debian/Ubuntu has a specific problem here See
-      # https://github.com/mesonbuild/meson/issues/8739 for an overview of the
-      # problem
-      if(EXISTS /etc/debian_version)
-        execute_process(
-          COMMAND
-            ${PYTHON_EXECUTABLE} -c
-            "import sys; print(\"python{}.{}\".format(sys.version_info.major, sys.version_info.minor));"
-          OUTPUT_VARIABLE PYTHON_VERSION
-          OUTPUT_STRIP_TRAILING_WHITESPACE)
-        string(REPLACE "python3/" "${PYTHON_VERSION}/"
-                       PIP_TARGET
-                       "${PIP_TARGET}")
-      endif()
-      set(PIP_EXTRA_OPTIONS --target "${PIP_TARGET}")
-      if(${PIP_HAS_INSTALL_SYSTEM})
-        set(PIP_EXTRA_OPTIONS --system ${PIP_EXTRA_OPTIONS})
-      endif()
-    endif()
+    set(PIP_EXTRA_OPTIONS "--no-build-isolation")
     add_custom_target(install-${TARGET_NAME}
       COMMAND ${CMAKE_COMMAND} -E chdir "${SETUP_LOCATION}" ${PYTHON_EXECUTABLE} -m pip install . --upgrade ${PIP_EXTRA_OPTIONS}
       COMMENT "Install Eigen ${PYTHON} bindings"
@@ -153,27 +96,19 @@ set(BINDINGS_SOURCES
   tests/test_eigen.py
 )
 
-if(NOT DEFINED Python_EXECUTABLE)
-  set(Python_EXECUTABLE "python")
-endif()
-if(NOT DEFINED Python2_EXECUTABLE)
-  set(Python2_EXECUTABLE "python2")
-endif()
-if(NOT DEFINED Python3_EXECUTABLE)
-  set(Python3_EXECUTABLE "python3")
-endif()
-
 if(${PYTHON_BINDING})
-  if(${PYTHON_BINDING_BUILD_PYTHON2_AND_PYTHON3})
-    ADD_BINDINGS(python2 "${Python2_EXECUTABLE}" "${BINDINGS_SOURCES}")
-    ADD_BINDINGS(python3 "${Python3_EXECUTABLE}" "${BINDINGS_SOURCES}")
-  elseif(${PYTHON_BINDING_FORCE_PYTHON3})
-    ADD_BINDINGS(python3 "${Python3_EXECUTABLE}" "${BINDINGS_SOURCES}")
-  elseif(${PYTHON_BINDING_FORCE_PYTHON2})
-    ADD_BINDINGS(python2 "${Python2_EXECUTABLE}" "${BINDINGS_SOURCES}")
-  else()
-    ADD_BINDINGS(python "${Python_EXECUTABLE}" "${BINDINGS_SOURCES}")
+  if(NOT DEFINED Python3_EXECUTABLE)
+    # Look for the python3 currently available in the PATH environment
+    find_program(Python3_EXECUTABLE python3)
+
+    if(NOT Python3_EXECUTABLE)
+      message(FATAL_ERROR "Could not find python3 executable in your environment PATH.")
+    else()
+      message(STATUS "Found Python interpreter: ${Python3_EXECUTABLE}")
+    endif()
   endif()
+
+  ADD_BINDINGS(python3 "${Python3_EXECUTABLE}" "${BINDINGS_SOURCES}")
 else()
   enable_testing()
   install(CODE "message(\"Nothing to install\")")
